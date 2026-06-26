@@ -5,6 +5,10 @@ import type { Database } from "@/types/database";
 const protectedRoutes = ["/dashboard", "/log", "/trades"];
 const authRoutes = ["/login", "/signup"];
 
+function matchesRoute(pathname: string, route: string) {
+  return pathname === route || pathname.startsWith(`${route}/`);
+}
+
 export async function middleware(request: NextRequest) {
   let response = NextResponse.next({
     request,
@@ -34,8 +38,8 @@ export async function middleware(request: NextRequest) {
   } = await supabase.auth.getUser();
 
   const pathname = request.nextUrl.pathname;
-  const isProtected = protectedRoutes.some((route) => pathname.startsWith(route));
-  const isAuthRoute = authRoutes.some((route) => pathname.startsWith(route));
+  const isProtected = protectedRoutes.some((route) => matchesRoute(pathname, route));
+  const isAuthRoute = authRoutes.some((route) => matchesRoute(pathname, route));
 
   if (isProtected && !user) {
     const url = request.nextUrl.clone();
