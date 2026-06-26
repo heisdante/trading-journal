@@ -40,7 +40,7 @@ export function AuthForm({ mode }: AuthFormProps) {
     }
 
     if (!isLogin && !response.data.session) {
-      setMessage("Account created. Check your inbox if email confirmation is enabled, then log in.");
+      router.push(`/verify?email=${encodeURIComponent(email)}`);
       return;
     }
 

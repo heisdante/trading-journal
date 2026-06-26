@@ -18,7 +18,8 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=
 5. Confirm Row Level Security is enabled on `public.trades`.
 6. Confirm policies exist for select, insert, update, and delete.
 7. Configure email/password auth.
-8. Decide whether email confirmation is enabled.
+8. Enable email confirmation if you want signup verification before dashboard access.
+9. For code-based signup verification, update the Supabase signup email template to show the OTP token instead of only a confirmation link. The app verifies codes on `/verify` using Supabase `verifyOtp` with `type: "signup"`.
 
 ## Local Verification
 

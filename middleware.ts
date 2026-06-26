@@ -3,7 +3,7 @@ import { createServerClient } from "@supabase/ssr";
 import type { Database } from "@/types/database";
 
 const protectedRoutes = ["/dashboard", "/log", "/trades"];
-const authRoutes = ["/login", "/signup"];
+const authRoutes = ["/login", "/signup", "/verify"];
 
 function matchesRoute(pathname: string, route: string) {
   return pathname === route || pathname.startsWith(`${route}/`);
