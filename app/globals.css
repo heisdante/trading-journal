@@ -1,0 +1,43 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  min-height: 100vh;
+  margin: 0;
+  background:
+    linear-gradient(rgba(25, 211, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(25, 211, 255, 0.025) 1px, transparent 1px),
+    #07111f;
+  background-size: 28px 28px;
+  color: #d5f3ff;
+}
+
+::selection {
+  background: rgba(25, 211, 255, 0.35);
+}
+
+input,
+textarea,
+select {
+  color-scheme: dark;
+}
+
+.terminal-panel {
+  border: 1px solid rgba(25, 211, 255, 0.18);
+  background: rgba(11, 23, 40, 0.92);
+  box-shadow: 0 0 0 1px rgba(213, 243, 255, 0.03), 0 24px 80px rgba(0, 0, 0, 0.24);
+}
+
+.number {
+  font-family: var(--font-jetbrains), ui-monospace, SFMono-Regular, monospace;
+  font-variant-numeric: tabular-nums;
+}
