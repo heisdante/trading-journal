@@ -7,37 +7,38 @@
   - Environments: .env.local
 
  ✓ Starting...
- ✓ Ready in 7.6s
+ ✓ Ready in 3.7s
  ○ Compiling /middleware ...
- ✓ Compiled /middleware in 790ms (127 modules)
- ○ Compiling /signup ...
- ✓ Compiled /signup in 24.8s (655 modules)
- GET /signup 200 in 66ms
- GET /signup 200 in 100ms
- GET / 307 in 81ms
+ ✓ Compiled /middleware in 18.9s (606 modules)
+ GET /_next/static/webpack/bb065fdc6d79487b.webpack.hot-update.json 404 in 20311ms
  ○ Compiling /dashboard ...
- ✓ Compiled /dashboard in 12.9s (1782 modules)
- GET /dashboard 500 in 15264ms
- GET / 307 in 77ms
- GET /dashboard 500 in 1231ms
- ✓ Compiled in 917ms (854 modules)
- ✓ Compiled in 488ms (854 modules)
- GET /dashboard 500 in 1455ms
- ✓ Compiled in 1765ms (1768 modules)
- GET /dashboard 200 in 2504ms
- ✓ Compiled in 888ms (854 modules)
- ○ Compiling / ...
- ✓ Compiled / in 1069ms (922 modules)
- ○ Compiling /_error ...
- ✓ Compiled /_not-found in 5.9s (1992 modules)
- GET / 500 in 8060ms
- GET /_next/static/webpack/4646fd4a34138a44.webpack.hot-update.json 404 in 3171ms
+ ✓ Compiled /dashboard in 11.5s (1767 modules)
+ GET /dashboard 200 in 11529ms
+ GET /_next/static/webpack/bb065fdc6d79487b.webpack.hot-update.json 404 in 533ms
  ○ Compiling /signup ...
- ✓ Compiled /signup in 1480ms (970 modules)
- GET /dashboard 200 in 2129ms
- GET /signup 200 in 2732ms
+ GET /dashboard 200 in 1503ms
+ ✓ Compiled /signup in 1074ms (1762 modules)
+ GET /signup 200 in 1312ms
  ○ Compiling /login ...
- ✓ Compiled /login in 6.9s (2028 modules)
- GET /login 200 in 7620ms
- GET /_next/static/webpack/4646fd4a34138a44.webpack.hot-update.json 500 in 7866ms
- GET /dashboard 500 in 12911ms
+ ✓ Compiled /login in 2.3s (1797 modules)
+ GET /login 200 in 2573ms
+ ○ Compiling / ...
+ ✓ Compiled / in 669ms (1801 modules)
+ GET / 307 in 878ms
+ GET /signup 200 in 224ms
+ GET /login 200 in 160ms
+ GET /login?next=%2Fdashboard 200 in 42ms
+ GET /login?next=%2Ftrades 200 in 79ms
+ GET /login?next=%2Flog 200 in 74ms
+ GET / 307 in 55ms
+ GET /login?next=%2Fdashboard 200 in 41ms
+ GET / 307 in 81ms
+ GET /dashboard 200 in 1802ms
+ ○ Compiling /log ...
+ ✓ Compiled /trades in 2.5s (1795 modules)
+ GET / 307 in 168ms
+ GET /dashboard 200 in 1718ms
+ ✓ Compiled /login in 356ms (960 modules)
+ POST /login 303 in 4152ms
+ POST /dashboard 200 in 2104ms
+ POST /dashboard 200 in 2218ms
