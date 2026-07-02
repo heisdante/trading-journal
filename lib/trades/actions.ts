@@ -63,7 +63,7 @@ export async function addTradeAction(formData: FormData) {
 
   const payload = {
     user_id: user.id,
-    date: requiredString(formData, "date"),
+    trade_date: requiredString(formData, "date"),
     setup_name: requiredString(formData, "setup_name"),
     direction,
     entry_price: entryPrice,

@@ -1,0 +1,16 @@
+
+> trading-journal@0.1.0 dev
+> next dev
+
+  ▲ Next.js 14.2.35
+  - Local:        http://localhost:3002
+  - Environments: .env.local
+
+ ✓ Starting...
+ ✓ Ready in 5.3s
+ ○ Compiling /middleware ...
+ ✓ Compiled /middleware in 1013ms (127 modules)
+ ○ Compiling /signup ...
+ ✓ Compiled /signup in 13.1s (631 modules)
+ GET /signup 200 in 13977ms
+ ✓ Compiled in 3.3s (324 modules)

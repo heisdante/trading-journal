@@ -1,0 +1,232 @@
+  ▲ Next.js 14.2.35
+  - Local:        http://localhost:3000
+  - Network:      http://0.0.0.0:3000
+  - Environments: .env.local
+
+ ✓ Starting...
+ ✓ Ready in 4.4s
+ ○ Compiling /middleware ...
+ ✓ Compiled /middleware in 2.1s (127 modules)
+ ○ Compiling /login ...
+ ✓ Compiled /login in 13s (616 modules)
+ HEAD /login 200 in 13792ms
+<w> [webpack.cache.PackFileCacheStrategy] Serializing big strings (102kiB) impacts deserialization performance (consider using Buffer instead and decode when needed)
+<w> [webpack.cache.PackFileCacheStrategy] Serializing big strings (250kiB) impacts deserialization performance (consider using Buffer instead and decode when needed)
+ GET /login 200 in 321ms
+[TypeError: fetch failed] {
+  [cause]: Error: getaddrinfo EAI_AGAIN csensanoeanckmwldpje.supabase.co
+      at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26) {
+    errno: -3001,
+    code: 'EAI_AGAIN',
+    syscall: 'getaddrinfo',
+    hostname: 'csensanoeanckmwldpje.supabase.co'
+  }
+}
+ POST /login 303 in 219ms
+[TypeError: fetch failed] {
+  [cause]: Error: getaddrinfo EAI_AGAIN csensanoeanckmwldpje.supabase.co
+      at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26) {
+    errno: -3001,
+    code: 'EAI_AGAIN',
+    syscall: 'getaddrinfo',
+    hostname: 'csensanoeanckmwldpje.supabase.co'
+  }
+}
+ POST /login?error=fetch%20failed 303 in 280ms
+[TypeError: fetch failed] {
+  [cause]: Error: getaddrinfo EAI_AGAIN csensanoeanckmwldpje.supabase.co
+      at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26) {
+    errno: -3001,
+    code: 'EAI_AGAIN',
+    syscall: 'getaddrinfo',
+    hostname: 'csensanoeanckmwldpje.supabase.co'
+  }
+}
+ POST /login?error=fetch%20failed 303 in 161ms
+[TypeError: fetch failed] {
+  [cause]: Error: getaddrinfo EAI_AGAIN csensanoeanckmwldpje.supabase.co
+      at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26) {
+    errno: -3001,
+    code: 'EAI_AGAIN',
+    syscall: 'getaddrinfo',
+    hostname: 'csensanoeanckmwldpje.supabase.co'
+  }
+}
+ POST /login?error=fetch%20failed 303 in 109ms
+[TypeError: fetch failed] {
+  [cause]: Error: getaddrinfo EAI_AGAIN csensanoeanckmwldpje.supabase.co
+      at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26) {
+    errno: -3001,
+    code: 'EAI_AGAIN',
+    syscall: 'getaddrinfo',
+    hostname: 'csensanoeanckmwldpje.supabase.co'
+  }
+}
+ POST /login?error=fetch%20failed 303 in 66ms
+[TypeError: fetch failed] {
+  [cause]: Error: getaddrinfo EAI_AGAIN csensanoeanckmwldpje.supabase.co
+      at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26) {
+    errno: -3001,
+    code: 'EAI_AGAIN',
+    syscall: 'getaddrinfo',
+    hostname: 'csensanoeanckmwldpje.supabase.co'
+  }
+}
+ POST /login?error=fetch%20failed 303 in 74ms
+[TypeError: fetch failed] {
+  [cause]: Error: getaddrinfo EAI_AGAIN csensanoeanckmwldpje.supabase.co
+      at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26) {
+    errno: -3001,
+    code: 'EAI_AGAIN',
+    syscall: 'getaddrinfo',
+    hostname: 'csensanoeanckmwldpje.supabase.co'
+  }
+}
+ POST /login?error=fetch%20failed 303 in 62ms
+[TypeError: fetch failed] {
+  [cause]: Error: getaddrinfo EAI_AGAIN csensanoeanckmwldpje.supabase.co
+      at GetAddrInfoReqWrap.onlookupall [as oncomplete] (node:dns:122:26) {
+    errno: -3001,
+    code: 'EAI_AGAIN',
+    syscall: 'getaddrinfo',
+    hostname: 'csensanoeanckmwldpje.supabase.co'
+  }
+}
+ POST /login?error=fetch%20failed 303 in 68ms
+ ○ Compiling /dashboard ...
+ ✓ Compiled /dashboard in 11.5s (1799 modules)
+ POST /login?error=fetch%20failed 303 in 17300ms
+ ⨯ lib\trades\queries.ts (41:11) @ getTrades
+ ⨯ Error: column trades.date does not exist
+    at getTrades (./lib/trades/queries.ts:38:15)
+    at async DashboardPage (./app/dashboard/page.tsx:70:20)
+digest: "3475830560"
+[0m [90m 39 |[39m[0m
+[0m [90m 40 |[39m   [36mif[39m (error) {[0m
+[0m[31m[1m>[22m[39m[90m 41 |[39m     [36mthrow[39m [36mnew[39m [33mError[39m(error[33m.[39mmessage)[33m;[39m[0m
+[0m [90m    |[39m           [31m[1m^[22m[39m[0m
+[0m [90m 42 |[39m   }[0m
+[0m [90m 43 |[39m[0m
+[0m [90m 44 |[39m   [36mreturn[39m (data [33m?[39m[33m?[39m [])[33m.[39mmap((row) [33m=>[39m normalizeTrade(row))[33m;[39m[0m
+failed to forward action response [TypeError: fetch failed] {
+  [cause]: Error
+      at makeNetworkError (node:internal/deps/undici/undici:11566:35)
+      at httpRedirectFetch (node:internal/deps/undici/undici:13271:32)
+      at httpFetch (node:internal/deps/undici/undici:13231:28)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async mainFetch (node:internal/deps/undici/undici:12967:24)
+}
+ ⨯ lib\trades\queries.ts (41:11) @ getTrades
+ ⨯ Error: column trades.date does not exist
+    at getTrades (./lib/trades/queries.ts:38:15)
+    at async DashboardPage (./app/dashboard/page.tsx:70:20)
+digest: "3475830560"
+[0m [90m 39 |[39m[0m
+[0m [90m 40 |[39m   [36mif[39m (error) {[0m
+[0m[31m[1m>[22m[39m[90m 41 |[39m     [36mthrow[39m [36mnew[39m [33mError[39m(error[33m.[39mmessage)[33m;[39m[0m
+[0m [90m    |[39m           [31m[1m^[22m[39m[0m
+[0m [90m 42 |[39m   }[0m
+[0m [90m 43 |[39m[0m
+[0m [90m 44 |[39m   [36mreturn[39m (data [33m?[39m[33m?[39m [])[33m.[39mmap((row) [33m=>[39m normalizeTrade(row))[33m;[39m[0m
+ ⨯ lib\trades\queries.ts (41:11) @ getTrades
+ ⨯ Error: column trades.date does not exist
+    at getTrades (./lib/trades/queries.ts:38:15)
+    at async DashboardPage (./app/dashboard/page.tsx:70:20)
+digest: "3475830560"
+[0m [90m 39 |[39m[0m
+[0m [90m 40 |[39m   [36mif[39m (error) {[0m
+[0m[31m[1m>[22m[39m[90m 41 |[39m     [36mthrow[39m [36mnew[39m [33mError[39m(error[33m.[39mmessage)[33m;[39m[0m
+[0m [90m    |[39m           [31m[1m^[22m[39m[0m
+[0m [90m 42 |[39m   }[0m
+[0m [90m 43 |[39m[0m
+[0m [90m 44 |[39m   [36mreturn[39m (data [33m?[39m[33m?[39m [])[33m.[39mmap((row) [33m=>[39m normalizeTrade(row))[33m;[39m[0m
+ POST /dashboard?error=fetch+failed 500 in 1832ms
+ ⨯ lib\trades\queries.ts (41:11) @ getTrades
+ ⨯ Error: column trades.date does not exist
+    at getTrades (./lib/trades/queries.ts:38:15)
+    at async DashboardPage (./app/dashboard/page.tsx:70:20)
+digest: "3475830560"
+[0m [90m 39 |[39m[0m
+[0m [90m 40 |[39m   [36mif[39m (error) {[0m
+[0m[31m[1m>[22m[39m[90m 41 |[39m     [36mthrow[39m [36mnew[39m [33mError[39m(error[33m.[39mmessage)[33m;[39m[0m
+[0m [90m    |[39m           [31m[1m^[22m[39m[0m
+[0m [90m 42 |[39m   }[0m
+[0m [90m 43 |[39m[0m
+[0m [90m 44 |[39m   [36mreturn[39m (data [33m?[39m[33m?[39m [])[33m.[39mmap((row) [33m=>[39m normalizeTrade(row))[33m;[39m[0m
+ GET /login?next=%2Fdashboard 200 in 153ms
+ ⨯ lib\trades\queries.ts (41:11) @ getTrades
+ ⨯ Error: column trades.date does not exist
+    at getTrades (./lib/trades/queries.ts:38:15)
+    at async DashboardPage (./app/dashboard/page.tsx:70:20)
+digest: "3475830560"
+[0m [90m 39 |[39m[0m
+[0m [90m 40 |[39m   [36mif[39m (error) {[0m
+[0m[31m[1m>[22m[39m[90m 41 |[39m     [36mthrow[39m [36mnew[39m [33mError[39m(error[33m.[39mmessage)[33m;[39m[0m
+[0m [90m    |[39m           [31m[1m^[22m[39m[0m
+[0m [90m 42 |[39m   }[0m
+[0m [90m 43 |[39m[0m
+[0m [90m 44 |[39m   [36mreturn[39m (data [33m?[39m[33m?[39m [])[33m.[39mmap((row) [33m=>[39m normalizeTrade(row))[33m;[39m[0m
+ POST /login?next=%2Fdashboard 303 in 5331ms
+failed to forward action response [TypeError: fetch failed] {
+  [cause]: Error
+      at makeNetworkError (node:internal/deps/undici/undici:11566:35)
+      at httpRedirectFetch (node:internal/deps/undici/undici:13271:32)
+      at httpFetch (node:internal/deps/undici/undici:13231:28)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async mainFetch (node:internal/deps/undici/undici:12967:24)
+}
+ ⨯ lib\trades\queries.ts (41:11) @ getTrades
+ ⨯ Error: column trades.date does not exist
+    at getTrades (./lib/trades/queries.ts:38:15)
+    at async DashboardPage (./app/dashboard/page.tsx:70:20)
+digest: "3475830560"
+[0m [90m 39 |[39m[0m
+[0m [90m 40 |[39m   [36mif[39m (error) {[0m
+[0m[31m[1m>[22m[39m[90m 41 |[39m     [36mthrow[39m [36mnew[39m [33mError[39m(error[33m.[39mmessage)[33m;[39m[0m
+[0m [90m    |[39m           [31m[1m^[22m[39m[0m
+[0m [90m 42 |[39m   }[0m
+[0m [90m 43 |[39m[0m
+[0m [90m 44 |[39m   [36mreturn[39m (data [33m?[39m[33m?[39m [])[33m.[39mmap((row) [33m=>[39m normalizeTrade(row))[33m;[39m[0m
+ ⨯ lib\trades\queries.ts (41:11) @ getTrades
+ ⨯ Error: column trades.date does not exist
+    at getTrades (./lib/trades/queries.ts:38:15)
+    at async DashboardPage (./app/dashboard/page.tsx:70:20)
+digest: "3475830560"
+[0m [90m 39 |[39m[0m
+[0m [90m 40 |[39m   [36mif[39m (error) {[0m
+[0m[31m[1m>[22m[39m[90m 41 |[39m     [36mthrow[39m [36mnew[39m [33mError[39m(error[33m.[39mmessage)[33m;[39m[0m
+[0m [90m    |[39m           [31m[1m^[22m[39m[0m
+[0m [90m 42 |[39m   }[0m
+[0m [90m 43 |[39m[0m
+[0m [90m 44 |[39m   [36mreturn[39m (data [33m?[39m[33m?[39m [])[33m.[39mmap((row) [33m=>[39m normalizeTrade(row))[33m;[39m[0m
+ POST /dashboard?next=%2Fdashboard 500 in 1747ms
+ ○ Compiling /trades ...
+ ✓ Compiled /trades in 2.1s (1803 modules)
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ✓ Compiled in 882ms (852 modules)
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ⨯ lib\trades\queries.ts (41:11) @ getTrades
+ ⨯ Error: column trades.date does not exist
+    at getTrades (./lib/trades/queries.ts:38:15)
+    at async TradesPage (./app/trades/page.tsx:58:20)
+digest: "3055777514"
+[0m [90m 39 |[39m[0m
+[0m [90m 40 |[39m   [36mif[39m (error) {[0m
+[0m[31m[1m>[22m[39m[90m 41 |[39m     [36mthrow[39m [36mnew[39m [33mError[39m(error[33m.[39mmessage)[33m;[39m[0m
+[0m [90m    |[39m           [31m[1m^[22m[39m[0m
+[0m [90m 42 |[39m   }[0m
+[0m [90m 43 |[39m[0m
+[0m [90m 44 |[39m   [36mreturn[39m (data [33m?[39m[33m?[39m [])[33m.[39mmap((row) [33m=>[39m normalizeTrade(row))[33m;[39m[0m
+ ⨯ lib\trades\queries.ts (41:11) @ getTrades
+ ⨯ Error: column trades.date does not exist
+    at getTrades (./lib/trades/queries.ts:38:15)
+    at async TradesPage (./app/trades/page.tsx:58:20)
+digest: "3055777514"
+[0m [90m 39 |[39m[0m
+[0m [90m 40 |[39m   [36mif[39m (error) {[0m
+[0m[31m[1m>[22m[39m[90m 41 |[39m     [36mthrow[39m [36mnew[39m [33mError[39m(error[33m.[39mmessage)[33m;[39m[0m
+[0m [90m    |[39m           [31m[1m^[22m[39m[0m
+[0m [90m 42 |[39m   }[0m
+[0m [90m 43 |[39m[0m
+[0m [90m 44 |[39m   [36mreturn[39m (data [33m?[39m[33m?[39m [])[33m.[39mmap((row) [33m=>[39m normalizeTrade(row))[33m;[39m[0m
+ GET /trades 500 in 3976ms

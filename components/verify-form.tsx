@@ -1,44 +1,12 @@
-"use client";
-
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
-import { FormEvent, useState } from "react";
-import { createClient } from "@/lib/supabase/client";
 
-export function VerifyForm() {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
-  const email = searchParams.get("email") ?? "";
+type VerifyFormProps = {
+  action: (formData: FormData) => Promise<void>;
+  error?: string;
+  email?: string;
+};
 
-  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    setError(null);
-    setLoading(true);
-
-    const formData = new FormData(event.currentTarget);
-    const submittedEmail = String(formData.get("email") ?? "").trim();
-    const token = String(formData.get("token") ?? "").trim();
-    const supabase = createClient();
-
-    const { error: verifyError } = await supabase.auth.verifyOtp({
-      email: submittedEmail,
-      token,
-      type: "signup",
-    });
-
-    setLoading(false);
-
-    if (verifyError) {
-      setError(verifyError.message);
-      return;
-    }
-
-    router.push("/dashboard");
-    router.refresh();
-  }
-
+export function VerifyForm({ action, error, email = "" }: VerifyFormProps) {
   return (
     <div className="flex min-h-screen items-center justify-center px-4 py-10">
       <div className="terminal-panel w-full max-w-md rounded-lg p-6">
@@ -47,7 +15,7 @@ export function VerifyForm() {
           <h1 className="mt-2 text-2xl font-semibold text-terminal-text">Enter your verification code</h1>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form action={action} className="space-y-4">
           <label className="block">
             <span className="text-sm text-terminal-muted">Email</span>
             <input
@@ -76,10 +44,9 @@ export function VerifyForm() {
 
           <button
             type="submit"
-            disabled={loading}
-            className="h-11 w-full rounded bg-terminal-cyan px-4 font-semibold text-terminal-bg transition hover:bg-cyan-300 disabled:cursor-not-allowed disabled:opacity-60"
+            className="h-11 w-full rounded bg-terminal-cyan px-4 font-semibold text-terminal-bg transition hover:bg-cyan-300"
           >
-            {loading ? "Verifying..." : "Verify and continue"}
+            Verify and continue
           </button>
         </form>
 

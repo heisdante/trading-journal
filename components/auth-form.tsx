@@ -1,52 +1,14 @@
-"use client";
-
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
-import { FormEvent, useState } from "react";
-import { createClient } from "@/lib/supabase/client";
 
 type AuthFormProps = {
-  mode: "login" | "signup";
+  mode: "login";
+  action: (formData: FormData) => Promise<void>;
+  error?: string;
+  message?: string;
 };
 
-export function AuthForm({ mode }: AuthFormProps) {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const [error, setError] = useState<string | null>(null);
-  const [message, setMessage] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+export function AuthForm({ action, mode, error, message }: AuthFormProps) {
   const isLogin = mode === "login";
-
-  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    setError(null);
-    setMessage(null);
-    setLoading(true);
-
-    const formData = new FormData(event.currentTarget);
-    const email = String(formData.get("email") ?? "");
-    const password = String(formData.get("password") ?? "");
-    const supabase = createClient();
-
-    const response = isLogin
-      ? await supabase.auth.signInWithPassword({ email, password })
-      : await supabase.auth.signUp({ email, password });
-
-    setLoading(false);
-
-    if (response.error) {
-      setError(response.error.message);
-      return;
-    }
-
-    if (!isLogin && !response.data.session) {
-      router.push(`/verify?email=${encodeURIComponent(email)}`);
-      return;
-    }
-
-    router.push(searchParams.get("next") ?? "/dashboard");
-    router.refresh();
-  }
 
   return (
     <div className="flex min-h-screen items-center justify-center px-4 py-10">
@@ -58,7 +20,7 @@ export function AuthForm({ mode }: AuthFormProps) {
           </h1>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form action={action} className="space-y-4">
           <label className="block">
             <span className="text-sm text-terminal-muted">Email</span>
             <input
@@ -87,10 +49,9 @@ export function AuthForm({ mode }: AuthFormProps) {
 
           <button
             type="submit"
-            disabled={loading}
-            className="h-11 w-full rounded bg-terminal-cyan px-4 font-semibold text-terminal-bg transition hover:bg-cyan-300 disabled:cursor-not-allowed disabled:opacity-60"
+            className="h-11 w-full rounded bg-terminal-cyan px-4 font-semibold text-terminal-bg transition hover:bg-cyan-300"
           >
-            {loading ? "Working..." : isLogin ? "Log in" : "Sign up"}
+            {isLogin ? "Log in" : "Sign up"}
           </button>
         </form>
 

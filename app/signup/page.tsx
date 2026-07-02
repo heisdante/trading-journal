@@ -1,10 +1,5 @@
-import { Suspense } from "react";
-import { AuthForm } from "@/components/auth-form";
+import { SignupForm } from "@/components/signup-form";
 
-export default function SignupPage() {
-  return (
-    <Suspense>
-      <AuthForm mode="signup" />
-    </Suspense>
-  );
+export default function SignupPage({ searchParams }: { searchParams?: { error?: string; message?: string } }) {
+  return <SignupForm error={searchParams?.error} message={searchParams?.message} />;
 }

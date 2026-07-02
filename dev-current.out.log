@@ -1,0 +1,43 @@
+
+> trading-journal@0.1.0 dev
+> next dev
+
+  ▲ Next.js 14.2.35
+  - Local:        http://localhost:3000
+  - Environments: .env.local
+
+ ✓ Starting...
+ ✓ Ready in 7.6s
+ ○ Compiling /middleware ...
+ ✓ Compiled /middleware in 790ms (127 modules)
+ ○ Compiling /signup ...
+ ✓ Compiled /signup in 24.8s (655 modules)
+ GET /signup 200 in 66ms
+ GET /signup 200 in 100ms
+ GET / 307 in 81ms
+ ○ Compiling /dashboard ...
+ ✓ Compiled /dashboard in 12.9s (1782 modules)
+ GET /dashboard 500 in 15264ms
+ GET / 307 in 77ms
+ GET /dashboard 500 in 1231ms
+ ✓ Compiled in 917ms (854 modules)
+ ✓ Compiled in 488ms (854 modules)
+ GET /dashboard 500 in 1455ms
+ ✓ Compiled in 1765ms (1768 modules)
+ GET /dashboard 200 in 2504ms
+ ✓ Compiled in 888ms (854 modules)
+ ○ Compiling / ...
+ ✓ Compiled / in 1069ms (922 modules)
+ ○ Compiling /_error ...
+ ✓ Compiled /_not-found in 5.9s (1992 modules)
+ GET / 500 in 8060ms
+ GET /_next/static/webpack/4646fd4a34138a44.webpack.hot-update.json 404 in 3171ms
+ ○ Compiling /signup ...
+ ✓ Compiled /signup in 1480ms (970 modules)
+ GET /dashboard 200 in 2129ms
+ GET /signup 200 in 2732ms
+ ○ Compiling /login ...
+ ✓ Compiled /login in 6.9s (2028 modules)
+ GET /login 200 in 7620ms
+ GET /_next/static/webpack/4646fd4a34138a44.webpack.hot-update.json 500 in 7866ms
+ GET /dashboard 500 in 12911ms

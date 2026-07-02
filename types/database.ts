@@ -9,7 +9,7 @@ export type Database = {
         Row: {
           id: string;
           user_id: string;
-          date: string;
+          trade_date: string;
           setup_name: string;
           direction: Direction;
           entry_price: number;
@@ -18,15 +18,13 @@ export type Database = {
           exit_price: number;
           criteria_met: boolean;
           notes: string | null;
-          r_value: number;
           result: TradeResult;
           created_at: string;
-          updated_at: string;
         };
         Insert: {
           id?: string;
           user_id?: string;
-          date: string;
+          trade_date: string;
           setup_name: string;
           direction: Direction;
           entry_price: number;
@@ -36,10 +34,9 @@ export type Database = {
           criteria_met?: boolean;
           notes?: string | null;
           created_at?: string;
-          updated_at?: string;
         };
         Update: {
-          date?: string;
+          trade_date?: string;
           setup_name?: string;
           direction?: Direction;
           entry_price?: number;
@@ -48,7 +45,6 @@ export type Database = {
           exit_price?: number;
           criteria_met?: boolean;
           notes?: string | null;
-          updated_at?: string;
         };
         Relationships: [
           {
