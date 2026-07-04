@@ -1,6 +1,6 @@
 import { addTradeAction } from "@/lib/trades/actions";
 
-const pairs = ["Forex", "Stocks", "Futures", "Crypto", "Indices", "Options", "Bonds", "Funds", "Economy"];
+const markets = ["Forex", "Stocks", "Futures", "Crypto", "Indices", "Options", "Bonds", "Funds", "Economy"];
 const criteriaStatuses = ["Good", "Fail"];
 const outcomes = ["Loss", "Win", "Breakeven"];
 const followedTradingPlanOptions = ["Yes", "No"];
@@ -64,7 +64,8 @@ export function TradeForm() {
 
       <div className="grid gap-4 md:grid-cols-2">
         <Field label="Date" name="date" type="date" />
-        <SelectField label="Pair" name="pair" options={pairs} />
+        <Field label="Pair" name="pair" placeholder="EUR/USD, AAPL, BTC/USD" />
+        <SelectField label="Market" name="market" options={markets} />
         <Field label="Setup name" name="setup_name" placeholder="Breakout retest" />
 
         <label className="block">

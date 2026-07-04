@@ -7,7 +7,8 @@ function trade(overrides: Partial<Trade>): Trade {
     id: "trade-id",
     user_id: "user-id",
     date: "2026-01-01",
-    pair: "Forex",
+    pair: "EUR/USD",
+    market: "Forex",
     setup_name: "Breakout",
     direction: "Long",
     entry_price: 100,
@@ -69,8 +70,8 @@ describe("trade calculations", () => {
     expect(metrics.avgWin).toBe(2);
     expect(metrics.avgLoss).toBe(-1);
     expect(metrics.maxDrawdown).toBe(1);
-    expect(metrics.criteriaMetR).toBe(2);
-    expect(metrics.brokenCriteriaR).toBe(-1);
+    expect(metrics.criteriaMetRate).toBe(50);
+    expect(metrics.brokenCriteriaRate).toBe(0);
     expect(metrics.equityCurve.map((point) => point.equity)).toEqual([2, 1, 1]);
   });
 });

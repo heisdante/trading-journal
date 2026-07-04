@@ -32,6 +32,7 @@ export function TradeTable({ trades }: { trades: Trade[] }) {
               <tr>
                 <th className="px-4 py-3 font-medium">Date</th>
                 <th className="px-4 py-3 font-medium">Pair</th>
+                <th className="px-4 py-3 font-medium">Market</th>
                 <th className="px-4 py-3 font-medium">Setup</th>
                 <th className="px-4 py-3 font-medium">Dir</th>
                 <th className="px-4 py-3 font-medium">Session</th>
@@ -55,6 +56,7 @@ export function TradeTable({ trades }: { trades: Trade[] }) {
                 <tr key={trade.id} className="border-t border-terminal-line/70 transition hover:bg-terminal-panel2/60">
                   <td className="number whitespace-nowrap px-4 py-3 text-terminal-text">{trade.date}</td>
                   <td className="px-4 py-3 text-terminal-muted">{trade.pair}</td>
+                  <td className="px-4 py-3 text-terminal-muted">{trade.market}</td>
                   <td className="px-4 py-3 font-medium text-terminal-text">{trade.setup_name}</td>
                   <td className="px-4 py-3 text-terminal-muted">{trade.direction}</td>
                   <td className="whitespace-nowrap px-4 py-3 text-terminal-muted">{trade.session}</td>

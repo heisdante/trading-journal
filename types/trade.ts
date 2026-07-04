@@ -1,6 +1,7 @@
 export type Direction = "Long" | "Short";
 export type TradeResult = "Win" | "Loss" | "BE";
 export type CriteriaStatus = "Good" | "Fail";
+export type Market = "Forex" | "Stocks" | "Futures" | "Crypto" | "Indices" | "Options" | "Bonds" | "Funds" | "Economy";
 export type TradeOutcome = "Win" | "Loss" | "Breakeven";
 export type FollowedTradingPlan = "Yes" | "No";
 export type TradingSession = "London" | "New York" | "Asian" | "Frankfurt";
@@ -18,6 +19,7 @@ export type Trade = {
   user_id: string;
   date: string;
   pair: string;
+  market: Market;
   setup_name: string;
   direction: Direction;
   entry_price: number;
@@ -42,6 +44,7 @@ export type Trade = {
 export type TradeInsert = {
   date: string;
   pair: string;
+  market: Market;
   setup_name: string;
   direction: Direction;
   entry_price: number;
@@ -73,7 +76,7 @@ export type TradeMetrics = {
   avgWin: number;
   avgLoss: number;
   maxDrawdown: number;
-  criteriaMetR: number;
-  brokenCriteriaR: number;
+  criteriaMetRate: number;
+  brokenCriteriaRate: number;
   equityCurve: EquityPoint[];
 };

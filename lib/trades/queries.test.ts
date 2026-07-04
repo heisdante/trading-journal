@@ -7,7 +7,8 @@ describe("normalizeTrade", () => {
       id: "trade-1",
       user_id: "user-1",
       trade_date: "2026-07-02",
-      pair: "Forex",
+      pair: "EUR/USD",
+      market: "Forex",
       setup_name: "Breakout",
       direction: "Long",
       entry_price: 100,
@@ -28,6 +29,8 @@ describe("normalizeTrade", () => {
     });
 
     expect(trade.date).toBe("2026-07-02");
+    expect(trade.pair).toBe("EUR/USD");
+    expect(trade.market).toBe("Forex");
     expect(trade.r_value).toBe(2);
     expect(trade.screenshots).toHaveLength(1);
     expect(trade.updated_at).toBe("2026-07-02T10:00:00.000Z");

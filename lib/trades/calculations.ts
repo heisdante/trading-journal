@@ -46,12 +46,12 @@ export function buildTradeMetrics(trades: Trade[]): TradeMetrics {
   const wins = sorted.filter((trade) => trade.r_value > 0);
   const losses = sorted.filter((trade) => trade.r_value < 0);
   const totalR = sorted.reduce((sum, trade) => sum + trade.r_value, 0);
-  const criteriaMetR = sorted
-    .filter((trade) => trade.criteria_met)
-    .reduce((sum, trade) => sum + trade.r_value, 0);
-  const brokenCriteriaR = sorted
-    .filter((trade) => !trade.criteria_met)
-    .reduce((sum, trade) => sum + trade.r_value, 0);
+  const criteriaMetTrades = sorted.filter((trade) => trade.criteria_met);
+  const brokenCriteriaTrades = sorted.filter((trade) => !trade.criteria_met);
+  const criteriaMetWins = criteriaMetTrades.filter((trade) => trade.r_value > 0);
+  const brokenCriteriaWins = brokenCriteriaTrades.filter((trade) => trade.r_value > 0);
+  const criteriaMetRate = criteriaMetTrades.length ? (criteriaMetWins.length / criteriaMetTrades.length) * 100 : 0;
+  const brokenCriteriaRate = brokenCriteriaTrades.length ? (brokenCriteriaWins.length / brokenCriteriaTrades.length) * 100 : 0;
 
   let equity = 0;
   let peak = 0;
@@ -79,8 +79,8 @@ export function buildTradeMetrics(trades: Trade[]): TradeMetrics {
     avgWin: wins.length ? wins.reduce((sum, trade) => sum + trade.r_value, 0) / wins.length : 0,
     avgLoss: losses.length ? losses.reduce((sum, trade) => sum + trade.r_value, 0) / losses.length : 0,
     maxDrawdown,
-    criteriaMetR,
-    brokenCriteriaR,
+    criteriaMetRate,
+    brokenCriteriaRate,
     equityCurve,
   };
 }

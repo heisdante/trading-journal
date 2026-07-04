@@ -1,6 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { calculateRValue, classifyResult } from "@/lib/trades/calculations";
-import type { CriteriaStatus, FollowedTradingPlan, Trade, TradeOutcome, TradeScreenshot, TradeType, TradingSession } from "@/types/trade";
+import type { CriteriaStatus, FollowedTradingPlan, Market, Trade, TradeOutcome, TradeScreenshot, TradeType, TradingSession } from "@/types/trade";
 
 function normalizeScreenshots(value: unknown): TradeScreenshot[] {
   if (!Array.isArray(value)) {
@@ -38,7 +38,19 @@ export function normalizeTrade(row: Record<string, unknown>): Trade {
     id: String(row.id),
     user_id: String(row.user_id),
     date,
-    pair: String(row.pair ?? "Forex"),
+    pair: String(row.pair ?? ""),
+    market: (
+      row.market === "Stocks" ||
+      row.market === "Futures" ||
+      row.market === "Crypto" ||
+      row.market === "Indices" ||
+      row.market === "Options" ||
+      row.market === "Bonds" ||
+      row.market === "Funds" ||
+      row.market === "Economy"
+        ? row.market
+        : "Forex"
+    ) as Market,
     setup_name: String(row.setup_name),
     direction,
     entry_price: entryPrice,

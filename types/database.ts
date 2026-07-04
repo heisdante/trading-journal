@@ -2,6 +2,7 @@ import type {
   CriteriaStatus,
   Direction,
   FollowedTradingPlan,
+  Market,
   TradeOutcome,
   TradeResult,
   TradeScreenshot,
@@ -20,6 +21,7 @@ export type Database = {
           user_id: string;
           trade_date: string;
           pair: string;
+          market: Market;
           setup_name: string;
           direction: Direction;
           entry_price: number;
@@ -43,6 +45,7 @@ export type Database = {
           user_id?: string;
           trade_date: string;
           pair: string;
+          market: Market;
           setup_name: string;
           direction: Direction;
           entry_price: number;
@@ -63,6 +66,7 @@ export type Database = {
         Update: {
           trade_date?: string;
           pair?: string;
+          market?: Market;
           setup_name?: string;
           direction?: Direction;
           entry_price?: number;

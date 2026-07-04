@@ -48,13 +48,13 @@ export default async function DashboardPage() {
         <MetricCard label="Max drawdown" value={formatR(-metrics.maxDrawdown)} tone={metrics.maxDrawdown > 0 ? "bad" : "default"} />
         <MetricCard label="Avg win" value={formatR(metrics.avgWin)} tone="good" />
         <MetricCard label="Avg loss" value={formatR(metrics.avgLoss)} tone="bad" />
-        <MetricCard label="Criteria met R" value={formatR(metrics.criteriaMetR)} tone={metrics.criteriaMetR >= 0 ? "good" : "bad"} />
-        <MetricCard label="Broken criteria R" value={formatR(metrics.brokenCriteriaR)} tone={metrics.brokenCriteriaR >= 0 ? "warn" : "bad"} />
+        <MetricCard label="Criteria met" value={`${metrics.criteriaMetRate.toFixed(1)}%`} tone={metrics.criteriaMetRate >= 50 ? "good" : "warn"} />
+        <MetricCard label="Broken criteria" value={`${metrics.brokenCriteriaRate.toFixed(1)}%`} tone={metrics.brokenCriteriaRate >= 50 ? "warn" : "bad"} />
       </section>
 
       <section className="grid gap-4 xl:grid-cols-2">
         <EquityCurve data={metrics.equityCurve} />
-        <DisciplineAnalysis criteriaMetR={metrics.criteriaMetR} brokenCriteriaR={metrics.brokenCriteriaR} />
+        <DisciplineAnalysis criteriaMetRate={metrics.criteriaMetRate} brokenCriteriaRate={metrics.brokenCriteriaRate} />
       </section>
 
       <TradeTable trades={trades.slice(0, 8)} />

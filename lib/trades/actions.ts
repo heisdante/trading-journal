@@ -4,9 +4,9 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { isValidRisk } from "@/lib/trades/calculations";
-import type { CriteriaStatus, Direction, FollowedTradingPlan, TradeOutcome, TradeScreenshot, TradeType, TradingSession } from "@/types/trade";
+import type { CriteriaStatus, Direction, FollowedTradingPlan, Market, TradeOutcome, TradeScreenshot, TradeType, TradingSession } from "@/types/trade";
 
-const pairs = ["Forex", "Stocks", "Futures", "Crypto", "Indices", "Options", "Bonds", "Funds", "Economy"] as const;
+const markets = ["Forex", "Stocks", "Futures", "Crypto", "Indices", "Options", "Bonds", "Funds", "Economy"] as const;
 const criteriaStatuses = ["Good", "Fail"] as const;
 const outcomes = ["Win", "Loss", "Breakeven"] as const;
 const followedTradingPlanOptions = ["Yes", "No"] as const;
@@ -146,7 +146,8 @@ export async function addTradeAction(formData: FormData) {
     id: tradeId,
     user_id: user.id,
     trade_date: requiredString(formData, "date"),
-    pair: optionValue(formData, "pair", pairs),
+    pair: requiredString(formData, "pair"),
+    market: optionValue(formData, "market", markets) as Market,
     setup_name: requiredString(formData, "setup_name"),
     direction,
     entry_price: entryPrice,
