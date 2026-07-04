@@ -1,6 +1,22 @@
 import { createClient } from "@/lib/supabase/server";
 import { calculateRValue, classifyResult } from "@/lib/trades/calculations";
-import type { Trade } from "@/types/trade";
+import type { CriteriaStatus, FollowedTradingPlan, Trade, TradeOutcome, TradeScreenshot, TradeType, TradingSession } from "@/types/trade";
+
+function normalizeScreenshots(value: unknown): TradeScreenshot[] {
+  if (!Array.isArray(value)) {
+    return [];
+  }
+
+  return value
+    .filter((item): item is Record<string, unknown> => typeof item === "object" && item !== null)
+    .map((item) => ({
+      path: String(item.path ?? ""),
+      name: String(item.name ?? "Screenshot"),
+      type: String(item.type ?? "image/*"),
+      size: Number(item.size ?? 0),
+    }))
+    .filter((item) => item.path);
+}
 
 export function normalizeTrade(row: Record<string, unknown>): Trade {
   const date = String(row.date ?? row.trade_date);
@@ -22,6 +38,7 @@ export function normalizeTrade(row: Record<string, unknown>): Trade {
     id: String(row.id),
     user_id: String(row.user_id),
     date,
+    pair: String(row.pair ?? "Forex"),
     setup_name: String(row.setup_name),
     direction,
     entry_price: entryPrice,
@@ -29,6 +46,15 @@ export function normalizeTrade(row: Record<string, unknown>): Trade {
     target_price: row.target_price === null ? null : Number(row.target_price),
     exit_price: exitPrice,
     criteria_met: Boolean(row.criteria_met),
+    criteria_status: (row.criteria_status === "Fail" ? "Fail" : "Good") as CriteriaStatus,
+    outcome: (row.outcome === "Loss" ? "Loss" : row.outcome === "Breakeven" ? "Breakeven" : "Win") as TradeOutcome,
+    trade_idea_link: row.trade_idea_link === null || row.trade_idea_link === undefined ? null : String(row.trade_idea_link),
+    screenshots: normalizeScreenshots(row.screenshots),
+    followed_trading_plan: (row.followed_trading_plan === "No" ? "No" : "Yes") as FollowedTradingPlan,
+    session: (
+      row.session === "New York" || row.session === "Asian" || row.session === "Frankfurt" ? row.session : "London"
+    ) as TradingSession,
+    trade_type: (row.trade_type === "Swing Trade" ? "Swing Trade" : "Day Trade") as TradeType,
     notes: row.notes === null ? null : String(row.notes),
     r_value: rValue,
     result: row.result === "Loss" ? "Loss" : row.result === "BE" ? "BE" : classifyResult(rValue),

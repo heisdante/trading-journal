@@ -1,9 +1,14 @@
 create extension if not exists "pgcrypto";
 
+insert into storage.buckets (id, name, public)
+values ('trade-screenshots', 'trade-screenshots', false)
+on conflict (id) do nothing;
+
 create table if not exists public.trades (
   id uuid primary key default gen_random_uuid(),
   user_id uuid not null references auth.users(id) on delete cascade default auth.uid(),
-  date date not null,
+  trade_date date not null,
+  pair text not null check (pair in ('Forex', 'Stocks', 'Futures', 'Crypto', 'Indices', 'Options', 'Bonds', 'Funds', 'Economy')),
   setup_name text not null check (char_length(trim(setup_name)) > 0),
   direction text not null check (direction in ('Long', 'Short')),
   entry_price numeric(18, 6) not null check (entry_price > 0),
@@ -11,6 +16,13 @@ create table if not exists public.trades (
   target_price numeric(18, 6) check (target_price is null or target_price > 0),
   exit_price numeric(18, 6) not null check (exit_price > 0),
   criteria_met boolean not null default false,
+  criteria_status text not null default 'Good' check (criteria_status in ('Good', 'Fail')),
+  outcome text not null check (outcome in ('Win', 'Loss', 'Breakeven')),
+  trade_idea_link text,
+  screenshots jsonb not null default '[]'::jsonb,
+  followed_trading_plan text not null check (followed_trading_plan in ('Yes', 'No')),
+  session text not null check (session in ('London', 'New York', 'Asian', 'Frankfurt')),
+  trade_type text not null check (trade_type in ('Day Trade', 'Swing Trade')),
   notes text,
   r_value numeric(18, 6) generated always as (
     case
@@ -96,6 +108,46 @@ on public.trades for delete
 to authenticated
 using (auth.uid() = user_id);
 
-create index if not exists trades_user_date_idx on public.trades (user_id, date desc, created_at desc);
+drop policy if exists "Users can read their own trade screenshots" on storage.objects;
+create policy "Users can read their own trade screenshots"
+on storage.objects for select
+to authenticated
+using (
+  bucket_id = 'trade-screenshots'
+  and auth.uid()::text = (storage.foldername(name))[1]
+);
+
+drop policy if exists "Users can upload their own trade screenshots" on storage.objects;
+create policy "Users can upload their own trade screenshots"
+on storage.objects for insert
+to authenticated
+with check (
+  bucket_id = 'trade-screenshots'
+  and auth.uid()::text = (storage.foldername(name))[1]
+);
+
+drop policy if exists "Users can update their own trade screenshots" on storage.objects;
+create policy "Users can update their own trade screenshots"
+on storage.objects for update
+to authenticated
+using (
+  bucket_id = 'trade-screenshots'
+  and auth.uid()::text = (storage.foldername(name))[1]
+)
+with check (
+  bucket_id = 'trade-screenshots'
+  and auth.uid()::text = (storage.foldername(name))[1]
+);
+
+drop policy if exists "Users can delete their own trade screenshots" on storage.objects;
+create policy "Users can delete their own trade screenshots"
+on storage.objects for delete
+to authenticated
+using (
+  bucket_id = 'trade-screenshots'
+  and auth.uid()::text = (storage.foldername(name))[1]
+);
+
+create index if not exists trades_user_date_idx on public.trades (user_id, trade_date desc, created_at desc);
 create index if not exists trades_user_result_idx on public.trades (user_id, result);
 create index if not exists trades_user_criteria_idx on public.trades (user_id, criteria_met);

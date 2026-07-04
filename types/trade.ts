@@ -1,10 +1,23 @@
 export type Direction = "Long" | "Short";
 export type TradeResult = "Win" | "Loss" | "BE";
+export type CriteriaStatus = "Good" | "Fail";
+export type TradeOutcome = "Win" | "Loss" | "Breakeven";
+export type FollowedTradingPlan = "Yes" | "No";
+export type TradingSession = "London" | "New York" | "Asian" | "Frankfurt";
+export type TradeType = "Day Trade" | "Swing Trade";
+
+export type TradeScreenshot = {
+  path: string;
+  name: string;
+  type: string;
+  size: number;
+};
 
 export type Trade = {
   id: string;
   user_id: string;
   date: string;
+  pair: string;
   setup_name: string;
   direction: Direction;
   entry_price: number;
@@ -12,6 +25,13 @@ export type Trade = {
   target_price: number | null;
   exit_price: number;
   criteria_met: boolean;
+  criteria_status: CriteriaStatus;
+  outcome: TradeOutcome;
+  trade_idea_link: string | null;
+  screenshots: TradeScreenshot[];
+  followed_trading_plan: FollowedTradingPlan;
+  session: TradingSession;
+  trade_type: TradeType;
   notes: string | null;
   r_value: number;
   result: TradeResult;
@@ -21,6 +41,7 @@ export type Trade = {
 
 export type TradeInsert = {
   date: string;
+  pair: string;
   setup_name: string;
   direction: Direction;
   entry_price: number;
@@ -28,6 +49,13 @@ export type TradeInsert = {
   target_price?: number | null;
   exit_price: number;
   criteria_met: boolean;
+  criteria_status: CriteriaStatus;
+  outcome: TradeOutcome;
+  trade_idea_link?: string | null;
+  screenshots?: TradeScreenshot[];
+  followed_trading_plan: FollowedTradingPlan;
+  session: TradingSession;
+  trade_type: TradeType;
   notes?: string | null;
 };
 
