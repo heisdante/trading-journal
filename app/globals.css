@@ -377,6 +377,83 @@ select:focus {
   opacity: 0.5;
 }
 
+.auth-shell {
+  position: relative;
+  isolation: isolate;
+}
+
+.auth-shell::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  background:
+    radial-gradient(520px circle at var(--pointer-x) var(--pointer-y), rgba(25, 211, 255, 0.14), transparent 58%),
+    radial-gradient(680px circle at 12% 18%, rgba(53, 242, 154, 0.08), transparent 48%),
+    linear-gradient(180deg, rgba(15, 32, 53, 0.2), rgba(7, 17, 31, 0) 36%);
+}
+
+.auth-shell::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.22;
+  background-image:
+    linear-gradient(rgba(25, 211, 255, 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(25, 211, 255, 0.06) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: radial-gradient(circle at center, black, transparent 72%);
+}
+
+.auth-visual {
+  overflow: hidden;
+  background:
+    linear-gradient(135deg, rgba(25, 211, 255, 0.08), transparent 38%),
+    repeating-linear-gradient(135deg, rgba(213, 243, 255, 0.045) 0 1px, transparent 1px 16px);
+}
+
+.auth-visual::before {
+  content: "";
+  position: absolute;
+  inset: auto -18% 12% 14%;
+  aspect-ratio: 1;
+  border: 1px solid rgba(25, 211, 255, 0.18);
+  background:
+    linear-gradient(rgba(25, 211, 255, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(25, 211, 255, 0.05) 1px, transparent 1px),
+    rgba(7, 17, 31, 0.34);
+  background-size: 28px 28px;
+  transform: rotate(-10deg);
+  animation: auth-panel-float 8s ease-in-out infinite;
+}
+
+.auth-visual::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(180deg, transparent, rgba(25, 211, 255, 0.12), transparent);
+  opacity: 0.28;
+  transform: translateY(-100%);
+  animation: scanline-pass 5.2s ease-in-out infinite;
+}
+
+[data-auth-reveal] {
+  opacity: 0;
+  transform: translateY(16px);
+  transition:
+    opacity 280ms ease-out var(--auth-delay, 0ms),
+    transform 280ms ease-out var(--auth-delay, 0ms);
+}
+
+[data-auth-reveal][data-auth-in-view="true"] {
+  opacity: 1;
+  transform: translateY(0);
+}
+
 @keyframes preview-float {
   0%,
   100% {
@@ -450,6 +527,16 @@ select:focus {
   }
 }
 
+@keyframes auth-panel-float {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-10deg);
+  }
+  50% {
+    transform: translateY(-10px) rotate(-10deg);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -466,6 +553,11 @@ select:focus {
   }
 
   [data-app-reveal="true"] {
+    opacity: 1;
+    transform: none;
+  }
+
+  [data-auth-reveal] {
     opacity: 1;
     transform: none;
   }
