@@ -32,7 +32,7 @@ export default async function DashboardPage() {
 
   return (
     <AppShell>
-      <section className="terminal-panel flex flex-col gap-5 rounded-lg p-5 sm:p-6 lg:flex-row lg:items-end lg:justify-between">
+      <section className="terminal-panel app-page-heading flex flex-col gap-5 rounded-lg p-5 sm:p-6 lg:flex-row lg:items-end lg:justify-between">
         <div><p className="font-mono text-xs uppercase text-terminal-cyan">dashboard / live statistics</p><h1 className="mt-2 text-3xl font-semibold text-terminal-text sm:text-4xl">Performance command center</h1><p className="mt-3 max-w-2xl text-sm leading-6 text-terminal-muted">Your current decision record, discipline signals, and trade outcomes in one place.</p></div>
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center"><div className="border-l-2 border-terminal-green pl-3 text-sm"><p className="font-mono text-xs text-terminal-muted">TRADE RECORD</p><p className="mt-1 font-semibold text-terminal-text">{metrics.totalTrades} logged trade{metrics.totalTrades === 1 ? "" : "s"}</p></div><Link href="/log" className="inline-flex h-11 items-center justify-center gap-2 bg-terminal-cyan px-4 font-semibold text-terminal-bg transition hover:bg-cyan-300"><PlusCircle className="h-4 w-4" />Log trade</Link></div>
       </section>
@@ -53,7 +53,7 @@ export default async function DashboardPage() {
 
       <DailyReviewReminder complete={Boolean(todayReview)} />
 
-      <section className="flex items-center justify-between"><div><p className="font-mono text-xs uppercase text-terminal-cyan">outcomes / process</p><h2 className="mt-1 text-xl font-semibold text-terminal-text">Performance signals</h2></div><Link href="/trades" className="inline-flex items-center gap-1 text-sm font-semibold text-terminal-cyan hover:text-cyan-300">All trades<ArrowUpRight className="h-4 w-4" /></Link></section>
+      <section className="app-surface flex items-center justify-between border-y border-terminal-line/70 py-4"><div><p className="font-mono text-xs uppercase text-terminal-cyan">outcomes / process</p><h2 className="mt-1 text-xl font-semibold text-terminal-text">Performance signals</h2></div><Link href="/trades" className="inline-flex min-h-11 items-center gap-1 text-sm font-semibold text-terminal-cyan transition hover:text-cyan-300">All trades<ArrowUpRight className="h-4 w-4" /></Link></section>
 
       <section className="grid gap-4 xl:grid-cols-2">
         <EquityCurve data={metrics.equityCurve} />

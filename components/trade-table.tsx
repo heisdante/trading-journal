@@ -18,12 +18,12 @@ function resultClass(rValue: number) {
 export function TradeTable({ trades }: { trades: Trade[] }) {
   return (
     <div className="terminal-panel overflow-hidden rounded-lg">
-      <div className="flex items-center justify-between border-b border-terminal-line p-4">
+      <div className="app-page-heading flex items-center justify-between border-b border-terminal-line p-4">
         <div>
           <p className="font-mono text-xs uppercase text-terminal-cyan">history / all</p>
           <h1 className="mt-1 text-xl font-semibold text-terminal-text">Trade Log</h1>
         </div>
-        <span className="number text-sm text-terminal-muted">{trades.length} trades</span>
+        <span className="number rounded-sm border border-terminal-line bg-terminal-bg/70 px-2 py-1 text-sm text-terminal-muted">{trades.length} trades</span>
       </div>
 
       {trades.length ? (
@@ -99,7 +99,7 @@ export function TradeTable({ trades }: { trades: Trade[] }) {
           </table>
         </div>
       ) : (
-        <div className="p-10 text-center text-sm text-terminal-muted">No trades logged yet.</div>
+        <div className="p-10 text-center text-sm text-terminal-muted"><span className="block text-terminal-text">No trades logged yet.</span><span className="mt-1 block text-xs">Your trade history will animate into this table once records exist.</span></div>
       )}
     </div>
   );

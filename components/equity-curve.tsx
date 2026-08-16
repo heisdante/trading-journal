@@ -4,11 +4,18 @@ import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YA
 import type { EquityPoint } from "@/types/trade";
 
 export function EquityCurve({ data }: { data: EquityPoint[] }) {
+  const lastPoint = data.at(-1);
+
   return (
-    <div className="terminal-panel h-[360px] rounded-lg p-4">
+    <div className="terminal-panel app-chart-panel h-[360px] rounded-lg p-4">
       <div className="mb-4 flex items-center justify-between">
-        <h2 className="text-base font-semibold text-terminal-text">Equity Curve</h2>
-        <span className="font-mono text-xs text-terminal-muted">cumulative R</span>
+        <div>
+          <p className="font-mono text-[11px] uppercase text-terminal-cyan">equity / curve</p>
+          <h2 className="mt-1 text-base font-semibold text-terminal-text">Cumulative R</h2>
+        </div>
+        <span className="number rounded-sm border border-terminal-line bg-terminal-bg/70 px-2 py-1 text-xs text-terminal-muted">
+          {lastPoint ? `${lastPoint.equity.toFixed(2)}R` : "no data"}
+        </span>
       </div>
       {data.length ? (
         <ResponsiveContainer width="100%" height="85%">
@@ -25,12 +32,13 @@ export function EquityCurve({ data }: { data: EquityPoint[] }) {
               }}
               formatter={(value) => [`${Number(value).toFixed(2)}R`, "Equity"]}
             />
-            <Line type="monotone" dataKey="equity" stroke="#19d3ff" strokeWidth={2.5} dot={{ r: 3 }} activeDot={{ r: 5 }} />
+            <Line type="monotone" dataKey="equity" stroke="#19d3ff" strokeWidth={2.5} dot={{ r: 3, fill: "#07111f", strokeWidth: 2 }} activeDot={{ r: 5 }} isAnimationActive animationDuration={700} />
           </LineChart>
         </ResponsiveContainer>
       ) : (
-        <div className="flex h-[280px] items-center justify-center rounded border border-dashed border-terminal-line text-sm text-terminal-muted">
-          No trades logged yet
+        <div className="flex h-[280px] flex-col items-center justify-center rounded border border-dashed border-terminal-line bg-terminal-bg/45 text-center text-sm text-terminal-muted">
+          <span className="text-terminal-text">No trades logged yet</span>
+          <span className="mt-1 text-xs">Your equity line appears after the first saved trade.</span>
         </div>
       )}
     </div>

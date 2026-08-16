@@ -59,10 +59,11 @@ function SelectField({ label, name, options, required = true, defaultValue }: { 
 
 export function TradeForm({ defaults }: { defaults?: { market?: string | null; session?: string | null; tradeType?: string | null } }) {
   return (
-    <form action={addTradeAction} encType="multipart/form-data" className="terminal-panel rounded-lg p-5">
-      <div className="mb-6">
+    <form action={addTradeAction} encType="multipart/form-data" className="terminal-panel overflow-hidden rounded-lg p-5">
+      <div className="app-page-heading -m-5 mb-6 border-b border-terminal-line p-5">
         <p className="font-mono text-xs uppercase text-terminal-cyan">trade / new</p>
         <h1 className="mt-2 text-2xl font-semibold text-terminal-text">Log a trade</h1>
+        <p className="mt-2 max-w-2xl text-sm leading-6 text-terminal-muted">Capture the facts, context, and behavior while the decision is still close enough to inspect honestly.</p>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2">
@@ -129,7 +130,7 @@ export function TradeForm({ defaults }: { defaults?: { market?: string | null; s
       </label>
 
       <div className="mt-6 flex justify-end">
-        <button type="submit" className="h-11 rounded bg-terminal-cyan px-5 font-semibold text-terminal-bg transition hover:bg-cyan-300">
+        <button type="submit" className="h-11 rounded bg-terminal-cyan px-5 font-semibold text-terminal-bg transition hover:bg-cyan-300 hover:shadow-glow">
           Save trade
         </button>
       </div>

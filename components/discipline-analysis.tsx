@@ -14,10 +14,13 @@ export function DisciplineAnalysis({ criteriaMetRate, brokenCriteriaRate }: Disc
   ];
 
   return (
-    <div className="terminal-panel h-[360px] rounded-lg p-4">
+    <div className="terminal-panel app-chart-panel h-[360px] rounded-lg p-4">
       <div className="mb-4 flex items-center justify-between">
-        <h2 className="text-base font-semibold text-terminal-text">Discipline Analysis</h2>
-        <span className="font-mono text-xs text-terminal-muted">Win % by rule adherence</span>
+        <div>
+          <p className="font-mono text-[11px] uppercase text-terminal-cyan">discipline / adherence</p>
+          <h2 className="mt-1 text-base font-semibold text-terminal-text">Rule impact</h2>
+        </div>
+        <span className="font-mono text-xs text-terminal-muted">win %</span>
       </div>
       <ResponsiveContainer width="100%" height="85%">
         <BarChart data={data} margin={{ top: 10, right: 12, left: 0, bottom: 0 }}>
@@ -33,7 +36,7 @@ export function DisciplineAnalysis({ criteriaMetRate, brokenCriteriaRate }: Disc
             }}
             formatter={(value) => [`${Number(value).toFixed(1)}%`, "Win rate"]}
           />
-          <Bar dataKey="value" radius={[4, 4, 0, 0]}>
+          <Bar dataKey="value" radius={[4, 4, 0, 0]} isAnimationActive animationDuration={650}>
             {data.map((entry) => (
               <Cell key={entry.name} fill={entry.color} />
             ))}
