@@ -7,6 +7,9 @@ Set these in local `.env.local` and in the hosting provider:
 ```text
 NEXT_PUBLIC_SUPABASE_URL=
 NEXT_PUBLIC_SUPABASE_ANON_KEY=
+OPENAI_API_KEY=
+OPENAI_TRADE_INTAKE_MODEL=gpt-5
+OPENAI_TRADE_REVIEW_MODEL=gpt-5-mini
 ```
 
 ## Supabase Setup
@@ -37,10 +40,9 @@ Expected: all commands pass.
 
 The app is deployable to any Next.js-compatible host. Vercel is the default recommendation because the project uses Next.js App Router and standard environment variables.
 
-## Not Included In MVP
+## Current boundaries
 
-- Trade edit/delete UI
-- Broker integrations
-- Live market data
-- AI trade review
-- Import/export workflows
+- The first automation slice supports CSV exports from MT4, MT5, and cTrader.
+- AI trade-idea drafting is optional and requires the server-only `OPENAI_API_KEY`.
+- Direct broker connections, live market data, and automatic background syncing still require provider credentials and a connector service.
+- Trade edit/delete UI remains to be built.

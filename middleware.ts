@@ -2,7 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 import type { Database } from "@/types/database";
 
-const protectedRoutes = ["/dashboard", "/log", "/trades"];
+const protectedRoutes = ["/dashboard", "/log", "/trades", "/import", "/rules", "/review", "/coach", "/profile", "/billing", "/playbooks", "/weekly", "/report"];
 const authRoutes = ["/login", "/signup", "/verify"];
 
 function matchesRoute(pathname: string, route: string) {
@@ -40,24 +40,21 @@ export async function middleware(request: NextRequest) {
     },
   );
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
   const pathname = request.nextUrl.pathname;
   const isProtected = protectedRoutes.some((route) => matchesRoute(pathname, route));
   const isAuthRoute = authRoutes.some((route) => matchesRoute(pathname, route));
 
-  if (isProtected && !user) {
+  if (isAuthRoute) {
+    return response;
+  }
+
+  const { data: claimsData } = await supabase.auth.getClaims();
+  const isAuthenticated = Boolean(claimsData?.claims);
+
+  if (isProtected && !isAuthenticated) {
     const url = request.nextUrl.clone();
     url.pathname = "/login";
     url.searchParams.set("next", pathname);
-    return NextResponse.redirect(url);
-  }
-
-  if (isAuthRoute && user) {
-    const url = request.nextUrl.clone();
-    url.pathname = "/dashboard";
     return NextResponse.redirect(url);
   }
 

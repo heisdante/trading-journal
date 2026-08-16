@@ -3,8 +3,9 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { isValidRisk } from "@/lib/trades/calculations";
-import type { CriteriaStatus, Direction, FollowedTradingPlan, Market, TradeOutcome, TradeScreenshot, TradeType, TradingSession } from "@/types/trade";
+import { reviewTradeAgainstRules } from "@/lib/ai/trade-review";
+import { calculateDisciplineScore } from "@/lib/trades/calculations";
+import type { CriteriaStatus, Direction, Emotion, FollowedTradingPlan, Market, TradeOutcome, TradeScreenshot, TradeType, TradingSession } from "@/types/trade";
 
 const markets = ["Forex", "Stocks", "Futures", "Crypto", "Indices", "Options", "Bonds", "Funds", "Economy"] as const;
 const criteriaStatuses = ["Good", "Fail"] as const;
@@ -23,31 +24,21 @@ function requiredString(formData: FormData, name: string) {
   return value;
 }
 
-function requiredNumber(formData: FormData, name: string) {
-  const value = Number(formData.get(name));
-  if (!Number.isFinite(value) || value <= 0) {
-    throw new Error(`${name} must be a positive number`);
+function optionValue<const T extends readonly string[]>(formData: FormData, name: string, options: T): T[number] {
+  const value = requiredString(formData, name);
+  if (!options.includes(value)) {
+    throw new Error(`${name} must be one of: ${options.join(", ")}`);
   }
 
   return value;
 }
 
-function optionalNumber(formData: FormData, name: string) {
-  const raw = String(formData.get(name) ?? "").trim();
-  if (!raw) {
+function optionalOptionValue<const T extends readonly string[]>(formData: FormData, name: string, options: T): T[number] | null {
+  const value = String(formData.get(name) ?? "").trim();
+  if (!value) {
     return null;
   }
 
-  const value = Number(raw);
-  if (!Number.isFinite(value) || value <= 0) {
-    throw new Error(`${name} must be a positive number`);
-  }
-
-  return value;
-}
-
-function optionValue<const T extends readonly string[]>(formData: FormData, name: string, options: T): T[number] {
-  const value = requiredString(formData, name);
   if (!options.includes(value)) {
     throw new Error(`${name} must be one of: ${options.join(", ")}`);
   }
@@ -131,18 +122,27 @@ export async function addTradeAction(formData: FormData) {
     throw new Error("direction must be Long or Short");
   }
 
-  const entryPrice = requiredNumber(formData, "entry_price");
-  const stopPrice = requiredNumber(formData, "stop_price");
   const tradeId = crypto.randomUUID();
-
-  if (!isValidRisk(direction, entryPrice, stopPrice)) {
-    throw new Error(direction === "Long" ? "Long trades require entry above stop" : "Short trades require stop above entry");
-  }
 
   const criteriaStatus = optionValue(formData, "criteria_status", criteriaStatuses) as CriteriaStatus;
   const screenshots = await uploadScreenshots(supabase, user.id, tradeId, formData);
+  const entryPrice = Number(requiredString(formData, "entry_price"));
+  const stopPrice = Number(requiredString(formData, "stop_price"));
+  const exitPrice = Number(requiredString(formData, "exit_price"));
+  const targetPrice = Number(String(formData.get("target_price") ?? "").trim()) || null;
+  const emotion = (String(formData.get("emotion") ?? "").trim() || null) as Emotion | null;
+  const fomo = formData.get("fomo") === "on";
+  const cutWinnerEarly = formData.get("cut_winner_early") === "on";
+  const revengeTrade = formData.get("revenge_trade") === "on";
+  const followedTradingPlan = optionValue(formData, "followed_trading_plan", followedTradingPlanOptions) as FollowedTradingPlan;
+  if (![entryPrice, stopPrice, exitPrice].every((value) => Number.isFinite(value) && value > 0)) {
+    throw new Error("Entry, stop, and exit prices must be positive numbers");
+  }
+  if ((direction === "Long" && entryPrice <= stopPrice) || (direction === "Short" && stopPrice <= entryPrice)) {
+    throw new Error("Stop price must be below entry for Long trades and above entry for Short trades");
+  }
 
-  const payload = {
+  const basePayload = {
     id: tradeId,
     user_id: user.id,
     trade_date: requiredString(formData, "date"),
@@ -152,18 +152,34 @@ export async function addTradeAction(formData: FormData) {
     direction,
     entry_price: entryPrice,
     stop_price: stopPrice,
-    target_price: optionalNumber(formData, "target_price"),
-    exit_price: requiredNumber(formData, "exit_price"),
+    target_price: targetPrice,
+    exit_price: exitPrice,
+    entry_reason: requiredString(formData, "entry_reason"),
+    exit_reason: requiredString(formData, "exit_reason"),
     criteria_met: criteriaStatus === "Good",
     criteria_status: criteriaStatus,
     outcome: optionValue(formData, "outcome", outcomes) as TradeOutcome,
     trade_idea_link: optionalUrl(formData, "trade_idea_link"),
     screenshots,
-    followed_trading_plan: optionValue(formData, "followed_trading_plan", followedTradingPlanOptions) as FollowedTradingPlan,
-    session: optionValue(formData, "session", sessions) as TradingSession,
-    trade_type: optionValue(formData, "trade_type", tradeTypes) as TradeType,
+    followed_trading_plan: followedTradingPlan,
+    session: optionalOptionValue(formData, "session", sessions) as TradingSession | null,
+    trade_type: optionalOptionValue(formData, "trade_type", tradeTypes) as TradeType | null,
     notes: String(formData.get("notes") ?? "").trim() || null,
+    emotion,
+    emotion_notes: String(formData.get("emotion_notes") ?? "").trim() || null,
+    fomo,
+    cut_winner_early: cutWinnerEarly,
+    revenge_trade: revengeTrade,
   };
+
+  const [{ data: rules }, { data: profile }] = await Promise.all([
+    supabase.from("trading_rules").select("id,user_id,title,rule_text,is_active,created_at,updated_at").eq("is_active", true),
+    supabase.from("user_profiles").select("ai_coach_enabled").maybeSingle(),
+  ]);
+  const review = profile?.ai_coach_enabled === false
+    ? { status: "Unavailable" as const, feedback: null, disciplineScore: calculateDisciplineScore(basePayload) }
+    : await reviewTradeAgainstRules(rules ?? [], basePayload);
+  const payload = { ...basePayload, discipline_score: review.disciplineScore || calculateDisciplineScore(basePayload), ai_rule_status: review.status, ai_rule_feedback: review.feedback };
 
   const { error } = await supabase.from("trades").insert(payload);
 

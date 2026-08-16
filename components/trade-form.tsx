@@ -6,6 +6,7 @@ const outcomes = ["Loss", "Win", "Breakeven"];
 const followedTradingPlanOptions = ["Yes", "No"];
 const sessions = ["London", "New York", "Asian", "Frankfurt"];
 const tradeTypes = ["Day Trade", "Swing Trade"];
+const emotions = ["Calm", "Confident", "Focused", "Anxious", "Fearful", "Frustrated", "Excited", "Tired", "Angry"];
 
 function Field({
   label,
@@ -37,15 +38,17 @@ function Field({
   );
 }
 
-function SelectField({ label, name, options }: { label: string; name: string; options: string[] }) {
+function SelectField({ label, name, options, required = true, defaultValue }: { label: string; name: string; options: string[]; required?: boolean; defaultValue?: string }) {
   return (
     <label className="block">
       <span className="text-sm text-terminal-muted">{label}</span>
       <select
         name={name}
-        defaultValue={options[0]}
+        required={required}
+        defaultValue={defaultValue ?? (required ? options[0] : "")}
         className="mt-2 h-11 w-full rounded border border-terminal-line bg-terminal-bg px-3 text-terminal-text outline-none transition focus:border-terminal-cyan"
       >
+        {!required ? <option value="">Optional</option> : null}
         {options.map((option) => (
           <option key={option}>{option}</option>
         ))}
@@ -54,7 +57,7 @@ function SelectField({ label, name, options }: { label: string; name: string; op
   );
 }
 
-export function TradeForm() {
+export function TradeForm({ defaults }: { defaults?: { market?: string | null; session?: string | null; tradeType?: string | null } }) {
   return (
     <form action={addTradeAction} encType="multipart/form-data" className="terminal-panel rounded-lg p-5">
       <div className="mb-6">
@@ -65,8 +68,12 @@ export function TradeForm() {
       <div className="grid gap-4 md:grid-cols-2">
         <Field label="Date" name="date" type="date" />
         <Field label="Pair" name="pair" placeholder="EUR/USD, AAPL, BTC/USD" />
-        <SelectField label="Market" name="market" options={markets} />
+        <SelectField label="Market" name="market" options={markets} defaultValue={defaults?.market ?? undefined} />
         <Field label="Setup name" name="setup_name" placeholder="Breakout retest" />
+        <Field label="Entry price" name="entry_price" type="number" step="any" placeholder="1.08500" />
+        <Field label="Stop price" name="stop_price" type="number" step="any" placeholder="1.08000" />
+        <Field label="Target price" name="target_price" type="number" step="any" required={false} placeholder="1.09500" />
+        <Field label="Exit price" name="exit_price" type="number" step="any" placeholder="1.09200" />
 
         <label className="block">
           <span className="text-sm text-terminal-muted">Direction</span>
@@ -83,15 +90,22 @@ export function TradeForm() {
         <SelectField label="Criteria met" name="criteria_status" options={criteriaStatuses} />
         <SelectField label="Outcome" name="outcome" options={outcomes} />
 
-        <Field label="Entry price" name="entry_price" type="number" step="0.000001" />
-        <Field label="Stop price" name="stop_price" type="number" step="0.000001" />
-        <Field label="Target price" name="target_price" type="number" step="0.000001" required={false} />
-        <Field label="Exit price" name="exit_price" type="number" step="0.000001" />
+        <Field label="Entry reason" name="entry_reason" placeholder="Why did this trade qualify?" />
+        <Field label="Exit reason" name="exit_reason" placeholder="Why did you close or plan to close?" />
         <Field label="Trade idea link" name="trade_idea_link" type="url" required={false} placeholder="https://..." />
         <SelectField label="Followed your trading plan?" name="followed_trading_plan" options={followedTradingPlanOptions} />
-        <SelectField label="Session" name="session" options={sessions} />
-        <SelectField label="Type of trade" name="trade_type" options={tradeTypes} />
+        <SelectField label="Session" name="session" options={sessions} required={false} defaultValue={defaults?.session ?? undefined} />
+        <SelectField label="Type of trade" name="trade_type" options={tradeTypes} required={false} defaultValue={defaults?.tradeType ?? undefined} />
+        <SelectField label="Emotion" name="emotion" options={emotions} required={false} />
       </div>
+
+      <div className="mt-5 grid gap-3 border-t border-terminal-line pt-5 sm:grid-cols-3">
+        <label className="flex min-h-11 items-center gap-3 rounded border border-terminal-line px-3 text-sm text-terminal-muted"><input name="fomo" type="checkbox" className="h-4 w-4 accent-cyan-300" /> FOMO</label>
+        <label className="flex min-h-11 items-center gap-3 rounded border border-terminal-line px-3 text-sm text-terminal-muted"><input name="cut_winner_early" type="checkbox" className="h-4 w-4 accent-cyan-300" /> Cut winner early</label>
+        <label className="flex min-h-11 items-center gap-3 rounded border border-terminal-line px-3 text-sm text-terminal-muted"><input name="revenge_trade" type="checkbox" className="h-4 w-4 accent-cyan-300" /> Revenge trade</label>
+      </div>
+
+      <label className="mt-4 block"><span className="text-sm text-terminal-muted">Emotion notes</span><input name="emotion_notes" placeholder="What were you feeling and why?" className="mt-2 h-11 w-full rounded border border-terminal-line bg-terminal-bg px-3 text-terminal-text placeholder:text-terminal-muted/50" /></label>
 
       <label className="mt-4 block">
         <span className="text-sm text-terminal-muted">Screenshots</span>

@@ -1,4 +1,5 @@
 import { clsx } from "clsx";
+import Link from "next/link";
 import { formatR } from "@/lib/trades/calculations";
 import type { Trade } from "@/types/trade";
 
@@ -37,10 +38,8 @@ export function TradeTable({ trades }: { trades: Trade[] }) {
                 <th className="px-4 py-3 font-medium">Dir</th>
                 <th className="px-4 py-3 font-medium">Session</th>
                 <th className="px-4 py-3 font-medium">Type</th>
-                <th className="px-4 py-3 font-medium">Entry</th>
-                <th className="px-4 py-3 font-medium">Stop</th>
-                <th className="px-4 py-3 font-medium">Target</th>
-                <th className="px-4 py-3 font-medium">Exit</th>
+                <th className="px-4 py-3 font-medium">Entry Reason</th>
+                <th className="px-4 py-3 font-medium">Exit Reason</th>
                 <th className="px-4 py-3 font-medium">Criteria</th>
                 <th className="px-4 py-3 font-medium">Plan</th>
                 <th className="px-4 py-3 font-medium">Outcome</th>
@@ -55,16 +54,14 @@ export function TradeTable({ trades }: { trades: Trade[] }) {
               {trades.map((trade) => (
                 <tr key={trade.id} className="border-t border-terminal-line/70 transition hover:bg-terminal-panel2/60">
                   <td className="number whitespace-nowrap px-4 py-3 text-terminal-text">{trade.date}</td>
-                  <td className="px-4 py-3 text-terminal-muted">{trade.pair}</td>
+                  <td className="px-4 py-3 text-terminal-muted"><Link href={`/trades/${trade.id}`} className="font-semibold text-terminal-text hover:text-terminal-cyan">{trade.pair}</Link></td>
                   <td className="px-4 py-3 text-terminal-muted">{trade.market}</td>
                   <td className="px-4 py-3 font-medium text-terminal-text">{trade.setup_name}</td>
                   <td className="px-4 py-3 text-terminal-muted">{trade.direction}</td>
-                  <td className="whitespace-nowrap px-4 py-3 text-terminal-muted">{trade.session}</td>
-                  <td className="whitespace-nowrap px-4 py-3 text-terminal-muted">{trade.trade_type}</td>
-                  <td className="number px-4 py-3 text-terminal-muted">{trade.entry_price.toFixed(2)}</td>
-                  <td className="number px-4 py-3 text-terminal-muted">{trade.stop_price.toFixed(2)}</td>
-                  <td className="number px-4 py-3 text-terminal-muted">{trade.target_price?.toFixed(2) ?? "-"}</td>
-                  <td className="number px-4 py-3 text-terminal-muted">{trade.exit_price.toFixed(2)}</td>
+                  <td className="whitespace-nowrap px-4 py-3 text-terminal-muted">{trade.session ?? "-"}</td>
+                  <td className="whitespace-nowrap px-4 py-3 text-terminal-muted">{trade.trade_type ?? "-"}</td>
+                  <td className="max-w-[240px] truncate px-4 py-3 text-terminal-muted">{trade.entry_reason}</td>
+                  <td className="max-w-[240px] truncate px-4 py-3 text-terminal-muted">{trade.exit_reason}</td>
                   <td className="px-4 py-3">
                     <span
                       className={clsx(

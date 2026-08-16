@@ -38,6 +38,6 @@ select {
 }
 
 .number {
-  font-family: var(--font-jetbrains), ui-monospace, SFMono-Regular, monospace;
+  font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
   font-variant-numeric: tabular-nums;
 }

@@ -26,7 +26,8 @@ const config: Config = {
         glow: "0 0 24px rgba(25, 211, 255, 0.16)",
       },
       fontFamily: {
-        mono: ["var(--font-jetbrains)", "ui-monospace", "SFMono-Regular", "monospace"],
+        sans: ["Inter", "ui-sans-serif", "system-ui", "Segoe UI", "sans-serif"],
+        mono: ["JetBrains Mono", "ui-monospace", "SFMono-Regular", "monospace"],
       },
     },
   },

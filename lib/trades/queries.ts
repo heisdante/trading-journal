@@ -1,6 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { calculateRValue, classifyResult } from "@/lib/trades/calculations";
-import type { CriteriaStatus, FollowedTradingPlan, Market, Trade, TradeOutcome, TradeScreenshot, TradeType, TradingSession } from "@/types/trade";
+import type { CriteriaStatus, Emotion, FollowedTradingPlan, Market, RuleReviewStatus, Trade, TradeOutcome, TradeScreenshot, TradeType, TradingSession } from "@/types/trade";
 
 function normalizeScreenshots(value: unknown): TradeScreenshot[] {
   if (!Array.isArray(value)) {
@@ -20,17 +20,14 @@ function normalizeScreenshots(value: unknown): TradeScreenshot[] {
 
 export function normalizeTrade(row: Record<string, unknown>): Trade {
   const date = String(row.date ?? row.trade_date);
-  const entryPrice = Number(row.entry_price);
-  const stopPrice = Number(row.stop_price);
-  const exitPrice = Number(row.exit_price);
   const direction = row.direction === "Short" ? "Short" : "Long";
   const rValue =
     row.r_value === undefined || row.r_value === null
       ? calculateRValue({
           direction,
-          entry_price: entryPrice,
-          stop_price: stopPrice,
-          exit_price: exitPrice,
+          entry_price: Number(row.entry_price),
+          stop_price: Number(row.stop_price),
+          exit_price: Number(row.exit_price),
         })
       : Number(row.r_value);
 
@@ -53,10 +50,28 @@ export function normalizeTrade(row: Record<string, unknown>): Trade {
     ) as Market,
     setup_name: String(row.setup_name),
     direction,
-    entry_price: entryPrice,
-    stop_price: stopPrice,
-    target_price: row.target_price === null ? null : Number(row.target_price),
-    exit_price: exitPrice,
+    entry_price: Number(row.entry_price ?? 0),
+    stop_price: Number(row.stop_price ?? 0),
+    target_price: row.target_price === null || row.target_price === undefined ? null : Number(row.target_price),
+    exit_price: Number(row.exit_price ?? 0),
+    volume: row.volume === null || row.volume === undefined ? null : Number(row.volume),
+    commission: row.commission === null || row.commission === undefined ? null : Number(row.commission),
+    swap: row.swap === null || row.swap === undefined ? null : Number(row.swap),
+    profit: row.profit === null || row.profit === undefined ? null : Number(row.profit),
+    source_platform: row.source_platform === null || row.source_platform === undefined ? null : String(row.source_platform),
+    source_trade_id: row.source_trade_id === null || row.source_trade_id === undefined ? null : String(row.source_trade_id),
+    opened_at: row.opened_at === null || row.opened_at === undefined ? null : String(row.opened_at),
+    closed_at: row.closed_at === null || row.closed_at === undefined ? null : String(row.closed_at),
+    emotion: (row.emotion ?? null) as Emotion | null,
+    emotion_notes: row.emotion_notes === null || row.emotion_notes === undefined ? null : String(row.emotion_notes),
+    fomo: Boolean(row.fomo),
+    cut_winner_early: Boolean(row.cut_winner_early),
+    revenge_trade: Boolean(row.revenge_trade),
+    discipline_score: row.discipline_score === null || row.discipline_score === undefined ? null : Number(row.discipline_score),
+    ai_rule_status: (row.ai_rule_status === "Warning" || row.ai_rule_status === "Unavailable" ? row.ai_rule_status : "Pass") as RuleReviewStatus,
+    ai_rule_feedback: row.ai_rule_feedback === null || row.ai_rule_feedback === undefined ? null : String(row.ai_rule_feedback),
+    entry_reason: String(row.entry_reason ?? ""),
+    exit_reason: String(row.exit_reason ?? ""),
     criteria_met: Boolean(row.criteria_met),
     criteria_status: (row.criteria_status === "Fail" ? "Fail" : "Good") as CriteriaStatus,
     outcome: (row.outcome === "Loss" ? "Loss" : row.outcome === "Breakeven" ? "Breakeven" : "Win") as TradeOutcome,
@@ -64,9 +79,9 @@ export function normalizeTrade(row: Record<string, unknown>): Trade {
     screenshots: normalizeScreenshots(row.screenshots),
     followed_trading_plan: (row.followed_trading_plan === "No" ? "No" : "Yes") as FollowedTradingPlan,
     session: (
-      row.session === "New York" || row.session === "Asian" || row.session === "Frankfurt" ? row.session : "London"
-    ) as TradingSession,
-    trade_type: (row.trade_type === "Swing Trade" ? "Swing Trade" : "Day Trade") as TradeType,
+      row.session === "London" || row.session === "New York" || row.session === "Asian" || row.session === "Frankfurt" ? row.session : null
+    ) as TradingSession | null,
+    trade_type: (row.trade_type === "Day Trade" || row.trade_type === "Swing Trade" ? row.trade_type : null) as TradeType | null,
     notes: row.notes === null ? null : String(row.notes),
     r_value: rValue,
     result: row.result === "Loss" ? "Loss" : row.result === "BE" ? "BE" : classifyResult(rValue),
@@ -77,14 +92,6 @@ export function normalizeTrade(row: Record<string, unknown>): Trade {
 
 export async function getTrades() {
   const supabase = createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    return [];
-  }
-
   const { data, error } = await supabase
     .from("trades")
     .select("*")
@@ -96,4 +103,11 @@ export async function getTrades() {
   }
 
   return (data ?? []).map((row) => normalizeTrade(row));
+}
+
+export async function getTradeById(id: string) {
+  const supabase = createClient();
+  const { data, error } = await supabase.from("trades").select("*").eq("id", id).maybeSingle();
+  if (error) throw new Error(error.message);
+  return data ? normalizeTrade(data) : null;
 }

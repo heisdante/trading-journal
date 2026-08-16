@@ -1,9 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { buildTradeMetrics, calculateRValue, classifyResult, isValidRisk } from "@/lib/trades/calculations";
+import { buildSeriesStats, buildTradeMetrics, calculateDisciplineScore, calculateRValue, calculateRiskReward, classifyResult, isValidRisk } from "@/lib/trades/calculations";
 import type { Trade } from "@/types/trade";
 
 function trade(overrides: Partial<Trade>): Trade {
-  return {
+  const base: Trade = {
     id: "trade-id",
     user_id: "user-id",
     date: "2026-01-01",
@@ -15,6 +15,24 @@ function trade(overrides: Partial<Trade>): Trade {
     stop_price: 90,
     target_price: null,
     exit_price: 110,
+    volume: null,
+    commission: null,
+    swap: null,
+    profit: null,
+    source_platform: null,
+    source_trade_id: null,
+    opened_at: null,
+    closed_at: null,
+    emotion: null,
+    emotion_notes: null,
+    fomo: false,
+    cut_winner_early: false,
+    revenge_trade: false,
+    discipline_score: null,
+    ai_rule_status: "Pass",
+    ai_rule_feedback: null,
+    entry_reason: "Setup confirmed",
+    exit_reason: "Target reached",
     criteria_met: true,
     criteria_status: "Good",
     outcome: "Win",
@@ -28,8 +46,8 @@ function trade(overrides: Partial<Trade>): Trade {
     result: "Win",
     created_at: "2026-01-01T00:00:00.000Z",
     updated_at: "2026-01-01T00:00:00.000Z",
-    ...overrides,
   };
+  return { ...base, ...overrides } as Trade;
 }
 
 describe("trade calculations", () => {
@@ -73,5 +91,23 @@ describe("trade calculations", () => {
     expect(metrics.criteriaMetRate).toBe(50);
     expect(metrics.brokenCriteriaRate).toBe(0);
     expect(metrics.equityCurve.map((point) => point.equity)).toEqual([2, 1, 1]);
+  });
+
+  it("calculates planned risk-to-reward and transparent discipline score", () => {
+    expect(calculateRiskReward(trade({ target_price: 120 }))).toBe(2);
+    expect(calculateDisciplineScore({ criteria_met: true, followed_trading_plan: "Yes", fomo: false, cut_winner_early: false, revenge_trade: false })).toBe(100);
+    expect(calculateDisciplineScore({ criteria_met: false, followed_trading_plan: "No", fomo: true, cut_winner_early: true, revenge_trade: true })).toBe(0);
+  });
+
+  it("calculates latest trade series instead of all history", () => {
+    const trades = [
+      trade({ id: "one", date: "2026-01-01", r_value: -1, ai_rule_status: "Pass" }),
+      trade({ id: "two", date: "2026-01-02", r_value: 2, ai_rule_status: "Warning" }),
+      trade({ id: "three", date: "2026-01-03", r_value: 1, ai_rule_status: "Pass" }),
+    ];
+    const stats = buildSeriesStats(trades, 2);
+    expect(stats.size).toBe(2);
+    expect(stats.totalR).toBe(3);
+    expect(stats.warnings).toBe(1);
   });
 });

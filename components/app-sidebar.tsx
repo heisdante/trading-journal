@@ -1,0 +1,33 @@
+"use client";
+
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useState } from "react";
+import { Activity, BookOpenCheck, BotMessageSquare, CalendarRange, ChevronLeft, ChevronRight, ClipboardList, CreditCard, FileOutput, FileUp, LayoutDashboard, ListChecks, Menu, PlusCircle, RotateCcw, Settings, X } from "lucide-react";
+import { LogoutButton } from "@/components/logout-button";
+
+const workspaceItems = [{ href: "/dashboard", label: "Dashboard", icon: LayoutDashboard }, { href: "/log", label: "Log trade", icon: PlusCircle }, { href: "/trades", label: "Trades", icon: ClipboardList }, { href: "/import", label: "Import history", icon: FileUp }];
+const reviewItems = [{ href: "/rules", label: "Trading rules", icon: ListChecks }, { href: "/playbooks", label: "Playbooks", icon: BookOpenCheck }, { href: "/review", label: "Daily review", icon: RotateCcw }, { href: "/weekly", label: "Weekly debrief", icon: CalendarRange }, { href: "/coach", label: "AI coach", icon: BotMessageSquare }, { href: "/report", label: "Accountability report", icon: FileOutput }];
+
+type SidebarContentProps = { email: string; collapsed?: boolean; onNavigate?: () => void; onToggle?: () => void; mobile?: boolean };
+
+function SidebarContent({ email, collapsed = false, onNavigate, onToggle, mobile = false }: SidebarContentProps) {
+  const pathname = usePathname();
+  const isActive = (href: string) => pathname === href || (href !== "/dashboard" && pathname.startsWith(`${href}/`));
+  const navLink = (item: (typeof workspaceItems)[number]) => {
+    const active = isActive(item.href);
+    return <Link key={item.href} href={item.href} onClick={onNavigate} title={collapsed ? item.label : undefined} aria-label={collapsed ? item.label : undefined} className={`flex min-h-11 items-center border-l-2 text-sm transition ${collapsed ? "justify-center px-2" : "gap-3 px-3"} ${active ? "border-terminal-cyan bg-terminal-cyan/10 font-semibold text-terminal-text" : "border-transparent text-terminal-muted hover:border-terminal-line hover:bg-terminal-panel2 hover:text-terminal-text"}`}><item.icon className="h-4 w-4 shrink-0" /><span className={collapsed ? "sr-only" : undefined}>{item.label}</span></Link>;
+  };
+  const accountLink = (href: "/profile" | "/billing", label: string, Icon: typeof Settings) => <Link href={href} onClick={onNavigate} title={collapsed ? label : undefined} aria-label={collapsed ? label : undefined} className={`flex min-h-11 items-center border-l-2 text-sm transition ${collapsed ? "justify-center px-2" : "gap-3 px-3"} ${isActive(href) ? "border-terminal-cyan bg-terminal-cyan/10 font-semibold text-terminal-text" : "border-transparent text-terminal-muted hover:bg-terminal-panel2 hover:text-terminal-text"}`}><Icon className="h-4 w-4 shrink-0" /><span className={collapsed ? "sr-only" : undefined}>{label}</span></Link>;
+
+  return <div className="flex h-full min-h-0 flex-col bg-terminal-panel">
+    <div className={`border-b border-terminal-line py-5 ${collapsed ? "px-3" : "px-5"}`}><div className={`flex items-center ${collapsed ? "justify-center" : "justify-between gap-3"}`}><Link href="/dashboard" onClick={onNavigate} title={collapsed ? "Trading Journal" : undefined} className="flex items-center gap-3"><span className="flex h-9 w-9 shrink-0 items-center justify-center border border-terminal-cyan/40 bg-terminal-cyan/10 text-terminal-cyan"><Activity className="h-5 w-5" /></span><span className={collapsed ? "sr-only" : "text-base font-semibold text-terminal-text"}>Trading Journal</span></Link>{!mobile && !collapsed ? <button type="button" onClick={onToggle} aria-label="Collapse sidebar" title="Collapse sidebar" className="flex h-9 w-9 shrink-0 items-center justify-center text-terminal-muted hover:bg-terminal-panel2 hover:text-terminal-cyan"><ChevronLeft className="h-4 w-4" /></button> : null}</div>{collapsed ? <button type="button" onClick={onToggle} aria-label="Expand sidebar" title="Expand sidebar" className="mt-4 flex h-9 w-full items-center justify-center text-terminal-muted hover:bg-terminal-panel2 hover:text-terminal-cyan"><ChevronRight className="h-4 w-4" /></button> : <p className="mt-4 truncate text-xs text-terminal-muted" title={email}>{email}</p>}</div>
+    <nav className="flex-1 overflow-y-auto py-5" aria-label="Workspace navigation"><p className={collapsed ? "sr-only" : "px-5 pb-2 font-mono text-[11px] uppercase text-terminal-muted"}>Workspace</p><div className="space-y-1">{workspaceItems.map(navLink)}</div><p className={collapsed ? "sr-only" : "px-5 pb-2 pt-7 font-mono text-[11px] uppercase text-terminal-muted"}>Process</p><div className="space-y-1">{reviewItems.map(navLink)}</div></nav>
+    <div className={`border-t border-terminal-line py-3 ${collapsed ? "px-2" : "px-3"}`}>{accountLink("/profile", "Settings", Settings)}<div className="mt-1">{accountLink("/billing", "Billing", CreditCard)}</div><div className={`mt-1 ${collapsed ? "flex justify-center" : "px-3"}`}><LogoutButton compact={collapsed} /></div></div>
+  </div>;
+}
+
+export function AppSidebar({ email, collapsed, onCollapsedChange }: { email: string; collapsed: boolean; onCollapsedChange: (value: boolean) => void }) {
+  const [open, setOpen] = useState(false);
+  return <><aside className="sticky top-0 hidden h-dvh border-r border-terminal-line lg:block"><SidebarContent email={email} collapsed={collapsed} onToggle={() => onCollapsedChange(!collapsed)} /></aside><header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-terminal-line bg-terminal-bg/95 px-4 backdrop-blur lg:hidden"><Link href="/dashboard" className="flex items-center gap-2 font-semibold text-terminal-text"><Activity className="h-5 w-5 text-terminal-cyan" />Trading Journal</Link><button type="button" onClick={() => setOpen(true)} aria-label="Open navigation" className="flex h-11 w-11 items-center justify-center border border-terminal-line text-terminal-muted hover:border-terminal-cyan hover:text-terminal-cyan"><Menu className="h-5 w-5" /></button></header>{open ? <div className="fixed inset-0 z-50 lg:hidden" role="dialog" aria-modal="true" aria-label="Navigation"><button type="button" aria-label="Close navigation" onClick={() => setOpen(false)} className="absolute inset-0 bg-terminal-bg/75" /><aside className="relative h-dvh w-[min(19rem,88vw)] border-r border-terminal-line shadow-2xl"><button type="button" aria-label="Close navigation" onClick={() => setOpen(false)} className="absolute right-3 top-3 z-10 flex h-10 w-10 items-center justify-center text-terminal-muted hover:text-terminal-cyan"><X className="h-5 w-5" /></button><SidebarContent email={email} mobile onNavigate={() => setOpen(false)} /></aside></div> : null}</>;
+}
