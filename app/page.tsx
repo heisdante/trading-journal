@@ -14,6 +14,7 @@ import {
   TrendingUp,
 } from "lucide-react";
 import { HomepageMotion } from "@/components/homepage-motion";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 const features = [
   { icon: Target, title: "Trade the plan", text: "Store the rules that define your edge, then review every documented trade against them." },
@@ -129,6 +130,7 @@ export default function HomePage() {
           <a href="#about" className="transition hover:text-terminal-cyan">About</a>
         </div>
         <div className="flex items-center gap-2 sm:gap-3">
+          <ThemeToggle compact />
           <Link href="/login" className="inline-flex h-11 items-center px-2 text-sm text-terminal-muted transition hover:text-terminal-text sm:px-3">Sign in</Link>
           <Link href="/signup" className="btn-primary inline-flex h-11 items-center gap-2 bg-terminal-cyan px-4 text-sm font-semibold text-terminal-bg transition hover:bg-cyan-300">
             Create account <ArrowRight className="h-4 w-4" />

@@ -7,6 +7,8 @@ import { MetricCard } from "@/components/metric-card";
 import { TradeTable } from "@/components/trade-table";
 import { SeriesAnalytics } from "@/components/series-analytics";
 import { DailyReviewReminder } from "@/components/daily-review-reminder";
+import { MarketSessionStatus } from "@/components/market-session-status";
+import { TradeCalendar } from "@/components/trade-calendar";
 import { buildTradeMetrics, formatR } from "@/lib/trades/calculations";
 import { getTrades } from "@/lib/trades/queries";
 import { hasValidSupabaseEnv, supabaseEnvMessage } from "@/lib/supabase/env";
@@ -53,6 +55,8 @@ export default async function DashboardPage() {
 
       <DailyReviewReminder complete={Boolean(todayReview)} />
 
+      <MarketSessionStatus />
+
       <section className="app-surface flex items-center justify-between border-y border-terminal-line/70 py-4"><div><p className="font-mono text-xs uppercase text-terminal-cyan">outcomes / process</p><h2 className="mt-1 text-xl font-semibold text-terminal-text">Performance signals</h2></div><Link href="/trades" className="inline-flex min-h-11 items-center gap-1 text-sm font-semibold text-terminal-cyan transition hover:text-cyan-300">All trades<ArrowUpRight className="h-4 w-4" /></Link></section>
 
       <section className="grid gap-4 xl:grid-cols-2">
@@ -61,6 +65,8 @@ export default async function DashboardPage() {
       </section>
 
       <SeriesAnalytics trades={trades} />
+
+      <TradeCalendar trades={trades} />
 
       <TradeTable trades={trades.slice(0, 8)} />
     </AppShell>

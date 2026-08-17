@@ -10,16 +10,16 @@ const config: Config = {
     extend: {
       colors: {
         terminal: {
-          bg: "#07111f",
-          panel: "#0b1728",
-          panel2: "#0f2035",
-          line: "#1b3552",
-          text: "#d5f3ff",
-          muted: "#7f9bb2",
-          cyan: "#19d3ff",
-          green: "#35f29a",
-          red: "#ff5b7c",
-          amber: "#f7c948",
+          bg: "var(--terminal-bg)",
+          panel: "var(--terminal-panel)",
+          panel2: "var(--terminal-panel2)",
+          line: "var(--terminal-line)",
+          text: "var(--terminal-text)",
+          muted: "var(--terminal-muted)",
+          cyan: "var(--terminal-cyan)",
+          green: "var(--terminal-green)",
+          red: "var(--terminal-red)",
+          amber: "var(--terminal-amber)",
         },
       },
       boxShadow: {

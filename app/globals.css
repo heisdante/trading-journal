@@ -3,9 +3,36 @@
 @tailwind utilities;
 
 :root {
-  color-scheme: dark;
+  color-scheme: dark light;
   --pointer-x: 50vw;
   --pointer-y: 20vh;
+  --terminal-bg: #07111f;
+  --terminal-panel: #0b1728;
+  --terminal-panel2: #0f2035;
+  --terminal-line: #1b3552;
+  --terminal-text: #d5f3ff;
+  --terminal-muted: #7f9bb2;
+  --terminal-cyan: #19d3ff;
+  --terminal-green: #35f29a;
+  --terminal-red: #ff5b7c;
+  --terminal-amber: #f7c948;
+  --grid-rgb: 25, 211, 255;
+  --shadow-rgb: 0, 0, 0;
+}
+
+:root[data-theme="light"] {
+  --terminal-bg: #f7fbff;
+  --terminal-panel: #ffffff;
+  --terminal-panel2: #eaf4fb;
+  --terminal-line: #bfd6e6;
+  --terminal-text: #102133;
+  --terminal-muted: #557086;
+  --terminal-cyan: #007fa3;
+  --terminal-green: #087f4f;
+  --terminal-red: #c02f52;
+  --terminal-amber: #946100;
+  --grid-rgb: 0, 127, 163;
+  --shadow-rgb: 38, 66, 88;
 }
 
 * {
@@ -16,11 +43,11 @@ body {
   min-height: 100vh;
   margin: 0;
   background:
-    linear-gradient(rgba(25, 211, 255, 0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(25, 211, 255, 0.025) 1px, transparent 1px),
-    #07111f;
+    linear-gradient(rgba(var(--grid-rgb), 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(var(--grid-rgb), 0.025) 1px, transparent 1px),
+    var(--terminal-bg);
   background-size: 28px 28px;
-  color: #d5f3ff;
+  color: var(--terminal-text);
 }
 
 ::selection {
