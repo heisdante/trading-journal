@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { IBM_Plex_Mono, Manrope } from "next/font/google";
-import { ThemeProvider } from "@/components/theme-provider";
 import { SmoothScroll } from "@/components/smooth-scroll";
 import "./globals.css";
 
@@ -18,9 +17,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" data-theme="dark">
       <body className={`${manrope.variable} ${plexMono.variable} font-sans antialiased`}>
-        <ThemeProvider><SmoothScroll />{children}</ThemeProvider>
+        <SmoothScroll />{children}
       </body>
     </html>
   );

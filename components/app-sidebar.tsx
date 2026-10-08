@@ -10,7 +10,6 @@ import {
   ListChecks, Menu, Plus, RotateCcw, Settings2, Target, X,
 } from "lucide-react";
 import { LogoutButton } from "@/components/logout-button";
-import { ThemeToggle } from "@/components/theme-toggle";
 
 type NavigationItem = { href: string; label: string; icon: LucideIcon };
 
@@ -87,7 +86,7 @@ function SidebarContent({ email, onNavigate }: SidebarContentProps) {
         <p className="sidebar-nav-heading">Account</p>
         <Link href="/profile" onClick={onNavigate} className={`app-nav-link ${isActive("/profile") ? "is-active" : ""}`}><span className="app-nav-icon"><Settings2 className="h-[17px] w-[17px]" strokeWidth={1.8} /></span><span className="truncate">Settings</span></Link>
         <Link href="/billing" onClick={onNavigate} className={`app-nav-link ${isActive("/billing") ? "is-active" : ""}`}><span className="app-nav-icon"><CreditCard className="h-[17px] w-[17px]" strokeWidth={1.8} /></span><span className="truncate">Billing</span></Link>
-        <div className="sidebar-footer-actions"><ThemeToggle /><LogoutButton /></div>
+        <div className="sidebar-footer-actions"><LogoutButton /></div>
       </div>
     </div>
   );
@@ -102,7 +101,7 @@ export function AppSidebar({ email }: { email: string }) {
       </aside>
       <header className="app-mobile-header sticky top-0 z-30 flex h-16 items-center justify-between px-4 lg:hidden">
         <Link href="/dashboard" className="sidebar-brand-link"><span className="sidebar-brand-icon"><Activity className="h-5 w-5" /></span><span className="font-semibold text-white">Trading Journal</span></Link>
-        <div className="flex items-center gap-2"><ThemeToggle compact /><button type="button" onClick={() => setOpen(true)} aria-label="Open navigation" className="sidebar-icon-button"><Menu className="h-5 w-5" /></button></div>
+        <button type="button" onClick={() => setOpen(true)} aria-label="Open navigation" className="sidebar-icon-button"><Menu className="h-5 w-5" /></button>
       </header>
       {open && <div className="fixed inset-0 z-50 lg:hidden" role="dialog" aria-modal="true" aria-label="Workspace navigation"><button type="button" aria-label="Close navigation" onClick={() => setOpen(false)} className="app-drawer-scrim absolute inset-0" /><aside className="app-drawer relative h-dvh w-[min(20rem,88vw)]"><button type="button" aria-label="Close navigation" onClick={() => setOpen(false)} className="sidebar-icon-button absolute right-3 top-3 z-10"><X className="h-5 w-5" /></button><SidebarContent email={email} onNavigate={() => setOpen(false)} /></aside></div>}
     </>

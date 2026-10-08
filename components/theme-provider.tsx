@@ -1,32 +1,18 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect } from "react";
 
 type Theme = "dark" | "light";
 
-const storageKey = "trading-journal-theme-v2";
-
-function getInitialTheme(): Theme {
-  if (typeof window === "undefined") return "dark";
-  const stored = window.localStorage.getItem(storageKey);
-  if (stored === "dark" || stored === "light") return stored;
-  return "light";
-}
+const darkTheme = { theme: "dark" as const, setTheme: (_theme: Theme) => {} };
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setTheme] = useState<Theme>("light");
-
   useEffect(() => {
-    setTheme(getInitialTheme());
+    document.documentElement.dataset.theme = "dark";
+    document.documentElement.style.colorScheme = "dark";
   }, []);
 
-  useEffect(() => {
-    document.documentElement.dataset.theme = theme;
-    document.documentElement.style.colorScheme = theme;
-    window.localStorage.setItem(storageKey, theme);
-  }, [theme]);
-
-  return <ThemeContext.Provider value={{ theme, setTheme }}>{children}</ThemeContext.Provider>;
+  return <ThemeContext.Provider value={darkTheme}>{children}</ThemeContext.Provider>;
 }
 
 const ThemeContext = createContext<{ theme: Theme; setTheme: (theme: Theme) => void } | null>(null);
