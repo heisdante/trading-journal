@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { IBM_Plex_Mono, Manrope } from "next/font/google";
-import { SmoothScroll } from "@/components/smooth-scroll";
+import { NavigationFeedback } from "@/components/navigation-feedback";
 import "./globals.css";
 
 const manrope = Manrope({ subsets: ["latin"], variable: "--font-manrope", display: "swap" });
@@ -20,7 +21,7 @@ export default function RootLayout({
     <html lang="en" data-theme="dark" suppressHydrationWarning>
       <body className={`${manrope.variable} ${plexMono.variable} font-sans antialiased`}>
         <script dangerouslySetInnerHTML={{ __html: `try{var t=localStorage.getItem('trading-journal-theme')||localStorage.getItem('trading-journal-auth-theme');document.documentElement.dataset.theme=t==='light'?'light':'dark'}catch(e){}` }} />
-        <SmoothScroll />{children}
+        <Suspense fallback={null}><NavigationFeedback /></Suspense>{children}
       </body>
     </html>
   );

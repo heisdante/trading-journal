@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ArrowRight, ArrowUpRight, Check, LineChart, ShieldCheck, Target } from "lucide-react";
 import { HomepageMotion } from "@/components/homepage-motion";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { SmoothScroll } from "@/components/smooth-scroll";
 
 const heroPhoto = "https://images.unsplash.com/photo-1748439435495-722cc1728b7e?auto=format&fit=crop&w=2200&q=88";
 const focusPhoto = "https://images.unsplash.com/photo-1768055104923-a6f76e7478c7?auto=format&fit=crop&w=1200&q=85";
@@ -35,6 +36,7 @@ function ProductMark() {
 export default function HomePage() {
   return <main className="landing relative overflow-hidden bg-[#101210] text-[#f4f2eb] selection:bg-[#b3e2bd] selection:text-[#101210]">
     <HomepageMotion />
+    <SmoothScroll />
     <header className="landing-header absolute inset-x-0 top-0 z-30"><nav className="mx-auto flex max-w-[1440px] items-center justify-between px-5 py-5 sm:px-8 lg:px-14"><ProductMark /><div className="hidden items-center gap-8 text-[13px] text-white/65 md:flex"><a className="transition hover:text-white" href="#approach">Approach</a><a className="transition hover:text-white" href="#journal">The journal</a><a className="transition hover:text-white" href="#method">Method</a></div><div className="flex items-center gap-2.5"><ThemeToggle /><Link href="/login" className="hidden min-h-10 items-center rounded-full px-4 text-sm text-white/75 transition hover:bg-white/10 hover:text-white sm:inline-flex">Sign in</Link><Link href="/signup" className="landing-nav-cta inline-flex min-h-10 items-center gap-2 rounded-full bg-[#e6e8dd] px-4 text-xs font-semibold text-[#151815] transition duration-300 hover:-translate-y-0.5 hover:bg-white sm:text-sm">Start journaling <ArrowUpRight className="h-4 w-4" /></Link></div></nav></header>
 
     <section className="hero-story relative isolate flex items-center overflow-hidden" aria-labelledby="hero-title">

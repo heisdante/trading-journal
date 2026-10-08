@@ -8,30 +8,43 @@ export function TradeAutomation() {
   const [file, setFile] = useState<File | null>(null);
   const [source, setSource] = useState("MT4 / MT5 / cTrader CSV");
   const [status, setStatus] = useState("");
+  const [importBusy, setImportBusy] = useState(false);
   const [draft, setDraft] = useState<Draft | null>(null);
   const [aiBusy, setAiBusy] = useState(false);
 
   async function importFile() {
-    if (!file) return;
+    if (!file || importBusy) return;
+    setImportBusy(true);
     setStatus("Reading file...");
-    const response = await fetch("/api/trades/import", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ csv: await file.text(), source }),
-    });
-    const body = await response.json();
-    setStatus(response.ok ? `${body.imported} trades imported` : body.error);
+    try {
+      const response = await fetch("/api/trades/import", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ csv: await file.text(), source }),
+      });
+      const body = await response.json();
+      setStatus(response.ok ? `${body.imported} trades imported` : body.error);
+    } catch {
+      setStatus("Could not import this file. Try again.");
+    } finally {
+      setImportBusy(false);
+    }
   }
 
   async function makeDraft(formData: FormData) {
     setAiBusy(true);
     setStatus("Creating draft...");
-    const response = await fetch("/api/trades/ai-draft", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(Object.fromEntries(formData)) });
-    const body = await response.json();
-    setAiBusy(false);
-    if (!response.ok) return setStatus(body.error);
-    setDraft(body);
-    setStatus("Draft ready. Review it before logging the trade.");
+    try {
+      const response = await fetch("/api/trades/ai-draft", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(Object.fromEntries(formData)) });
+      const body = await response.json();
+      if (!response.ok) return setStatus(body.error);
+      setDraft(body);
+      setStatus("Draft ready. Review it before logging the trade.");
+    } catch {
+      setStatus("Could not create the draft. Try again.");
+    } finally {
+      setAiBusy(false);
+    }
   }
 
   return (
@@ -46,7 +59,7 @@ export function TradeAutomation() {
           </select>
         </label>
         <input type="file" accept=".csv,.txt" onChange={(event) => setFile(event.target.files?.[0] ?? null)} className="mt-4 block w-full rounded border border-terminal-line bg-terminal-bg px-3 py-2 text-sm text-terminal-muted" />
-        <button type="button" onClick={importFile} disabled={!file} className="mt-4 h-11 rounded bg-terminal-cyan px-5 font-semibold text-terminal-bg transition hover:bg-cyan-300 hover:shadow-glow disabled:cursor-not-allowed disabled:opacity-40">Import trades</button>
+        <button type="button" onClick={importFile} disabled={!file || importBusy} className="mt-4 h-11 rounded bg-terminal-cyan px-5 font-semibold text-terminal-bg transition hover:bg-cyan-300 hover:shadow-glow disabled:cursor-not-allowed disabled:opacity-40">{importBusy ? "Importing…" : "Import trades"}</button>
       </section>
 
       <section className="terminal-panel app-chart-panel rounded-lg p-5">
@@ -60,7 +73,7 @@ export function TradeAutomation() {
         </form>
         {draft ? <div className="mt-5 border-t border-terminal-line pt-4 text-sm text-terminal-muted"><p className="font-semibold text-terminal-text">{draft.pair} · {draft.direction} · {draft.setup_name}</p><p className="mt-2">{draft.entry_reason}</p><p className="mt-2">{draft.notes}</p>{draft.missing_fields.length ? <p className="mt-2 text-terminal-amber">Still needed: {draft.missing_fields.join(", ")}</p> : null}</div> : null}
       </section>
-      {status ? <p className="text-sm text-terminal-muted lg:col-span-2">{status}</p> : null}
+      {status ? <p role="status" className="text-sm text-terminal-muted lg:col-span-2">{status}</p> : null}
     </div>
   );
 }

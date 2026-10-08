@@ -2,13 +2,6 @@ import { NextResponse, type NextRequest } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 import type { Database } from "@/types/database";
 
-const protectedRoutes = ["/dashboard", "/log", "/trades", "/import", "/rules", "/review", "/coach", "/profile", "/billing", "/playbooks", "/weekly", "/report", "/growth"];
-const authRoutes = ["/login", "/signup", "/verify"];
-
-function matchesRoute(pathname: string, route: string) {
-  return pathname === route || pathname.startsWith(`${route}/`);
-}
-
 export async function middleware(request: NextRequest) {
   let response = NextResponse.next({
     request,
@@ -40,27 +33,27 @@ export async function middleware(request: NextRequest) {
     },
   );
 
-  const pathname = request.nextUrl.pathname;
-  const isProtected = protectedRoutes.some((route) => matchesRoute(pathname, route));
-  const isAuthRoute = authRoutes.some((route) => matchesRoute(pathname, route));
-
-  if (isAuthRoute) {
-    return response;
-  }
-
   const { data: claimsData } = await supabase.auth.getClaims();
   const isAuthenticated = Boolean(claimsData?.claims);
 
-  if (isProtected && !isAuthenticated) {
+  if (!isAuthenticated) {
     const url = request.nextUrl.clone();
     url.pathname = "/login";
-    url.searchParams.set("next", pathname);
-    return NextResponse.redirect(url);
+    url.searchParams.set("next", request.nextUrl.pathname);
+    const redirectResponse = NextResponse.redirect(url);
+    response.cookies.getAll().forEach((cookie) => redirectResponse.cookies.set(cookie));
+    return redirectResponse;
   }
 
   return response;
 }
 
 export const config = {
-  matcher: ["/((?!_next/static|_next/image|favicon.ico).*)"],
+  // Public marketing, support, and auth pages never need an auth round trip.
+  matcher: [
+    "/dashboard/:path*", "/log/:path*", "/trades/:path*", "/calendar/:path*",
+    "/calculator/:path*", "/growth/:path*", "/import/:path*", "/rules/:path*",
+    "/playbooks/:path*", "/review/:path*", "/weekly/:path*", "/coach/:path*",
+    "/report/:path*", "/profile/:path*", "/billing/:path*",
+  ],
 };
