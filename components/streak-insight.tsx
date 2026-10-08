@@ -1,0 +1,15 @@
+import Link from "next/link";
+import type { Trade } from "@/types/trade";
+
+export function StreakInsight({ trades }: { trades: Trade[] }) {
+  const ordered = trades.filter((trade) => trade.status === "Completed").sort((a, b) => new Date(`${b.date}T00:00:00`).getTime() - new Date(`${a.date}T00:00:00`).getTime() || new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+  const first = ordered[0];
+  if (!first || first.result === "BE") return <section className="terminal-panel rounded-lg p-5"><p className="font-mono text-xs uppercase text-terminal-cyan">pattern watch / streaks</p><h2 className="mt-2 text-lg font-semibold">Build your baseline</h2><p className="mt-2 text-sm leading-6 text-terminal-muted">As you journal more trades, this space will help surface repeated patterns in results, process, and emotion. It is a prompt to investigate, not a diagnosis.</p></section>;
+  const streak: Trade[] = [];
+  for (const trade of ordered) { if (trade.result !== first.result) break; streak.push(trade); }
+  const processBreaks = streak.filter((trade) => !trade.criteria_met || trade.followed_trading_plan === "No" || trade.fomo || trade.revenge_trade).length;
+  const difficultEmotions = streak.filter((trade) => ["Anxious", "Fearful", "Frustrated", "Tired", "Angry"].includes(trade.emotion ?? "")).length;
+  const title = first.result === "Loss" ? `${streak.length} loss${streak.length === 1 ? "" : "es"} in a row` : `${streak.length} win${streak.length === 1 ? "" : "s"} in a row`;
+  const prompt = first.result === "Loss" ? "Pause before the next entry. Separate normal variance from execution drift: were the setups valid, stops respected, and rules followed? If process quality is slipping, step back and review before risking more." : "Protect the process that produced the wins. Check whether setups still met your rules, risk stayed constant, and confidence has not become over-sizing or impulsive entry.";
+  return <section className="terminal-panel rounded-lg p-5"><div className="flex flex-wrap items-start justify-between gap-3"><div><p className="font-mono text-xs uppercase text-terminal-cyan">pattern watch / streaks</p><h2 className="mt-2 text-lg font-semibold">{title}</h2></div><span className="rounded border border-terminal-line px-2 py-1 font-mono text-xs text-terminal-muted">LAST {streak.length} TRADE{streak.length === 1 ? "" : "S"}</span></div><p className="mt-3 text-sm leading-6 text-terminal-muted">{prompt}</p><div className="mt-4 grid gap-3 border-t border-terminal-line pt-4 text-sm sm:grid-cols-2"><p className="text-terminal-muted">Rule or behavior flags <strong className="number text-terminal-text">{processBreaks}/{streak.length}</strong></p><p className="text-terminal-muted">Difficult emotions recorded <strong className="number text-terminal-text">{difficultEmotions}/{streak.length}</strong></p></div><Link href="/weekly" className="mt-4 inline-flex text-sm font-semibold text-terminal-cyan hover:text-cyan-300">Open weekly debrief →</Link></section>;
+}

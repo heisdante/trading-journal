@@ -29,6 +29,9 @@ export async function GET(request: NextRequest) {
     await supabase.auth.exchangeCodeForSession(code)
   }
 
-  // Redirect to dashboard after verification
-  return NextResponse.redirect(new URL('/dashboard', request.url))
+  const requestedPath = request.cookies.get('trading-journal-login-next')?.value ?? requestUrl.searchParams.get('next') ?? '/dashboard'
+  const next = requestedPath.startsWith('/') && !requestedPath.startsWith('//') && !requestedPath.includes('\\') ? requestedPath : '/dashboard'
+  const response = NextResponse.redirect(new URL(next, request.url))
+  response.cookies.delete('trading-journal-login-next')
+  return response
 }

@@ -33,7 +33,7 @@ export function TradeTable({ trades }: { trades: Trade[] }) {
   const filteredTrades = useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase();
     return trades.filter((trade) => {
-      const searchable = [trade.pair, trade.market, trade.setup_name, trade.direction, trade.session, trade.trade_type, trade.outcome, trade.entry_reason, trade.exit_reason, trade.notes].filter(Boolean).join(" ").toLowerCase();
+      const searchable = [trade.pair, trade.market, trade.setup_name, trade.direction, trade.status, trade.session, trade.trade_type, trade.outcome, trade.entry_reason, trade.exit_reason, trade.notes].filter(Boolean).join(" ").toLowerCase();
       return (
         (!normalizedQuery || searchable.includes(normalizedQuery)) &&
         (market === "all" || trade.market === market) &&
@@ -75,7 +75,7 @@ export function TradeTable({ trades }: { trades: Trade[] }) {
         </label>
         <select aria-label="Filter by market" value={market} onChange={(event) => setMarket(event.target.value)} className="h-11 rounded border border-terminal-line bg-terminal-bg px-3 text-sm text-terminal-text outline-none focus:border-terminal-cyan"><option value="all">All markets</option>{markets.map((item) => <option key={item}>{item}</option>)}</select>
         <select aria-label="Filter by session" value={session} onChange={(event) => setSession(event.target.value)} className="h-11 rounded border border-terminal-line bg-terminal-bg px-3 text-sm text-terminal-text outline-none focus:border-terminal-cyan"><option value="all">All sessions</option>{sessions.map((item) => <option key={item}>{item}</option>)}</select>
-        <select aria-label="Filter by result" value={result} onChange={(event) => setResult(event.target.value)} className="h-11 rounded border border-terminal-line bg-terminal-bg px-3 text-sm text-terminal-text outline-none focus:border-terminal-cyan"><option value="all">All results</option><option>Win</option><option>Loss</option><option>BE</option></select>
+        <select aria-label="Filter by result or stage" value={result} onChange={(event) => setResult(event.target.value)} className="h-11 rounded border border-terminal-line bg-terminal-bg px-3 text-sm text-terminal-text outline-none focus:border-terminal-cyan"><option value="all">All stages/results</option><option>Planned</option><option>Open</option><option>Win</option><option>Loss</option><option>BE</option></select>
         <select aria-label="Filter by direction" value={direction} onChange={(event) => setDirection(event.target.value)} className="h-11 rounded border border-terminal-line bg-terminal-bg px-3 text-sm text-terminal-text outline-none focus:border-terminal-cyan"><option value="all">All directions</option><option>Long</option><option>Short</option></select>
         <div className="grid gap-3 lg:col-span-5 sm:grid-cols-[1fr_1fr_auto]">
           <input aria-label="From date" type="date" value={from} onChange={(event) => setFrom(event.target.value)} className="h-11 rounded border border-terminal-line bg-terminal-bg px-3 text-sm text-terminal-text outline-none focus:border-terminal-cyan" />
@@ -87,7 +87,7 @@ export function TradeTable({ trades }: { trades: Trade[] }) {
 
       {filteredTrades.length ? (
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[1500px] border-collapse text-left text-sm">
+          <table className="w-full min-w-[1760px] border-collapse text-left text-sm">
             <thead className="bg-terminal-panel2 text-xs uppercase tracking-wider text-terminal-muted">
               <tr>
                 <th className="px-4 py-3 font-medium">Date</th>
@@ -101,8 +101,11 @@ export function TradeTable({ trades }: { trades: Trade[] }) {
                 <th className="px-4 py-3 font-medium">Exit Reason</th>
                 <th className="px-4 py-3 font-medium">Criteria</th>
                 <th className="px-4 py-3 font-medium">Plan</th>
+                <th className="px-4 py-3 font-medium">Stage</th>
                 <th className="px-4 py-3 font-medium">Outcome</th>
                 <th className="px-4 py-3 font-medium">R</th>
+                <th className="px-4 py-3 font-medium">Risk return</th>
+                <th className="px-4 py-3 font-medium">Reflection</th>
                 <th className="px-4 py-3 font-medium">Result</th>
                 <th className="px-4 py-3 font-medium">Idea</th>
                 <th className="px-4 py-3 font-medium">Shots</th>
@@ -134,12 +137,15 @@ export function TradeTable({ trades }: { trades: Trade[] }) {
                     </span>
                   </td>
                   <td className="px-4 py-3 text-terminal-muted">{trade.followed_trading_plan}</td>
-                  <td className="px-4 py-3 text-terminal-muted">{trade.outcome}</td>
+                  <td className="px-4 py-3 text-terminal-muted">{trade.status}</td>
+                  <td className="px-4 py-3 text-terminal-muted">{trade.outcome ?? "—"}</td>
                   <td className={clsx("number px-4 py-3 font-semibold", resultClass(trade.r_value).split(" ").at(-1))}>
-                    {formatR(trade.r_value)}
+                    {trade.status === "Completed" ? formatR(trade.r_value) : "—"}
                   </td>
+                  <td className="number whitespace-nowrap px-4 py-3 text-terminal-muted">{trade.status !== "Completed" || trade.risk_percent == null ? "—" : `${trade.r_value * trade.risk_percent >= 0 ? "+" : ""}${(trade.r_value * trade.risk_percent).toFixed(2)}%`}</td>
+                  <td className="px-4 py-3">{trade.status !== "Completed" ? "—" : <Link href={`/trades/${trade.id}`} className={trade.reviewed_at ? "text-terminal-green" : "text-terminal-amber"}>{trade.reviewed_at ? "Reviewed" : "Review needed"}</Link>}</td>
                   <td className="px-4 py-3">
-                    <span className={clsx("rounded border px-2 py-1 text-xs", resultClass(trade.r_value))}>{trade.result}</span>
+                    <span className={clsx("rounded border px-2 py-1 text-xs", resultClass(trade.r_value))}>{trade.result === "BE" ? "Breakeven" : trade.result}</span>
                   </td>
                   <td className="max-w-[180px] truncate px-4 py-3 text-terminal-muted">
                     {trade.trade_idea_link ? (

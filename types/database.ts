@@ -10,6 +10,7 @@ import type {
   TradingSession,
   Emotion,
   RuleReviewStatus,
+  TradeStatus,
 } from "@/types/trade";
 
 export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[];
@@ -26,20 +27,27 @@ export type Database = {
           market: Market;
           setup_name: string;
           direction: Direction;
-          entry_price: number;
-          stop_price: number;
+          status: TradeStatus;
+          entry_price: number | null;
+          stop_price: number | null;
           target_price: number | null;
-          exit_price: number;
+          exit_price: number | null;
           volume: number | null;
           commission: number | null;
           swap: number | null;
           profit: number | null;
+          risk_percent: number | null;
           source_platform: string | null;
           source_trade_id: string | null;
           opened_at: string | null;
           closed_at: string | null;
           emotion: Emotion | null;
           emotion_notes: string | null;
+          review_comment: string | null;
+          lesson_learned: string | null;
+          next_trade_action: string | null;
+          reviewed_at: string | null;
+          review_required: boolean;
           fomo: boolean;
           cut_winner_early: boolean;
           revenge_trade: boolean;
@@ -50,10 +58,10 @@ export type Database = {
           exit_reason: string;
           criteria_met: boolean;
           criteria_status: CriteriaStatus;
-          outcome: TradeOutcome;
+          outcome: TradeOutcome | null;
           trade_idea_link: string | null;
           screenshots: TradeScreenshot[];
-          followed_trading_plan: FollowedTradingPlan;
+          followed_trading_plan: FollowedTradingPlan | null;
           session: TradingSession | null;
           trade_type: TradeType | null;
           notes: string | null;
@@ -69,20 +77,27 @@ export type Database = {
           market: Market;
           setup_name: string;
           direction: Direction;
-          entry_price: number;
-          stop_price: number;
+          status?: TradeStatus;
+          entry_price?: number | null;
+          stop_price?: number | null;
           target_price?: number | null;
-          exit_price: number;
+          exit_price?: number | null;
+          opened_at?: string | null;
+          closed_at?: string | null;
           volume?: number | null;
           commission?: number | null;
           swap?: number | null;
           profit?: number | null;
+          risk_percent?: number | null;
           source_platform?: string | null;
           source_trade_id?: string | null;
-          opened_at?: string | null;
-          closed_at?: string | null;
           emotion?: Emotion | null;
           emotion_notes?: string | null;
+          review_comment?: string | null;
+          lesson_learned?: string | null;
+          next_trade_action?: string | null;
+          reviewed_at?: string | null;
+          review_required?: boolean;
           fomo?: boolean;
           cut_winner_early?: boolean;
           revenge_trade?: boolean;
@@ -93,10 +108,10 @@ export type Database = {
           exit_reason: string;
           criteria_met?: boolean;
           criteria_status: CriteriaStatus;
-          outcome: TradeOutcome;
+          outcome?: TradeOutcome | null;
           trade_idea_link?: string | null;
           screenshots?: TradeScreenshot[];
-          followed_trading_plan: FollowedTradingPlan;
+          followed_trading_plan?: FollowedTradingPlan | null;
           session?: TradingSession | null;
           trade_type?: TradeType | null;
           notes?: string | null;
@@ -108,17 +123,38 @@ export type Database = {
           market?: Market;
           setup_name?: string;
           direction?: Direction;
+          status?: TradeStatus;
+          entry_price?: number | null;
+          stop_price?: number | null;
+          target_price?: number | null;
+          exit_price?: number | null;
+          opened_at?: string | null;
+          closed_at?: string | null;
           entry_reason?: string;
           exit_reason?: string;
           criteria_met?: boolean;
           criteria_status?: CriteriaStatus;
-          outcome?: TradeOutcome;
+          emotion?: Emotion | null;
+          emotion_notes?: string | null;
+          fomo?: boolean;
+          cut_winner_early?: boolean;
+          revenge_trade?: boolean;
+          outcome?: TradeOutcome | null;
           trade_idea_link?: string | null;
           screenshots?: TradeScreenshot[];
-          followed_trading_plan?: FollowedTradingPlan;
+          followed_trading_plan?: FollowedTradingPlan | null;
           session?: TradingSession | null;
           trade_type?: TradeType | null;
           notes?: string | null;
+          risk_percent?: number | null;
+          review_comment?: string | null;
+          lesson_learned?: string | null;
+          next_trade_action?: string | null;
+          reviewed_at?: string | null;
+          review_required?: boolean;
+          discipline_score?: number | null;
+          ai_rule_status?: RuleReviewStatus;
+          ai_rule_feedback?: string | null;
         };
         Relationships: [
           {
@@ -146,6 +182,12 @@ export type Database = {
         Row: { id: string; full_name: string | null; timezone: string; currency: string; default_market: Market | null; default_session: TradingSession | null; default_trade_type: TradeType | null; default_risk_percent: number | null; ai_coach_enabled: boolean; created_at: string; updated_at: string };
         Insert: { id?: string; full_name?: string | null; timezone?: string; currency?: string; default_market?: Market | null; default_session?: TradingSession | null; default_trade_type?: TradeType | null; default_risk_percent?: number | null; ai_coach_enabled?: boolean };
         Update: { full_name?: string | null; timezone?: string; currency?: string; default_market?: Market | null; default_session?: TradingSession | null; default_trade_type?: TradeType | null; default_risk_percent?: number | null; ai_coach_enabled?: boolean };
+        Relationships: [];
+      };
+      growth_plans: {
+        Row: { id: string; user_id: string; title: string; account_type: "Prop firm" | "Personal account"; starting_balance: number; target_balance: number; currency: string; risk_percent: number; deadline: string | null; milestones: string; is_active: boolean; created_at: string };
+        Insert: { id?: string; user_id?: string; title: string; account_type: "Prop firm" | "Personal account"; starting_balance: number; target_balance: number; currency?: string; risk_percent: number; deadline?: string | null; milestones?: string; is_active?: boolean };
+        Update: { title?: string; account_type?: "Prop firm" | "Personal account"; starting_balance?: number; target_balance?: number; currency?: string; risk_percent?: number; deadline?: string | null; milestones?: string; is_active?: boolean };
         Relationships: [];
       };
     };

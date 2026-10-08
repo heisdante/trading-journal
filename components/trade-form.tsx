@@ -1,139 +1,90 @@
+"use client";
+
+import { useState } from "react";
+import { ArrowLeft, ArrowRight, Check, ChevronDown, ClipboardCheck, Compass, Lightbulb, Sparkles } from "lucide-react";
 import { addTradeAction } from "@/lib/trades/actions";
+import { FormActionButton } from "@/components/form-action-button";
 
 const markets = ["Forex", "Stocks", "Futures", "Crypto", "Indices", "Options", "Bonds", "Funds", "Economy"];
-const criteriaStatuses = ["Good", "Fail"];
-const outcomes = ["Loss", "Win", "Breakeven"];
-const followedTradingPlanOptions = ["Yes", "No"];
 const sessions = ["London", "New York", "Asian", "Frankfurt"];
 const tradeTypes = ["Day Trade", "Swing Trade"];
 const emotions = ["Calm", "Confident", "Focused", "Anxious", "Fearful", "Frustrated", "Excited", "Tired", "Angry"];
+const steps = [
+  { label: "Setup", hint: "The idea", icon: Compass },
+  { label: "Context", hint: "Your mindset", icon: Lightbulb },
+  { label: "Review", hint: "Save the plan", icon: ClipboardCheck },
+];
 
-function Field({
-  label,
-  name,
-  type = "text",
-  required = true,
-  placeholder,
-  step,
-}: {
+const controlClass = "mt-2 h-12 w-full rounded-md border border-terminal-line bg-terminal-bg px-3.5 text-terminal-text outline-none transition duration-200 placeholder:text-terminal-muted/55 hover:border-terminal-cyan/40 focus:border-terminal-cyan focus:ring-2 focus:ring-terminal-cyan/15";
+const textareaClass = "mt-2 w-full resize-y rounded-md border border-terminal-line bg-terminal-bg px-3.5 py-3 text-terminal-text outline-none transition duration-200 placeholder:text-terminal-muted/55 hover:border-terminal-cyan/40 focus:border-terminal-cyan focus:ring-2 focus:ring-terminal-cyan/15";
+
+function Field({ label, name, value, onChange, type = "text", placeholder, options, defaultOption = "Choose when ready" }: {
   label: string;
   name: string;
+  value: string;
+  onChange: (name: string, value: string) => void;
   type?: string;
-  required?: boolean;
   placeholder?: string;
-  step?: string;
+  options?: string[];
+  defaultOption?: string;
 }) {
-  return (
-    <label className="block">
-      <span className="text-sm text-terminal-muted">{label}</span>
-      <input
-        name={name}
-        type={type}
-        required={required}
-        placeholder={placeholder}
-        step={step}
-        className="number mt-2 h-11 w-full rounded border border-terminal-line bg-terminal-bg px-3 text-terminal-text outline-none transition placeholder:text-terminal-muted/50 focus:border-terminal-cyan"
-      />
-    </label>
-  );
+  return <label className="block text-sm font-medium text-terminal-muted">{label}{options ? <span className="relative block"><select name={name} value={value} onChange={(event) => onChange(name, event.target.value)} className={`${controlClass} appearance-none pr-11`}><option value="">{defaultOption}</option>{options.map((option) => <option key={option} value={option}>{option}</option>)}</select><ChevronDown aria-hidden="true" className="pointer-events-none absolute right-3 top-1/2 mt-1 h-4 w-4 -translate-y-1/2 text-terminal-muted" /></span> : <input name={name} type={type} value={value} onChange={(event) => onChange(name, event.target.value)} placeholder={placeholder} className={controlClass} />}</label>;
 }
 
-function SelectField({ label, name, options, required = true, defaultValue }: { label: string; name: string; options: string[]; required?: boolean; defaultValue?: string }) {
-  return (
-    <label className="block">
-      <span className="text-sm text-terminal-muted">{label}</span>
-      <select
-        name={name}
-        required={required}
-        defaultValue={defaultValue ?? (required ? options[0] : "")}
-        className="mt-2 h-11 w-full rounded border border-terminal-line bg-terminal-bg px-3 text-terminal-text outline-none transition focus:border-terminal-cyan"
-      >
-        {!required ? <option value="">Optional</option> : null}
-        {options.map((option) => (
-          <option key={option}>{option}</option>
-        ))}
-      </select>
-    </label>
-  );
+function NoteField({ label, name, value, onChange, placeholder, rows = 3 }: { label: string; name: string; value: string; onChange: (name: string, value: string) => void; placeholder: string; rows?: number }) {
+  return <label className="block text-sm font-medium text-terminal-muted">{label}<textarea name={name} rows={rows} value={value} onChange={(event) => onChange(name, event.target.value)} placeholder={placeholder} className={textareaClass} /></label>;
 }
 
 export function TradeForm({ defaults }: { defaults?: { market?: string | null; session?: string | null; tradeType?: string | null } }) {
-  return (
-    <form action={addTradeAction} encType="multipart/form-data" className="terminal-panel overflow-hidden rounded-lg p-5">
-      <div className="app-page-heading -m-5 mb-6 border-b border-terminal-line p-5">
-        <p className="font-mono text-xs uppercase text-terminal-cyan">trade / new</p>
-        <h1 className="mt-2 text-2xl font-semibold text-terminal-text">Log a trade</h1>
-        <p className="mt-2 max-w-2xl text-sm leading-6 text-terminal-muted">Capture the facts, context, and behavior while the decision is still close enough to inspect honestly.</p>
+  const [step, setStep] = useState(0);
+  const today = new Date();
+  const [values, setValues] = useState<Record<string, string>>({
+    date: `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`,
+    market: defaults?.market ?? "Forex",
+    direction: "Long",
+    criteria_met: "yes",
+    session: defaults?.session ?? "",
+    trade_type: defaults?.tradeType ?? "",
+  });
+  const [flags, setFlags] = useState({ fomo: false, cut_winner_early: false, revenge_trade: false });
+  const update = (name: string, value: string) => setValues((current) => ({ ...current, [name]: value }));
+
+  return <form action={addTradeAction} onKeyDown={(event) => { if (step < 2 && event.key === "Enter" && !(event.target instanceof HTMLTextAreaElement)) event.preventDefault(); }} className="mx-auto w-full max-w-4xl overflow-hidden rounded-xl border border-terminal-line bg-terminal-panel shadow-[0_24px_72px_rgba(0,0,0,0.22)]">
+    <header className="border-b border-terminal-line bg-terminal-panel2/55 px-5 py-6 sm:px-8 sm:py-8">
+      <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
+        <div><p className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.18em] text-terminal-cyan"><Sparkles className="h-3.5 w-3.5" />Trade journal / guided entry</p><h1 className="mt-3 text-2xl font-semibold tracking-tight text-terminal-text sm:text-3xl">Build your trade idea</h1><p className="mt-2 max-w-xl text-sm leading-6 text-terminal-muted">Take it one step at a time. Save the setup now, then add execution and reflection as the trade unfolds.</p></div>
+        <div className="shrink-0 rounded-md border border-terminal-cyan/20 bg-terminal-bg/70 px-3 py-2"><p className="font-mono text-[10px] uppercase tracking-wider text-terminal-muted">Progress</p><p className="mt-1 text-sm font-semibold text-terminal-text">Step {step + 1} <span className="font-normal text-terminal-muted">of {steps.length}</span></p></div>
       </div>
+      <ol aria-label="Trade entry steps" className="mt-7 grid grid-cols-3 gap-2 sm:gap-4">{steps.map(({ label, hint, icon: Icon }, index) => <li key={label} aria-current={step === index ? "step" : undefined} className="min-w-0"><div className={`flex items-center gap-2.5 border-t-2 pt-3 transition-colors sm:gap-3 ${index <= step ? "border-terminal-cyan" : "border-terminal-line"}`}><span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${index < step ? "bg-terminal-cyan text-terminal-bg" : index === step ? "bg-terminal-cyan/15 text-terminal-cyan" : "bg-terminal-bg text-terminal-muted"}`}>{index < step ? <Check className="h-4 w-4" /> : <Icon className="h-4 w-4" />}</span><span className="min-w-0"><span className={`block truncate text-xs font-semibold sm:text-sm ${index === step ? "text-terminal-text" : "text-terminal-muted"}`}>{label}</span><span className="hidden text-xs text-terminal-muted sm:block">{hint}</span></span></div></li>)}</ol>
+    </header>
 
-      <div className="grid gap-4 md:grid-cols-2">
-        <Field label="Date" name="date" type="date" />
-        <Field label="Pair" name="pair" placeholder="EUR/USD, AAPL, BTC/USD" />
-        <SelectField label="Market" name="market" options={markets} defaultValue={defaults?.market ?? undefined} />
-        <Field label="Setup name" name="setup_name" placeholder="Breakout retest" />
-        <Field label="Entry price" name="entry_price" type="number" step="any" placeholder="1.08500" />
-        <Field label="Stop price" name="stop_price" type="number" step="any" placeholder="1.08000" />
-        <Field label="Target price" name="target_price" type="number" step="any" required={false} placeholder="1.09500" />
-        <Field label="Exit price" name="exit_price" type="number" step="any" placeholder="1.09200" />
-
-        <label className="block">
-          <span className="text-sm text-terminal-muted">Direction</span>
-          <select
-            name="direction"
-            defaultValue="Long"
-            className="mt-2 h-11 w-full rounded border border-terminal-line bg-terminal-bg px-3 text-terminal-text outline-none transition focus:border-terminal-cyan"
-          >
-            <option>Long</option>
-            <option>Short</option>
-          </select>
-        </label>
-
-        <SelectField label="Criteria met" name="criteria_status" options={criteriaStatuses} />
-        <SelectField label="Outcome" name="outcome" options={outcomes} />
-
-        <Field label="Entry reason" name="entry_reason" placeholder="Why did this trade qualify?" />
-        <Field label="Exit reason" name="exit_reason" placeholder="Why did you close or plan to close?" />
-        <Field label="Trade idea link" name="trade_idea_link" type="url" required={false} placeholder="https://..." />
-        <SelectField label="Followed your trading plan?" name="followed_trading_plan" options={followedTradingPlanOptions} />
-        <SelectField label="Session" name="session" options={sessions} required={false} defaultValue={defaults?.session ?? undefined} />
-        <SelectField label="Type of trade" name="trade_type" options={tradeTypes} required={false} defaultValue={defaults?.tradeType ?? undefined} />
-        <SelectField label="Emotion" name="emotion" options={emotions} required={false} />
+    <section hidden={step !== 0} aria-labelledby="trade-setup-title" className="p-5 sm:p-8">
+      <div className="mb-6"><p className="font-mono text-[10px] uppercase tracking-[0.16em] text-terminal-cyan">01 / define the idea</p><h2 id="trade-setup-title" className="mt-2 text-xl font-semibold text-terminal-text">What are you watching?</h2><p className="mt-1 text-sm text-terminal-muted">Capture the setup and the reason it is worth your attention.</p></div>
+      <div className="grid gap-x-5 gap-y-5 sm:grid-cols-2"><Field label="Date spotted" name="date" type="date" value={values.date} onChange={update} /><Field label="Pair or symbol" name="pair" value={values.pair ?? ""} onChange={update} placeholder="EUR/USD, AAPL, BTC/USD" /><Field label="Market" name="market" value={values.market} onChange={update} options={markets} defaultOption="Choose a market" /><Field label="Setup name" name="setup_name" value={values.setup_name ?? ""} onChange={update} placeholder="Breakout retest" />
+        <fieldset className="sm:col-span-2"><legend className="text-sm font-medium text-terminal-muted">Trade direction</legend><div className="mt-2 grid grid-cols-2 gap-3">{["Long", "Short"].map((direction) => <label key={direction} className="cursor-pointer"><input className="peer sr-only" type="radio" name="direction" value={direction} checked={values.direction === direction} onChange={(event) => update("direction", event.target.value)} /><span className="flex min-h-12 items-center justify-center gap-2 rounded-md border border-terminal-line bg-terminal-bg text-sm font-semibold text-terminal-muted transition hover:border-terminal-cyan/50 peer-checked:border-terminal-cyan peer-checked:bg-terminal-cyan/10 peer-checked:text-terminal-cyan peer-focus-visible:ring-2 peer-focus-visible:ring-terminal-cyan/50">{direction === "Long" ? "↗" : "↘"}<span>{direction}</span></span></label>)}</div></fieldset>
+        <fieldset className="rounded-md border border-terminal-line bg-terminal-bg/55 p-4 sm:col-span-2"><legend className="px-1 text-sm font-medium text-terminal-muted">Does this idea meet your criteria?</legend><div className="mt-1 grid grid-cols-2 gap-3">{[["yes", "Yes, it qualifies"], ["no", "No, outside my rules"]].map(([value, label]) => <label key={value} className="cursor-pointer"><input className="peer sr-only" type="radio" name="criteria_met" value={value} checked={values.criteria_met === value} onChange={(event) => update("criteria_met", event.target.value)} /><span className="flex min-h-11 items-center justify-center rounded-md border border-terminal-line px-3 text-sm text-terminal-muted transition hover:border-terminal-cyan/50 peer-checked:border-terminal-cyan peer-checked:bg-terminal-cyan/10 peer-checked:font-semibold peer-checked:text-terminal-cyan peer-focus-visible:ring-2 peer-focus-visible:ring-terminal-cyan/50">{label}</span></label>)}</div></fieldset>
+        <div className="sm:col-span-2"><NoteField label="Setup thesis" name="entry_reason" value={values.entry_reason ?? ""} onChange={update} placeholder="What are you waiting for? What would confirm or invalidate this idea?" rows={4} /></div>
       </div>
+      <div className="mt-8 flex justify-end border-t border-terminal-line pt-5"><button type="button" onClick={() => setStep(1)} className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-md bg-terminal-cyan px-5 text-sm font-semibold text-terminal-bg transition hover:bg-cyan-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-terminal-cyan sm:w-auto">Next: trading context <ArrowRight className="h-4 w-4" /></button></div>
+    </section>
 
-      <div className="mt-5 grid gap-3 border-t border-terminal-line pt-5 sm:grid-cols-3">
-        <label className="flex min-h-11 items-center gap-3 rounded border border-terminal-line px-3 text-sm text-terminal-muted"><input name="fomo" type="checkbox" className="h-4 w-4 accent-cyan-300" /> FOMO</label>
-        <label className="flex min-h-11 items-center gap-3 rounded border border-terminal-line px-3 text-sm text-terminal-muted"><input name="cut_winner_early" type="checkbox" className="h-4 w-4 accent-cyan-300" /> Cut winner early</label>
-        <label className="flex min-h-11 items-center gap-3 rounded border border-terminal-line px-3 text-sm text-terminal-muted"><input name="revenge_trade" type="checkbox" className="h-4 w-4 accent-cyan-300" /> Revenge trade</label>
+    <section hidden={step !== 1} aria-labelledby="trade-context-title" className="p-5 sm:p-8">
+      <div className="mb-6"><p className="font-mono text-[10px] uppercase tracking-[0.16em] text-terminal-cyan">02 / observe your state</p><h2 id="trade-context-title" className="mt-2 text-xl font-semibold text-terminal-text">Trading context</h2><p className="mt-1 text-sm text-terminal-muted">Record the conditions and mindset you are bringing into this idea.</p></div>
+      <div className="grid gap-x-5 gap-y-5 sm:grid-cols-2"><Field label="Market session" name="session" value={values.session} onChange={update} options={sessions} /><Field label="Trade style" name="trade_type" value={values.trade_type} onChange={update} options={tradeTypes} /><Field label="How do you feel right now?" name="emotion" value={values.emotion ?? ""} onChange={update} options={emotions} /><Field label="Trade idea link (optional)" name="trade_idea_link" value={values.trade_idea_link ?? ""} onChange={update} placeholder="https://…" />
+        <fieldset className="sm:col-span-2"><legend className="text-sm font-medium text-terminal-muted">Anything influencing your decisions?</legend><div className="mt-3 grid gap-3 sm:grid-cols-3">{[["fomo", "FOMO", "Rushing to catch a move"], ["cut_winner_early", "Early exit concern", "Worried about letting a win run"], ["revenge_trade", "Revenge impulse", "Trying to recover a recent loss"]].map(([name, label, hint]) => <label key={name} className={`flex min-h-[76px] cursor-pointer items-start gap-3 rounded-md border p-3 transition ${flags[name as keyof typeof flags] ? "border-terminal-amber/55 bg-terminal-amber/5" : "border-terminal-line bg-terminal-bg/45 hover:border-terminal-cyan/40"}`}><input name={name} type="checkbox" checked={flags[name as keyof typeof flags]} onChange={(event) => setFlags((current) => ({ ...current, [name]: event.target.checked }))} className="mt-1 h-4 w-4 shrink-0 accent-cyan-300" /><span><span className="block text-sm font-medium text-terminal-text">{label}</span><span className="mt-1 block text-xs leading-5 text-terminal-muted">{hint}</span></span></label>)}</div></fieldset>
+        <div className="sm:col-span-2"><NoteField label="Mindset notes" name="emotion_notes" value={values.emotion_notes ?? ""} onChange={update} placeholder="What are you thinking or feeling as you wait for the setup?" rows={3} /></div>
+        <label className="block text-sm font-medium text-terminal-muted sm:col-span-2">Chart screenshots<input name="screenshots" type="file" accept="image/*" multiple className="mt-2 block min-h-12 w-full rounded-md border border-terminal-line bg-terminal-bg px-3 py-2 text-sm text-terminal-muted file:mr-3 file:min-h-8 file:rounded file:border-0 file:bg-terminal-cyan/15 file:px-3 file:font-semibold file:text-terminal-cyan hover:border-terminal-cyan/40" /><span className="mt-1 block text-xs font-normal text-terminal-muted">Optional. Attach the chart you are using to plan this setup.</span></label>
+        <div className="sm:col-span-2"><NoteField label="Additional notes" name="notes" value={values.notes ?? ""} onChange={update} placeholder="Other context you want your future self to remember." rows={3} /></div>
       </div>
+      <div className="mt-8 flex flex-col-reverse gap-3 border-t border-terminal-line pt-5 sm:flex-row sm:items-center sm:justify-between"><button type="button" onClick={() => setStep(0)} className="inline-flex min-h-12 items-center justify-center gap-2 rounded-md border border-terminal-line px-5 text-sm font-medium text-terminal-muted transition hover:border-terminal-cyan/50 hover:text-terminal-text"><ArrowLeft className="h-4 w-4" />Back</button><button type="button" onClick={() => setStep(2)} className="inline-flex min-h-12 items-center justify-center gap-2 rounded-md bg-terminal-cyan px-5 text-sm font-semibold text-terminal-bg transition hover:bg-cyan-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-terminal-cyan">Review your idea <ArrowRight className="h-4 w-4" /></button></div>
+      </section>
 
-      <label className="mt-4 block"><span className="text-sm text-terminal-muted">Emotion notes</span><input name="emotion_notes" placeholder="What were you feeling and why?" className="mt-2 h-11 w-full rounded border border-terminal-line bg-terminal-bg px-3 text-terminal-text placeholder:text-terminal-muted/50" /></label>
-
-      <label className="mt-4 block">
-        <span className="text-sm text-terminal-muted">Screenshots</span>
-        <input
-          name="screenshots"
-          type="file"
-          accept="image/*"
-          multiple
-          className="mt-2 block w-full rounded border border-terminal-line bg-terminal-bg px-3 py-2 text-sm text-terminal-muted outline-none transition file:mr-3 file:rounded file:border-0 file:bg-terminal-cyan file:px-3 file:py-2 file:font-semibold file:text-terminal-bg hover:file:bg-cyan-300 focus:border-terminal-cyan"
-        />
-      </label>
-
-      <label className="mt-4 block">
-        <span className="text-sm text-terminal-muted">Notes</span>
-        <textarea
-          name="notes"
-          rows={5}
-          className="mt-2 w-full resize-y rounded border border-terminal-line bg-terminal-bg px-3 py-3 text-terminal-text outline-none transition placeholder:text-terminal-muted/50 focus:border-terminal-cyan"
-          placeholder="Context, execution quality, emotions, screenshots link..."
-        />
-      </label>
-
-      <div className="mt-6 flex justify-end">
-        <button type="submit" className="h-11 rounded bg-terminal-cyan px-5 font-semibold text-terminal-bg transition hover:bg-cyan-300 hover:shadow-glow">
-          Save trade
-        </button>
-      </div>
-    </form>
-  );
+    <section hidden={step !== 2} aria-labelledby="trade-review-title" className="p-5 sm:p-8">
+      <div className="mb-6"><p className="font-mono text-[10px] uppercase tracking-[0.16em] text-terminal-cyan">03 / ready to journal</p><h2 id="trade-review-title" className="mt-2 text-xl font-semibold text-terminal-text">A moment to check in</h2><p className="mt-1 text-sm text-terminal-muted">Review your notes, then save the idea. You can update it later as the trade develops.</p></div>
+      <div className="grid gap-4 sm:grid-cols-2"><article className="rounded-lg border border-terminal-line bg-terminal-bg/55 p-4"><div className="flex items-center justify-between gap-3"><h3 className="text-sm font-semibold text-terminal-text">Trade idea</h3><button type="button" onClick={() => setStep(0)} className="min-h-9 rounded px-2 text-xs font-semibold text-terminal-cyan hover:bg-terminal-cyan/10">Edit</button></div><dl className="mt-3 space-y-2 text-sm"><div className="flex justify-between gap-3"><dt className="text-terminal-muted">Date</dt><dd className="text-right text-terminal-text">{values.date || "Not added yet"}</dd></div><div className="flex justify-between gap-3"><dt className="text-terminal-muted">Market</dt><dd className="text-right text-terminal-text">{values.market || "Not selected"}</dd></div><div className="flex justify-between gap-3"><dt className="text-terminal-muted">Symbol</dt><dd className="text-right text-terminal-text">{values.pair || "Not added yet"}</dd></div><div className="flex justify-between gap-3"><dt className="text-terminal-muted">Setup</dt><dd className="text-right text-terminal-text">{values.setup_name || "Not named yet"}</dd></div><div className="flex justify-between gap-3"><dt className="text-terminal-muted">Direction</dt><dd className="text-right text-terminal-text">{values.direction}</dd></div><div className="flex justify-between gap-3"><dt className="text-terminal-muted">Criteria</dt><dd className="text-right text-terminal-text">{values.criteria_met === "yes" ? "Yes" : "No"}</dd></div></dl>{values.entry_reason && <p className="mt-3 border-t border-terminal-line pt-3 text-sm leading-6 text-terminal-muted">{values.entry_reason}</p>}</article>
+        <article className="rounded-lg border border-terminal-line bg-terminal-bg/55 p-4"><div className="flex items-center justify-between gap-3"><h3 className="text-sm font-semibold text-terminal-text">Trading context</h3><button type="button" onClick={() => setStep(1)} className="min-h-9 rounded px-2 text-xs font-semibold text-terminal-cyan hover:bg-terminal-cyan/10">Edit</button></div><dl className="mt-3 space-y-2 text-sm"><div className="flex justify-between gap-3"><dt className="text-terminal-muted">Session</dt><dd className="text-right text-terminal-text">{values.session || "Not set"}</dd></div><div className="flex justify-between gap-3"><dt className="text-terminal-muted">Style</dt><dd className="text-right text-terminal-text">{values.trade_type || "Not set"}</dd></div><div className="flex justify-between gap-3"><dt className="text-terminal-muted">Mindset</dt><dd className="text-right text-terminal-text">{values.emotion || "Not recorded"}</dd></div></dl><p className="mt-3 border-t border-terminal-line pt-3 text-sm text-terminal-muted">{[flags.fomo && "FOMO", flags.cut_winner_early && "Early exit concern", flags.revenge_trade && "Revenge impulse"].filter(Boolean).join(" · ") || "No behavior flags selected"}</p></article></div>
+      <div className="mt-4 flex items-start gap-3 rounded-md border border-terminal-cyan/20 bg-terminal-cyan/5 p-4"><span className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-terminal-cyan/10 text-terminal-cyan"><Sparkles className="h-4 w-4" /></span><p className="text-sm leading-6 text-terminal-muted">This saves a <span className="font-semibold text-terminal-text">planned setup</span>. When your entry is reached, open it to record prices. Once closed, you’ll complete the trade review.</p></div>
+      <div className="mt-8 flex flex-col-reverse gap-3 border-t border-terminal-line pt-5 sm:flex-row sm:items-center sm:justify-between"><button type="button" onClick={() => setStep(1)} className="inline-flex min-h-12 items-center justify-center gap-2 rounded-md border border-terminal-line px-5 text-sm font-medium text-terminal-muted transition hover:border-terminal-cyan/50 hover:text-terminal-text"><ArrowLeft className="h-4 w-4" />Back</button><FormActionButton pendingText="Saving setup…" className="min-h-12 w-full rounded-md bg-terminal-cyan px-5 text-sm font-semibold text-terminal-bg transition hover:bg-cyan-300 hover:shadow-glow focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-terminal-cyan sm:w-auto">Save planned setup <Check className="ml-2 inline h-4 w-4" /></FormActionButton></div>
+    </section>
+  </form>;
 }

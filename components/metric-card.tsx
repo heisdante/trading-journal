@@ -1,4 +1,5 @@
 import { clsx } from "clsx";
+import { Activity, CircleAlert, TrendingDown, TrendingUp } from "lucide-react";
 
 type MetricCardProps = {
   label: string;
@@ -13,27 +14,17 @@ export function MetricCard({ label, value, tone = "default" }: MetricCardProps) 
     bad: "text-terminal-red",
     warn: "text-terminal-amber",
   }[tone];
+  const ToneIcon = tone === "good" ? TrendingUp : tone === "bad" ? TrendingDown : tone === "warn" ? CircleAlert : Activity;
 
   return (
-    <div className="terminal-panel app-metric-card relative overflow-hidden rounded-lg p-4">
-      <p className="text-xs uppercase tracking-wider text-terminal-muted">{label}</p>
-      <p className={clsx("number mt-3 text-2xl font-semibold", toneClass)}>
+    <div className={clsx("terminal-panel app-metric-card relative overflow-hidden rounded-lg p-4 sm:p-5", `metric-tone-${tone}`)}>
+      <div className="flex items-center justify-between gap-3">
+        <p className="text-[11px] font-medium uppercase tracking-[0.12em] text-terminal-muted">{label}</p>
+        <span className={clsx("flex h-8 w-8 items-center justify-center rounded-full border border-terminal-line bg-terminal-panel2", toneClass)}><ToneIcon aria-hidden="true" className="h-4 w-4" /></span>
+      </div>
+      <p className={clsx("number mt-5 text-2xl font-semibold tracking-tight sm:text-[1.8rem]", toneClass)}>
         {value}
       </p>
-      <div className="mt-4 flex h-7 items-end gap-1" aria-hidden="true">
-        {[38, 54, 42, 68, 58, 84, 72].map((height, index) => (
-          <span
-            key={`${label}-${height}-${index}`}
-            className={clsx("metric-spark flex-1 rounded-t-sm", {
-              "bg-terminal-cyan/45": tone === "default",
-              "bg-terminal-green/45": tone === "good",
-              "bg-terminal-red/45": tone === "bad",
-              "bg-terminal-amber/45": tone === "warn",
-            })}
-            style={{ height: `${height}%`, animationDelay: `${index * 45}ms` }}
-          />
-        ))}
-      </div>
     </div>
   );
 }

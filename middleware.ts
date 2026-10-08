@@ -2,7 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 import type { Database } from "@/types/database";
 
-const protectedRoutes = ["/dashboard", "/log", "/trades", "/import", "/rules", "/review", "/coach", "/profile", "/billing", "/playbooks", "/weekly", "/report"];
+const protectedRoutes = ["/dashboard", "/log", "/trades", "/import", "/rules", "/review", "/coach", "/profile", "/billing", "/playbooks", "/weekly", "/report", "/growth"];
 const authRoutes = ["/login", "/signup", "/verify"];
 
 function matchesRoute(pathname: string, route: string) {

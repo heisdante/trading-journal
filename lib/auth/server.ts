@@ -1,5 +1,5 @@
 import { revalidatePath } from "next/cache";
-import { headers } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 
@@ -16,6 +16,11 @@ export function redirectWithError(path: string, error: string) {
   redirect(`${path}?error=${encodeURIComponent(error)}`);
 }
 
+function safeNextPath(value: FormDataEntryValue | string | null) {
+  const path = String(value ?? "").trim();
+  return path.startsWith("/") && !path.startsWith("//") && !path.includes("\\") ? path : "/dashboard";
+}
+
 export async function loginWithFormData(formData: FormData) {
   "use server";
 
@@ -25,11 +30,34 @@ export async function loginWithFormData(formData: FormData) {
 
   const { error } = await supabase.auth.signInWithPassword({ email, password });
   if (error) {
-    redirectWithError("/login", error.message);
+    redirect(`/login?next=${encodeURIComponent(safeNextPath(formData.get("next")))}&error=${encodeURIComponent(error.message)}`);
   }
 
   revalidatePath("/dashboard");
-  redirect("/dashboard");
+  redirect(safeNextPath(formData.get("next")));
+}
+
+export async function magicLinkWithFormData(formData: FormData) {
+  "use server";
+
+  const email = requiredString(formData, "email");
+  const next = safeNextPath(formData.get("next"));
+  const supabase = createClient();
+  const requestHeaders = headers();
+  cookies().set("trading-journal-login-next", next, { httpOnly: true, secure: process.env.NODE_ENV === "production", sameSite: "lax", path: "/auth/callback", maxAge: 300 });
+  const siteUrl = requestHeaders.get("origin") ?? process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+  const { error } = await supabase.auth.signInWithOtp({
+    email,
+    options: {
+      shouldCreateUser: false,
+      emailRedirectTo: `${siteUrl}/auth/callback`,
+    },
+  });
+  if (error) {
+    cookies().delete("trading-journal-login-next");
+    redirect(`/login?next=${encodeURIComponent(next)}&error=${encodeURIComponent("Could not send a sign-in link. Check the email address and try again.")}`);
+  }
+  redirect(`/login?next=${encodeURIComponent(next)}&message=${encodeURIComponent("If this email belongs to an account, a secure sign-in link is on its way.")}`);
 }
 
 export async function signupWithFormData(formData: FormData) {

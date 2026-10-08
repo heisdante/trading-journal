@@ -16,7 +16,6 @@ export function AppMotion() {
   const pathname = usePathname();
 
   useEffect(() => {
-    const root = document.documentElement;
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const elements = Array.from(document.querySelectorAll<HTMLElement>(revealSelector));
 
@@ -31,13 +30,6 @@ export function AppMotion() {
       });
       return;
     }
-
-    const handlePointerMove = (event: PointerEvent) => {
-      root.style.setProperty("--pointer-x", `${event.clientX}px`);
-      root.style.setProperty("--pointer-y", `${event.clientY}px`);
-    };
-
-    window.addEventListener("pointermove", handlePointerMove, { passive: true });
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -54,7 +46,6 @@ export function AppMotion() {
     elements.forEach((element) => observer.observe(element));
 
     return () => {
-      window.removeEventListener("pointermove", handlePointerMove);
       observer.disconnect();
     };
   }, [pathname]);

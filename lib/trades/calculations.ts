@@ -44,7 +44,7 @@ export function formatR(value: number) {
 }
 
 export function calculateRiskReward(trade: Pick<Trade, "direction" | "entry_price" | "stop_price" | "target_price">) {
-  if (!trade.target_price || !isValidRisk(trade.direction, trade.entry_price, trade.stop_price)) return null;
+  if (!trade.target_price || trade.entry_price === null || trade.stop_price === null || !isValidRisk(trade.direction, trade.entry_price, trade.stop_price)) return null;
   const risk = Math.abs(trade.entry_price - trade.stop_price);
   const reward = trade.direction === "Long" ? trade.target_price - trade.entry_price : trade.entry_price - trade.target_price;
   return Number((reward / risk).toFixed(2));
@@ -61,7 +61,7 @@ export function calculateDisciplineScore(trade: Pick<Trade, "criteria_met" | "fo
 }
 
 export function buildSeriesStats(trades: Trade[], size: number | "all") {
-  const ordered = [...trades].sort((a, b) => new Date(`${a.date}T00:00:00`).getTime() - new Date(`${b.date}T00:00:00`).getTime());
+  const ordered = trades.filter((trade) => trade.status === "Completed").sort((a, b) => new Date(`${a.date}T00:00:00`).getTime() - new Date(`${b.date}T00:00:00`).getTime());
   const series = size === "all" ? ordered : ordered.slice(-size);
   const wins = series.filter((trade) => trade.r_value > 0).length;
   const totalR = series.reduce((sum, trade) => sum + trade.r_value, 0);
@@ -78,7 +78,7 @@ export function buildSeriesStats(trades: Trade[], size: number | "all") {
 }
 
 export function buildTradeMetrics(trades: Trade[]): TradeMetrics {
-  const sorted = [...trades].sort((a, b) => {
+  const sorted = trades.filter((trade) => trade.status === "Completed").sort((a, b) => {
     const dateDiff = new Date(a.date).getTime() - new Date(b.date).getTime();
     if (dateDiff !== 0) {
       return dateDiff;
@@ -96,6 +96,8 @@ export function buildTradeMetrics(trades: Trade[]): TradeMetrics {
   const brokenCriteriaWins = brokenCriteriaTrades.filter((trade) => trade.r_value > 0);
   const criteriaMetRate = criteriaMetTrades.length ? (criteriaMetWins.length / criteriaMetTrades.length) * 100 : 0;
   const brokenCriteriaRate = brokenCriteriaTrades.length ? (brokenCriteriaWins.length / brokenCriteriaTrades.length) * 100 : 0;
+  const criteriaMetR = criteriaMetTrades.reduce((sum, trade) => sum + trade.r_value, 0);
+  const brokenCriteriaR = brokenCriteriaTrades.reduce((sum, trade) => sum + trade.r_value, 0);
   const rrValues = sorted.map(calculateRiskReward).filter((value): value is number => value !== null);
   const disciplineScores = sorted.map((trade) => trade.discipline_score ?? calculateDisciplineScore(trade));
 
@@ -127,6 +129,8 @@ export function buildTradeMetrics(trades: Trade[]): TradeMetrics {
     maxDrawdown,
     criteriaMetRate,
     brokenCriteriaRate,
+    criteriaMetR,
+    brokenCriteriaR,
     equityCurve,
     averageRiskReward: rrValues.length ? rrValues.reduce((sum, value) => sum + value, 0) / rrValues.length : 0,
     disciplineScore: disciplineScores.length ? disciplineScores.reduce((sum, value) => sum + value, 0) / disciplineScores.length : 0,

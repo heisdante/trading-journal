@@ -2,7 +2,7 @@ import { buildSeriesStats, calculateRiskReward, formatR } from "@/lib/trades/cal
 import type { Trade } from "@/types/trade";
 
 export function buildPlaybooks(trades: Trade[]) {
-  return Object.entries(trades.reduce<Record<string, Trade[]>>((groups, trade) => { (groups[trade.setup_name] ??= []).push(trade); return groups; }, {})).map(([name, setupTrades]) => {
+  return Object.entries(trades.filter((trade) => trade.status === "Completed").reduce<Record<string, Trade[]>>((groups, trade) => { (groups[trade.setup_name] ??= []).push(trade); return groups; }, {})).map(([name, setupTrades]) => {
     const stats = buildSeriesStats(setupTrades, "all");
     return { name, ...stats, warningRate: setupTrades.length ? (setupTrades.filter((trade) => trade.ai_rule_status === "Warning").length / setupTrades.length) * 100 : 0 };
   }).sort((a, b) => b.totalR - a.totalR);
@@ -11,7 +11,7 @@ export function buildPlaybooks(trades: Trade[]) {
 export function buildWeeklyDebrief(trades: Trade[]) {
   const weekAgo = new Date();
   weekAgo.setDate(weekAgo.getDate() - 7);
-  const recent = trades.filter((trade) => new Date(`${trade.date}T00:00:00`) >= weekAgo);
+  const recent = trades.filter((trade) => trade.status === "Completed" && new Date(`${trade.date}T00:00:00`) >= weekAgo);
   const stats = buildSeriesStats(recent, "all");
   const fomo = recent.filter((trade) => trade.fomo).length;
   const early = recent.filter((trade) => trade.cut_winner_early).length;

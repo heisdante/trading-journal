@@ -11,6 +11,7 @@ function trade(overrides: Partial<Trade>): Trade {
     market: "Forex",
     setup_name: "Breakout",
     direction: "Long",
+    status: "Completed",
     entry_price: 100,
     stop_price: 90,
     target_price: null,
@@ -19,12 +20,18 @@ function trade(overrides: Partial<Trade>): Trade {
     commission: null,
     swap: null,
     profit: null,
+    risk_percent: null,
     source_platform: null,
     source_trade_id: null,
     opened_at: null,
     closed_at: null,
     emotion: null,
     emotion_notes: null,
+    review_comment: null,
+    lesson_learned: null,
+    next_trade_action: null,
+    reviewed_at: null,
+    review_required: false,
     fomo: false,
     cut_winner_early: false,
     revenge_trade: false,
@@ -90,6 +97,8 @@ describe("trade calculations", () => {
     expect(metrics.maxDrawdown).toBe(1);
     expect(metrics.criteriaMetRate).toBe(50);
     expect(metrics.brokenCriteriaRate).toBe(0);
+    expect(metrics.criteriaMetR).toBe(2);
+    expect(metrics.brokenCriteriaR).toBe(-1);
     expect(metrics.equityCurve.map((point) => point.equity)).toEqual([2, 1, 1]);
   });
 

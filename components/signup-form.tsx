@@ -50,13 +50,13 @@ export function SignupForm({ error, message }: SignupFormProps) {
       <div className="grid w-full max-w-5xl overflow-hidden rounded-lg border border-terminal-line bg-terminal-panel/70 shadow-[0_32px_90px_rgba(0,0,0,0.35)] backdrop-blur lg:grid-cols-[0.95fr_1.05fr]">
         <section className="auth-visual relative hidden min-h-[620px] border-r border-terminal-line p-8 lg:flex lg:flex-col lg:justify-between" data-auth-reveal>
           <Link href="/" className="relative z-10 flex items-center gap-3 text-terminal-text">
-            <span className="flex h-10 w-10 items-center justify-center border border-terminal-cyan/40 bg-terminal-cyan/10 text-terminal-cyan shadow-glow">
+            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-terminal-cyan/15 text-terminal-cyan">
               <LineChart className="h-5 w-5" />
             </span>
             <span className="font-semibold">Trading Journal</span>
           </Link>
           <div className="relative z-10">
-            <p className="inline-flex items-center gap-2 border border-terminal-cyan/30 bg-terminal-cyan/10 px-3 py-2 font-mono text-xs uppercase text-terminal-cyan">
+            <p className="inline-flex items-center gap-2 rounded-full bg-terminal-cyan/15 px-3 py-2 font-mono text-xs uppercase text-terminal-cyan">
               <Sparkles className="h-4 w-4" />
               Build the habit
             </p>
@@ -65,7 +65,7 @@ export function SignupForm({ error, message }: SignupFormProps) {
           </div>
           <div className="relative z-10 grid gap-3">
             {["Manual trade logging", "Daily and weekly review loops", "Private performance dashboard"].map((item) => (
-              <div key={item} className="flex items-center gap-3 border border-terminal-line bg-terminal-bg/50 p-3 text-sm text-terminal-muted">
+              <div key={item} className="flex items-center gap-3 rounded-xl bg-black/20 px-3 py-3 text-sm text-white/80">
                 <CheckCircle2 className="h-4 w-4 text-terminal-green" />
                 {item}
               </div>
@@ -75,7 +75,7 @@ export function SignupForm({ error, message }: SignupFormProps) {
 
         <section className="relative p-5 sm:p-8" data-auth-reveal>
           <Link href="/" className="mb-8 flex items-center gap-3 text-terminal-text lg:hidden">
-            <span className="flex h-10 w-10 items-center justify-center border border-terminal-cyan/40 bg-terminal-cyan/10 text-terminal-cyan">
+            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-terminal-cyan/15 text-terminal-cyan">
               <LineChart className="h-5 w-5" />
             </span>
             <span className="font-semibold">Trading Journal</span>
