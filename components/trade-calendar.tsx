@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ArrowDownRight, ArrowUpRight, ChevronLeft, ChevronRight, CircleDot, Minus } from "lucide-react";
 import { formatR } from "@/lib/trades/calculations";
 import type { Trade } from "@/types/trade";
 
@@ -14,78 +14,96 @@ function toDateKey(date: Date) {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
 }
 
+const weekdayLabels = Array.from({ length: 7 }, (_, index) =>
+  new Intl.DateTimeFormat(undefined, { weekday: "short" }).format(new Date(2024, 0, index + 1)),
+);
+
 export function TradeCalendar({ trades, compact = false }: { trades: Trade[]; compact?: boolean }) {
   const latestTrade = trades[0]?.date;
   const [cursor, setCursor] = useState(() => (latestTrade ? new Date(`${latestTrade}T12:00:00`) : new Date()));
+  const todayKey = toDateKey(new Date());
 
   const calendar = useMemo(() => {
     const year = cursor.getFullYear();
     const month = cursor.getMonth();
     const first = new Date(year, month, 1);
     const start = new Date(first);
-    start.setDate(first.getDate() - first.getDay());
+    const mondayOffset = (first.getDay() + 6) % 7;
+    start.setDate(first.getDate() - mondayOffset);
     const days = Array.from({ length: 42 }, (_, index) => {
       const date = new Date(start);
       date.setDate(start.getDate() + index);
       return date;
     });
-
     const byDay = new Map<string, Trade[]>();
     trades.forEach((trade) => {
       const items = byDay.get(trade.date) ?? [];
       items.push(trade);
       byDay.set(trade.date, items);
     });
-
     return days.map((date) => {
       const key = toDateKey(date);
       const dayTrades = byDay.get(key) ?? [];
-      const totalR = dayTrades.reduce((sum, trade) => sum + trade.r_value, 0);
-      return { date, key, isCurrentMonth: monthKey(date) === monthKey(cursor), trades: dayTrades, totalR };
+      const totalR = dayTrades.filter((trade) => trade.status === "Completed").reduce((sum, trade) => sum + trade.r_value, 0);
+      return { date, key, isCurrentMonth: monthKey(date) === monthKey(cursor), isToday: key === todayKey, trades: dayTrades, totalR };
     });
-  }, [cursor, trades]);
+  }, [cursor, todayKey, trades]);
+
+  const monthTrades = calendar.filter((day) => day.isCurrentMonth).flatMap((day) => day.trades).filter((trade) => trade.status === "Completed");
+  const monthR = monthTrades.reduce((sum, trade) => sum + trade.r_value, 0);
+  const wins = monthTrades.filter((trade) => trade.r_value > 0).length;
+  const winRate = monthTrades.length ? wins / monthTrades.length * 100 : 0;
+  const tradingDays = calendar.filter((day) => day.isCurrentMonth && day.trades.length > 0).length;
+  const monthLabel = new Intl.DateTimeFormat(undefined, { month: "long", year: "numeric" }).format(cursor);
 
   function moveMonth(offset: number) {
     setCursor((current) => new Date(current.getFullYear(), current.getMonth() + offset, 1));
   }
 
-  const monthLabel = new Intl.DateTimeFormat(undefined, { month: "long", year: "numeric" }).format(cursor);
-
   return (
-    <section className={`terminal-panel app-chart-panel trade-calendar overflow-hidden rounded-lg ${compact ? "is-compact" : ""}`}>
-      <div className="app-page-heading flex flex-col gap-3 border-b border-terminal-line p-4 sm:flex-row sm:items-center sm:justify-between">
+    <section className={`terminal-panel app-chart-panel trade-calendar ${compact ? "is-compact" : ""}`}>
+      <header className="calendar-header">
         <div>
-          <p className="font-mono text-xs uppercase text-terminal-cyan">calendar / trade record</p>
-          <h1 className="mt-1 text-xl font-semibold text-terminal-text">{monthLabel}</h1>
+          <p className="calendar-eyebrow">Trade activity / calendar</p>
+          <h1>{monthLabel}</h1>
+          {!compact && <p className="calendar-subtitle">A month at a glance. Open a day’s record to revisit the decision.</p>}
         </div>
-        <div className="flex items-center gap-2">
-          <button type="button" onClick={() => moveMonth(-1)} aria-label="Previous month" className="flex h-10 w-10 items-center justify-center border border-terminal-line text-terminal-muted transition hover:border-terminal-cyan hover:text-terminal-cyan"><ChevronLeft className="h-4 w-4" /></button>
-          <button type="button" onClick={() => setCursor(new Date())} className="h-10 border border-terminal-line px-3 text-sm font-semibold text-terminal-muted transition hover:border-terminal-cyan hover:text-terminal-cyan">Today</button>
-          <button type="button" onClick={() => moveMonth(1)} aria-label="Next month" className="flex h-10 w-10 items-center justify-center border border-terminal-line text-terminal-muted transition hover:border-terminal-cyan hover:text-terminal-cyan"><ChevronRight className="h-4 w-4" /></button>
+        <div className="calendar-controls" aria-label="Calendar navigation">
+          <button type="button" onClick={() => moveMonth(-1)} aria-label="Previous month"><ChevronLeft className="h-4 w-4" /></button>
+          <button type="button" onClick={() => setCursor(new Date())} className="calendar-today-button">Today</button>
+          <button type="button" onClick={() => moveMonth(1)} aria-label="Next month"><ChevronRight className="h-4 w-4" /></button>
         </div>
-      </div>
+      </header>
+
+      {!compact && <div className="calendar-summary" aria-label="Monthly trade summary">
+        <article><span>NET PERFORMANCE</span><strong className={`number ${monthR > 0 ? "is-positive" : monthR < 0 ? "is-negative" : ""}`}>{formatR(monthR)}</strong><small>{monthTrades.length} trade{monthTrades.length === 1 ? "" : "s"} this month</small></article>
+        <article><span>WIN RATE</span><strong className="number">{winRate.toFixed(0)}%</strong><small>{wins} winning trade{wins === 1 ? "" : "s"}</small></article>
+        <article><span>ACTIVE DAYS</span><strong className="number">{tradingDays.toString().padStart(2, "0")}</strong><small>days with a journal entry</small></article>
+      </div>}
+
+      <div className="calendar-legend"><span><i className="is-win" />Win</span><span><i className="is-loss" />Loss</span><span><i className="is-be" />Breakeven</span></div>
       <div className="calendar-scroll">
-      <div className="calendar-grid grid grid-cols-7 border-b border-terminal-line bg-terminal-panel2 text-center font-mono text-[11px] uppercase text-terminal-muted">
-        {Array.from({ length: 7 }, (_, index) => new Intl.DateTimeFormat(undefined, { weekday: "short" }).format(new Date(2024, 0, index + 7))).map((day, index) => <div key={`${day}-${index}`} className="px-2 py-2">{day}</div>)}
-      </div>
-      <div className="calendar-grid grid grid-cols-7">
-        {calendar.map((day) => (
-          <div key={day.key} className={`calendar-day min-h-28 border-b border-terminal-line p-3 md:border-r ${day.isCurrentMonth ? "bg-terminal-bg/35" : "bg-terminal-panel/40 text-terminal-muted"}`}>
-            <div className="flex items-center justify-between gap-2">
-              <span className="number text-sm text-terminal-muted">{day.date.getDate()}</span>
-              {day.trades.length ? <span className={`number rounded-sm border px-2 py-0.5 text-[11px] ${day.totalR > 0 ? "border-terminal-green/30 bg-terminal-green/10 text-terminal-green" : day.totalR < 0 ? "border-terminal-red/30 bg-terminal-red/10 text-terminal-red" : "border-terminal-amber/30 bg-terminal-amber/10 text-terminal-amber"}`}>{formatR(day.totalR)}</span> : null}
+        <div className="calendar-grid calendar-weekdays" role="row">
+          {weekdayLabels.map((day, index) => <div role="columnheader" key={`${day}-${index}`}>{day}</div>)}
+        </div>
+        <div className="calendar-grid calendar-days" role="grid" aria-label={`${monthLabel} trade calendar`}>
+          {calendar.map((day) => (
+            <div key={day.key} role="gridcell" aria-label={`${day.key}, ${day.trades.length} trades`} className={`calendar-day ${day.isCurrentMonth ? "is-current-month" : "is-outside-month"} ${day.isToday ? "is-today" : ""} ${day.trades.length ? "has-trades" : ""}`}>
+              <div className="calendar-day-heading">
+                <span className="calendar-date-number">{day.date.getDate()}</span>
+                {day.trades.length > 0 && <span className={`calendar-day-result number ${day.totalR > 0 ? "is-positive" : day.totalR < 0 ? "is-negative" : "is-neutral"}`}>{formatR(day.totalR)}</span>}
+              </div>
+              <div className="calendar-trade-list">
+                {day.trades.slice(0, compact ? 2 : 3).map((trade) => {
+                  const resultTone = trade.status !== "Completed" ? "is-planned" : trade.result === "Win" ? "is-win" : trade.result === "Loss" ? "is-loss" : "is-be";
+                  const ResultIcon = trade.status !== "Completed" ? CircleDot : trade.result === "Win" ? ArrowUpRight : trade.result === "Loss" ? ArrowDownRight : Minus;
+                  return <Link key={trade.id} href={`/trades/${trade.id}`} title={`${trade.pair} · ${trade.status === "Completed" ? formatR(trade.r_value) : trade.status}`} className={`calendar-trade ${resultTone}`}><ResultIcon aria-hidden="true" /><span>{trade.pair}</span><strong className="number">{trade.status === "Completed" ? formatR(trade.r_value) : trade.status}</strong></Link>;
+                })}
+                {day.trades.length > (compact ? 2 : 3) && <span className="calendar-more">+{day.trades.length - (compact ? 2 : 3)} more</span>}
+              </div>
             </div>
-            <div className="mt-3 space-y-2">
-              {day.trades.slice(0, 3).map((trade) => (
-                <Link key={trade.id} href={`/trades/${trade.id}`} className="block truncate border-l-2 border-terminal-cyan/50 pl-2 text-xs text-terminal-text transition hover:text-terminal-cyan">
-                  {trade.pair} · {formatR(trade.r_value)}
-                </Link>
-              ))}
-              {day.trades.length > 3 ? <p className="text-xs text-terminal-muted">+{day.trades.length - 3} more</p> : null}
-            </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
       </div>
     </section>
   );

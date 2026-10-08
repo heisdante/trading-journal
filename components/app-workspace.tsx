@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ArrowUpRight, CircleDot } from "lucide-react";
@@ -8,17 +7,7 @@ import { AppMotion } from "@/components/app-motion";
 import { AppSidebar } from "@/components/app-sidebar";
 
 export function AppWorkspace({ children, email }: { children: React.ReactNode; email: string }) {
-  const [collapsed, setCollapsed] = useState(false);
   const pathname = usePathname();
-
-  useEffect(() => {
-    setCollapsed(window.localStorage.getItem("trading-journal-sidebar-collapsed") === "true");
-  }, []);
-
-  function setSidebarCollapsed(next: boolean) {
-    setCollapsed(next);
-    window.localStorage.setItem("trading-journal-sidebar-collapsed", String(next));
-  }
 
   const pathSegments = pathname.split("/").filter(Boolean);
   const activeLabel = pathSegments[0] === "trades" && pathSegments.length > 1
@@ -32,9 +21,9 @@ export function AppWorkspace({ children, email }: { children: React.ReactNode; e
   const actionHref = pathname === "/log" ? "/dashboard" : "/log";
 
   return (
-    <main className={`app-shell min-h-dvh lg:grid ${collapsed ? "lg:grid-cols-[5.25rem_minmax(0,1fr)]" : "lg:grid-cols-[17.5rem_minmax(0,1fr)]"}`}>
+    <main className="app-shell min-h-dvh lg:grid lg:grid-cols-[17.5rem_minmax(0,1fr)]">
       <AppMotion />
-      <AppSidebar email={email} collapsed={collapsed} onCollapsedChange={setSidebarCollapsed} />
+      <AppSidebar email={email} />
       <div className="workspace-main min-w-0 px-4 py-5 sm:px-6 lg:px-8 lg:py-7">
         <div className="workspace-inner mx-auto max-w-[1480px] space-y-6 lg:space-y-7">
           <div className="app-topbar flex min-h-[68px] items-center justify-between gap-4 rounded-[18px] px-4 py-3 sm:px-6">

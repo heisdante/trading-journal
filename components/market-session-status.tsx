@@ -83,7 +83,7 @@ export function MarketSessionStatus({ compact = false }: { compact?: boolean }) 
       </div>
       <div className="market-session-grid mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
         {states.map(({ session, state }) => (
-          <article key={session.name} className={`market-session-card rounded border p-3 ${state.isOpen ? "border-terminal-green/40 bg-terminal-green/10" : state.preOpen ? "border-terminal-amber/50 bg-terminal-amber/10" : "border-terminal-line bg-terminal-bg/45"}`}>
+          <article key={session.name} className={`market-session-card rounded p-3 ${state.isOpen ? "is-open" : state.preOpen ? "is-soon" : "is-closed"}`}>
             <div className="flex items-start justify-between gap-3">
               <div>
                 <h3 className="font-semibold text-terminal-text">{session.name}</h3>
