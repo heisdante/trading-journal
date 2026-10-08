@@ -17,11 +17,11 @@ export default async function LogPage() {
   }
 
   const supabase = createClient();
-  const { data: profile } = await supabase.from("user_profiles").select("default_market,default_session,default_trade_type").maybeSingle();
+  const { data: profile } = await supabase.from("user_profiles").select("default_market,default_session").maybeSingle();
 
   return (
     <AppShell>
-      <TradeForm defaults={{ market: profile?.default_market, session: profile?.default_session, tradeType: profile?.default_trade_type }} />
+      <TradeForm defaults={{ market: profile?.default_market, session: profile?.default_session }} />
     </AppShell>
   );
 }

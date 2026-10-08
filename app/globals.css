@@ -651,17 +651,16 @@ html.lenis.lenis-stopped { overflow: hidden; }
 }
 .trade-data-table { min-width:980px !important; }
 .trade-data-table th:nth-child(3),.trade-data-table td:nth-child(3),
+.trade-data-table th:nth-child(5),.trade-data-table td:nth-child(5),
 .trade-data-table th:nth-child(6),.trade-data-table td:nth-child(6),
 .trade-data-table th:nth-child(7),.trade-data-table td:nth-child(7),
 .trade-data-table th:nth-child(8),.trade-data-table td:nth-child(8),
 .trade-data-table th:nth-child(9),.trade-data-table td:nth-child(9),
 .trade-data-table th:nth-child(10),.trade-data-table td:nth-child(10),
 .trade-data-table th:nth-child(11),.trade-data-table td:nth-child(11),
-.trade-data-table th:nth-child(12),.trade-data-table td:nth-child(12),
-.trade-data-table th:nth-child(13),.trade-data-table td:nth-child(13),
-.trade-data-table th:nth-child(18),.trade-data-table td:nth-child(18),
-.trade-data-table th:nth-child(19),.trade-data-table td:nth-child(19),
-.trade-data-table th:nth-child(20),.trade-data-table td:nth-child(20) { display:none; }
+.trade-data-table th:nth-child(16),.trade-data-table td:nth-child(16),
+.trade-data-table th:nth-child(17),.trade-data-table td:nth-child(17),
+.trade-data-table th:nth-child(18),.trade-data-table td:nth-child(18) { display:none; }
 .trade-table.is-compact .trade-data-table { min-width:690px; }
 .trade-wizard { border-radius:22px; box-shadow:0 20px 55px rgba(var(--shadow-rgb),.08); }
 .trade-wizard > header { background:var(--terminal-panel); padding:clamp(19px,4vw,34px); }
@@ -1112,3 +1111,11 @@ html.lenis.lenis-stopped { overflow: hidden; }
  .calendar-trade strong { font-size:6px; }
  .calendar-more { font-size:7px; }
 }
+
+/* Keep workspace surfaces quiet; opacity border utilities must not fall back to white. */
+.app-shell :is(.terminal-panel,.app-surface,.app-reminder,.trade-wizard,.app-topbar,.dashboard-rangebar,.trade-table,.trade-calendar) { border-color:transparent !important; }
+:is(.app-shell,.auth-shell,.public-shell) [class*="border-terminal-line/"] { border-color:var(--terminal-line); }
+:is(.app-shell,.auth-shell,.public-shell) [class*="border-terminal-cyan/"] { border-color:rgba(var(--accent-rgb),.24); }
+:is(.app-shell,.auth-shell,.public-shell) [class*="border-terminal-green/"] { border-color:rgba(var(--success-rgb),.28); }
+:is(.app-shell,.auth-shell,.public-shell) [class*="border-terminal-amber/"] { border-color:rgba(227,180,110,.28); }
+:is(.app-shell,.auth-shell,.public-shell) [class*="border-terminal-red/"] { border-color:rgba(237,131,120,.28); }

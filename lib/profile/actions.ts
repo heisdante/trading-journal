@@ -3,11 +3,10 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import type { Market, TradeType, TradingSession } from "@/types/trade";
+import type { Market, TradingSession } from "@/types/trade";
 
 const markets = ["Forex", "Stocks", "Futures", "Crypto", "Indices", "Options", "Bonds", "Funds", "Economy"] as const;
 const sessions = ["London", "New York", "Asian", "Frankfurt"] as const;
-const tradeTypes = ["Day Trade", "Swing Trade"] as const;
 
 function optionalOption<const T extends readonly string[]>(value: FormDataEntryValue | null, options: T) {
   const parsed = String(value ?? "").trim();
@@ -30,7 +29,6 @@ export async function saveProfileAction(formData: FormData) {
     currency: String(formData.get("currency") ?? "USD").trim().toUpperCase(),
     default_market: optionalOption(formData.get("default_market"), markets) as Market | null,
     default_session: optionalOption(formData.get("default_session"), sessions) as TradingSession | null,
-    default_trade_type: optionalOption(formData.get("default_trade_type"), tradeTypes) as TradeType | null,
     default_risk_percent: defaultRisk,
     ai_coach_enabled: formData.get("ai_coach_enabled") === "on",
   };

@@ -5,12 +5,11 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { reviewTradeAgainstRules } from "@/lib/ai/trade-review";
 import { calculateDisciplineScore } from "@/lib/trades/calculations";
-import type { CriteriaStatus, Direction, Emotion, FollowedTradingPlan, Market, TradeOutcome, TradeScreenshot, TradeType, TradingSession } from "@/types/trade";
+import type { CriteriaStatus, Direction, Emotion, FollowedTradingPlan, Market, TradeOutcome, TradeScreenshot, TradingSession } from "@/types/trade";
 
 const markets = ["Forex", "Stocks", "Futures", "Crypto", "Indices", "Options", "Bonds", "Funds", "Economy"] as const;
 const followedTradingPlanOptions = ["Yes", "No"] as const;
 const sessions = ["London", "New York", "Asian", "Frankfurt"] as const;
-const tradeTypes = ["Day Trade", "Swing Trade"] as const;
 const screenshotBucket = "trade-screenshots";
 
 function requiredString(formData: FormData, name: string) {
@@ -98,7 +97,7 @@ async function uploadScreenshots(
   return screenshots;
 }
 
-export async function addTradeAction(formData: FormData) {
+export async function addTradeAction(_state: { error: string | null }, formData: FormData): Promise<{ error: string | null }> {
   const supabase = createClient();
   const {
     data: { user },
@@ -109,12 +108,21 @@ export async function addTradeAction(formData: FormData) {
     redirect("/login");
   }
 
+  const tradeId = crypto.randomUUID();
+  try {
   const direction = requiredString(formData, "direction") as Direction;
   if (direction !== "Long" && direction !== "Short") {
     throw new Error("direction must be Long or Short");
   }
 
-  const tradeId = crypto.randomUUID();
+  const pair = requiredString(formData, "pair");
+  const recordState = optionValue(formData, "record_state", ["Planned", "Active"] as const);
+  const entry = recordState === "Active" ? optionalPositiveNumber(formData, "entry_price") : null;
+  const stop = recordState === "Active" ? optionalPositiveNumber(formData, "stop_price") : null;
+  if (recordState === "Active") {
+    if (entry === null || stop === null) throw new Error("Add the actual entry and protective stop for an active trade.");
+    validateExecutionPrices(direction, entry, stop, null);
+  }
   const emotion = (String(formData.get("emotion") ?? "").trim() || null) as Emotion | null;
   const fomo = formData.get("fomo") === "on";
   const cutWinnerEarly = formData.get("cut_winner_early") === "on";
@@ -125,13 +133,14 @@ export async function addTradeAction(formData: FormData) {
     id: tradeId,
     user_id: user.id,
     trade_date: requiredString(formData, "date"),
-    pair: requiredString(formData, "pair"),
+    pair,
     market: optionValue(formData, "market", markets) as Market,
-    setup_name: requiredString(formData, "setup_name"),
+    setup_name: `${pair} trade`,
     direction,
-    status: "Planned" as const,
-    entry_price: null,
-    stop_price: null,
+    status: recordState,
+    entry_price: entry,
+    stop_price: stop,
+    opened_at: recordState === "Active" ? new Date().toISOString() : null,
     target_price: null,
     exit_price: null,
     entry_reason: requiredString(formData, "entry_reason"),
@@ -143,7 +152,7 @@ export async function addTradeAction(formData: FormData) {
     followed_trading_plan: null,
     review_required: false,
     session: optionalOptionValue(formData, "session", sessions) as TradingSession | null,
-    trade_type: optionalOptionValue(formData, "trade_type", tradeTypes) as TradeType | null,
+    trade_type: null,
     notes: String(formData.get("notes") ?? "").trim() || null,
     emotion,
     emotion_notes: String(formData.get("emotion_notes") ?? "").trim() || null,
@@ -162,6 +171,9 @@ export async function addTradeAction(formData: FormData) {
     }
 
     throw new Error(error.message);
+  }
+  } catch (error) {
+    return { error: error instanceof Error ? error.message.replaceAll("_", " ") : "Could not save this trade. Please try again." };
   }
 
   revalidatePath("/dashboard");
@@ -196,8 +208,9 @@ export async function updatePlannedSetupAction(formData: FormData) {
   const criteriaValue = String(formData.get("criteria_met") ?? "");
   const criteriaMet = criteriaValue === "on" || criteriaValue === "yes";
   const direction = optionValue(formData, "direction", ["Long", "Short"] as const) as Direction;
+  const pair = requiredString(formData, "pair");
   const payload = {
-    pair: requiredString(formData, "pair"), setup_name: requiredString(formData, "setup_name"), direction,
+    pair, setup_name: `${pair} trade`, direction,
     trade_date: requiredString(formData, "date"), criteria_met: criteriaMet, criteria_status: criteriaMet ? "Good" as const : "Fail" as const,
     entry_reason: requiredString(formData, "entry_reason"), trade_idea_link: optionalUrl(formData, "trade_idea_link"),
     notes: String(formData.get("notes") ?? "").trim() || null,
@@ -205,7 +218,6 @@ export async function updatePlannedSetupAction(formData: FormData) {
     emotion_notes: String(formData.get("emotion_notes") ?? "").trim() || null,
     fomo: formData.get("fomo") === "on", cut_winner_early: formData.get("cut_winner_early") === "on", revenge_trade: formData.get("revenge_trade") === "on",
     session: optionalOptionValue(formData, "session", sessions) as TradingSession | null,
-    trade_type: optionalOptionValue(formData, "trade_type", tradeTypes) as TradeType | null,
   };
   const { error } = await supabase.from("trades").update(payload).eq("id", id).eq("user_id", user.id);
   if (error) throw new Error(error.message);

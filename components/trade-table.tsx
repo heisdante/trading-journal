@@ -33,7 +33,7 @@ export function TradeTable({ trades, compact = false }: { trades: Trade[]; compa
   const filteredTrades = useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase();
     return trades.filter((trade) => {
-      const searchable = [trade.pair, trade.market, trade.setup_name, trade.direction, trade.status, trade.session, trade.trade_type, trade.outcome, trade.entry_reason, trade.exit_reason, trade.notes].filter(Boolean).join(" ").toLowerCase();
+      const searchable = [trade.pair, trade.market, trade.direction, trade.status, trade.session, trade.outcome, trade.entry_reason, trade.exit_reason, trade.notes].filter(Boolean).join(" ").toLowerCase();
       return (
         (!normalizedQuery || searchable.includes(normalizedQuery)) &&
         (market === "all" || trade.market === market) &&
@@ -93,10 +93,8 @@ export function TradeTable({ trades, compact = false }: { trades: Trade[]; compa
                 <th className="px-4 py-3 font-medium">Date</th>
                 <th className="px-4 py-3 font-medium">Pair</th>
                 <th className="px-4 py-3 font-medium">Market</th>
-                <th className="px-4 py-3 font-medium">Setup</th>
                 <th className="px-4 py-3 font-medium">Dir</th>
                 <th className="px-4 py-3 font-medium">Session</th>
-                <th className="px-4 py-3 font-medium">Type</th>
                 <th className="px-4 py-3 font-medium">Entry Reason</th>
                 <th className="px-4 py-3 font-medium">Exit Reason</th>
                 <th className="px-4 py-3 font-medium">Criteria</th>
@@ -118,10 +116,8 @@ export function TradeTable({ trades, compact = false }: { trades: Trade[]; compa
                   <td className="number whitespace-nowrap px-4 py-3 text-terminal-text">{trade.date}</td>
                   <td className="px-4 py-3 text-terminal-muted"><Link href={`/trades/${trade.id}`} className="font-semibold text-terminal-text hover:text-terminal-cyan">{trade.pair}</Link></td>
                   <td className="px-4 py-3 text-terminal-muted">{trade.market}</td>
-                  <td className="px-4 py-3 font-medium text-terminal-text">{trade.setup_name}</td>
                   <td className="px-4 py-3 text-terminal-muted">{trade.direction}</td>
                   <td className="whitespace-nowrap px-4 py-3 text-terminal-muted">{trade.session ?? "-"}</td>
-                  <td className="whitespace-nowrap px-4 py-3 text-terminal-muted">{trade.trade_type ?? "-"}</td>
                   <td className="max-w-[240px] truncate px-4 py-3 text-terminal-muted">{trade.entry_reason}</td>
                   <td className="max-w-[240px] truncate px-4 py-3 text-terminal-muted">{trade.exit_reason}</td>
                   <td className="px-4 py-3">
