@@ -323,28 +323,9 @@ tbody tr:hover { background-color: rgba(var(--accent-rgb), 0.045); }
 }
 
 .auth-shell { overflow: hidden; background: #090c0a; }
-.auth-shell::before { content:""; position:fixed; z-index:-1; inset:-28px; background-color:#090c0a; background-image:url("/images/login-trading-chart.jpg"); background-position:center; background-size:cover; background-blend-mode:multiply; filter:blur(22px) brightness(.3); transform:scale(1.06); }
-.auth-shell::after { content:none; }
-.auth-card { box-shadow:none !important; }
-.auth-shell .auth-card input:not([type="checkbox"]) { border:0; box-shadow:none; }
-.auth-shell .auth-card button { box-shadow:none; }
-
-.auth-visual {
-  overflow: hidden;
-  border-radius: 0;
-  background-color: #090c0a;
-  background-image: none;
-  background-position: center;
-  background-size: cover;
-  color: #f4f2eb;
-}
-
-.auth-visual::before { content: ""; position: absolute; inset: -24px; background-image:url("/images/login-trading-chart.jpg"); background-position:62% center; background-size:cover; filter:blur(2px) brightness(.68) saturate(.8); }
-.auth-visual::after { content: ""; position: absolute; inset:0; background:rgba(4,17,10,.43); pointer-events:none; }
 
 /* Split-screen editorial login inspired by the supplied trading reference. */
 .login-screen { overflow-x:hidden; background:#070a08; color-scheme:dark; }
-.login-screen::before { content:none; }
 .login-art-panel { background:#090c0a; color:#eef3ee; }
 .login-panel { border:0; background:#0d110e; box-shadow:none; }
 /* Photo: Austin Hervias / Unsplash, https://unsplash.com/photos/VLpWpv3oDB4 */

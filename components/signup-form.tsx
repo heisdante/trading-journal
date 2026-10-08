@@ -3,7 +3,7 @@
 import { useState, type FormEvent } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowRight, LineChart, ShieldCheck } from "lucide-react";
+import { ArrowRight, Eye, EyeOff, LineChart, ShieldCheck } from "lucide-react";
 import { AuthMotion } from "@/components/auth-motion";
 import { createClient } from "@/lib/supabase/client";
 
@@ -16,6 +16,7 @@ export function SignupForm({ error, message }: SignupFormProps) {
   const router = useRouter();
   const [verifyMessage, setVerifyMessage] = useState(Boolean(message));
   const [signupError, setSignupError] = useState<string | null>(error ?? null);
+  const [showPassword, setShowPassword] = useState(false);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -45,83 +46,52 @@ export function SignupForm({ error, message }: SignupFormProps) {
   }
 
   return (
-    <main className="auth-shell flex min-h-screen items-center justify-center px-4 py-10 sm:px-6 lg:px-8">
+    <main className="login-screen auth-shell grid min-h-screen gap-3 p-3 xl:h-dvh xl:min-h-0 xl:grid-cols-[minmax(0,1fr)_minmax(400px,31%)] xl:grid-rows-[minmax(0,1fr)]">
       <AuthMotion />
-      <div className="auth-card grid w-full max-w-5xl overflow-hidden rounded-2xl bg-[#0d110e]/75 backdrop-blur-2xl lg:grid-cols-[0.95fr_1.05fr]">
-        <section className="auth-visual relative flex min-h-[310px] flex-col justify-between p-6 sm:min-h-[370px] sm:p-8 lg:min-h-[620px]" data-auth-reveal>
-          <Link href="/" className="relative z-10 flex items-center gap-3 text-terminal-text">
-            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-terminal-cyan/15 text-terminal-cyan">
-              <LineChart className="h-5 w-5" />
-            </span>
-            <span className="font-semibold">Trading Journal</span>
-          </Link>
-          <div className="relative z-10 mt-auto max-w-md">
-            <h2 className="text-3xl font-semibold leading-tight text-terminal-text sm:text-4xl">Start turning trades into evidence.</h2>
-            <p className="mt-4 text-sm leading-6 text-white/70">A private space to reflect, build consistency, and grow with every trade.</p>
-          </div>
-        </section>
-
-        <section className="relative flex flex-col p-5 sm:p-8 lg:min-h-[620px]" data-auth-reveal>
-          <div>
-            <h1 className="text-3xl font-semibold text-terminal-text">Create your journal</h1>
-            <p className="mt-1 text-sm text-terminal-muted">A clear record of every trade and lesson.</p>
-          </div>
-
-        <div className="mx-auto mt-16 w-full max-w-md">
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <label className="block">
-            <span className="text-sm text-terminal-muted">Email</span>
-            <input
-              name="email"
-              type="email"
-              required
-              className="mt-2 h-12 w-full rounded-xl border-0 bg-white/[0.055] px-3 text-terminal-text outline-none transition placeholder:text-terminal-muted/60 focus-visible:ring-2 focus-visible:ring-terminal-cyan/60"
-              placeholder="you@example.com"
-            />
-          </label>
-
-          <label className="block">
-            <span className="text-sm text-terminal-muted">Password</span>
-            <input
-              name="password"
-              type="password"
-              required
-              minLength={6}
-              className="mt-2 h-12 w-full rounded-xl border-0 bg-white/[0.055] px-3 text-terminal-text outline-none transition placeholder:text-terminal-muted/60 focus-visible:ring-2 focus-visible:ring-terminal-cyan/60"
-              placeholder="••••••••"
-            />
-          </label>
-
-          {signupError ? <p role="alert" className="rounded-lg bg-terminal-red/10 p-3 text-sm text-terminal-red">{signupError}</p> : null}
-          {message ? <p role="status" className="rounded-lg bg-terminal-cyan/10 p-3 text-sm text-terminal-cyan">{message}</p> : null}
-          {verifyMessage || message ? (
-            <div role="status" className="rounded-lg bg-terminal-cyan/10 p-3 text-sm text-terminal-cyan">
-              Check your email and click the verification link to activate your account.
-            </div>
-          ) : null}
-
-          <button
-            type="submit"
-            className="inline-flex h-12 w-full items-center justify-center gap-2 rounded bg-terminal-cyan px-4 font-semibold text-terminal-bg transition hover:bg-cyan-300"
-          >
-            Create an account <ArrowRight className="h-4 w-4" />
-          </button>
-        </form>
-
-        <div className="mt-6 flex items-start gap-2 pt-5 text-xs leading-5 text-terminal-muted">
-          <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-terminal-cyan" />
-          Trading Journal is a review and accountability tool. It does not execute trades or provide market signals.
+      <section className="login-art-panel relative flex min-h-[310px] flex-col overflow-hidden rounded-[18px] p-6 sm:min-h-[370px] sm:p-10 xl:min-h-0 xl:p-10 2xl:p-14" data-auth-reveal>
+        <div className="relative z-10 flex items-center gap-2 font-mono text-[10px] font-semibold uppercase tracking-[.16em] text-[#8ce0ad]">
+          <span>Trading journal</span><span className="text-[#546458]">/</span><span className="text-[#89958b]">Process workspace</span>
         </div>
 
-        <p className="mt-6 text-sm text-terminal-muted">
-          Already have an account?{" "}
-          <Link href="/login" className="text-terminal-cyan hover:underline">
-            Log in
-          </Link>
-        </p>
+        <div className="login-art-body relative z-10 grid flex-1 items-end gap-8 pt-10 xl:grid-cols-[minmax(0,1.12fr)_minmax(0,.88fr)] xl:items-center xl:gap-7 2xl:gap-12">
+          <div className="login-art-copy max-w-[570px]">
+            <h2 className="text-[clamp(2.1rem,4vw,4.5rem)] font-semibold leading-[1.02] tracking-[-.06em]"><span className="block text-[#a8b4ab]">Grow as you execute.</span> <span className="block text-white">Journal every trade.</span></h2>
+            <p className="mt-5 max-w-[410px] text-sm leading-6 text-[#c5d1c7]">A private space for your setups, decisions, and lessons behind every outcome.</p>
+            <Link href="/" className="mt-7 inline-flex min-h-11 items-center gap-3 rounded-full bg-white px-4 text-sm font-semibold text-[#101510] transition hover:bg-[#e6f3e9]"><span className="grid h-7 w-7 place-items-center rounded-full bg-[#8ce0ad] text-[#0b120e]"><LineChart className="h-4 w-4" /></span>Explore the journal<ArrowRight className="h-4 w-4 text-[#365842]" /></Link>
+          </div>
+
+          <div className="login-review-art mb-8 hidden self-end xl:block" aria-hidden="true">
+            <div className="flex items-center justify-between gap-3"><p className="font-mono text-[9px] uppercase tracking-[.14em] text-[#a1b1a5]">Process in motion</p><span className="font-mono text-[9px] text-[#72c994]">01 / 03</span></div>
+            <svg viewBox="0 0 520 190" fill="none" className="mt-3 w-full" role="presentation">
+              <path d="M4 30H516M4 75H516M4 120H516M4 165H516" stroke="#29362d" strokeWidth="1" />
+              <path d="M18 142L76 129L124 138L178 94L228 108L280 72L326 88L378 49L425 67L497 24" stroke="#8ce0ad" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+              <circle cx="178" cy="94" r="4" fill="#8ce0ad"/><circle cx="378" cy="49" r="4" fill="#8ce0ad"/><circle cx="497" cy="24" r="5" fill="#8ce0ad"/>
+            </svg>
+            <div className="mt-2 flex items-center justify-between font-mono text-[9px] uppercase tracking-[.12em] text-[#9bad9e]"><span>Plan</span><span>Execute</span><span>Reflect</span></div>
+          </div>
         </div>
-        </section>
-      </div>
+
+        <div className="relative z-10 mt-8 hidden items-center gap-3 font-mono text-[10px] text-[#a0afa2] xl:flex"><span className="font-semibold text-[#e1eee4]">TRADE JOURNAL</span><span className="h-px w-9 bg-[#728d78]"/><span>Learn from the process</span></div>
+      </section>
+
+      <section className="login-panel relative flex min-h-[620px] flex-col rounded-[18px] px-6 py-6 text-[#f4f1e8] sm:px-10 sm:py-8 xl:min-h-0 xl:overflow-y-auto xl:px-11" data-auth-reveal>
+        <Link href="/" className="flex items-center gap-2.5 text-sm font-semibold"><span className="grid h-8 w-8 place-items-center rounded-lg bg-[#1d2b21] text-[#8ce0ad]"><LineChart className="h-4 w-4" /></span>Trading Journal</Link>
+        <div className="login-form-content mx-auto flex w-full max-w-[390px] flex-1 flex-col justify-center py-8">
+          <div className="mb-7 text-center"><h1 className="text-[32px] font-semibold tracking-[-.055em]">Create your journal.</h1><p className="mt-2 text-xs text-[#8e9b91]">Build a clear record of every trade and lesson.</p></div>
+          {signupError && <p role="alert" className="mb-4 rounded-xl bg-[#3a211e] px-3 py-3 text-sm text-[#ffb1a4]">{signupError}</p>}
+          {(verifyMessage || message) && <p role="status" className="mb-4 rounded-xl bg-[#1b2b20] px-3 py-3 text-sm text-[#a7e6ba]">Check your email and click the verification link to activate your account.</p>}
+
+          <form onSubmit={handleSubmit} className="space-y-3">
+            <label className="block"><span className="text-[11px] text-[#8e9b91]">Email address</span><input name="email" type="email" autoComplete="username" autoCapitalize="none" spellCheck={false} required className="mt-1.5 h-12 w-full rounded-xl border-0 bg-[#1a201b] px-3 text-sm text-[#eef3ee] outline-none placeholder:text-[#68736a] focus-visible:ring-2 focus-visible:ring-[#8ce0ad]/60" placeholder="you@example.com" /></label>
+            <label className="block"><span className="text-[11px] text-[#8e9b91]">Password</span><span className="relative mt-1.5 block"><input name="password" type={showPassword ? "text" : "password"} autoComplete="new-password" required minLength={6} className="h-12 w-full rounded-xl border-0 bg-[#1a201b] px-3 pr-12 text-sm text-[#eef3ee] outline-none placeholder:text-[#68736a] focus-visible:ring-2 focus-visible:ring-[#8ce0ad]/60" placeholder="Create a password" /><button type="button" onClick={() => setShowPassword((value) => !value)} aria-label={showPassword ? "Hide password" : "Show password"} aria-pressed={showPassword} className="absolute inset-y-0 right-0 flex w-12 items-center justify-center text-[#8e9b91] hover:text-[#8ce0ad]">{showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}</button></span></label>
+            <button type="submit" className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-full bg-[#8ce0ad] px-4 font-semibold text-[#0b120e] transition hover:bg-[#a5edbd]">Create an account <ArrowRight className="h-4 w-4" /></button>
+          </form>
+
+          <div className="mt-5 flex items-start gap-2 text-[10px] leading-5 text-[#77837a]"><ShieldCheck className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[#8e9b91]" />Your journal stays private. Trading Journal does not execute trades or provide signals.</div>
+          <p className="mt-5 text-center text-xs text-[#8e9b91]">Already have an account? <Link href="/login" className="font-semibold text-[#8ce0ad] hover:text-[#b0ebc2]">Sign in</Link></p>
+        </div>
+        <p className="mt-auto pt-3 text-[9px] leading-4 text-[#647067]">By continuing, you agree to our <Link href="/legal/terms" className="underline underline-offset-2 hover:text-[#9aa69d]">Terms of Service</Link> and <Link href="/legal/privacy" className="underline underline-offset-2 hover:text-[#9aa69d]">Privacy Policy</Link>.</p>
+      </section>
     </main>
   );
 }
