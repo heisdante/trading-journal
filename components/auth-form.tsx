@@ -77,10 +77,11 @@ export function AuthForm({ magicLinkAction, next, error, message }: AuthFormProp
           <div className="relative z-10 mt-auto max-w-md"><h2 className="text-4xl font-semibold leading-tight text-terminal-text">Pick up where your process left off.</h2><p className="mt-4 text-sm leading-6 text-white/70">Your trades, rules, reviews, and coaching context stay tied to your private account.</p></div>
         </section>
 
-        <section className="relative p-5 sm:p-8" data-auth-reveal>
+        <section className="relative flex flex-col p-5 sm:p-8 lg:min-h-[620px]" data-auth-reveal>
           <Link href="/" className="mb-7 flex items-center gap-3 text-terminal-text lg:hidden"><span className="flex h-10 w-10 items-center justify-center rounded-xl bg-terminal-cyan/10 text-terminal-cyan"><LineChart className="h-5 w-5" /></span><span className="font-semibold">Trading Journal</span></Link>
-          <div className="mb-6"><h1 className="text-3xl font-semibold text-terminal-text">Welcome back</h1><p className="mt-2 text-sm leading-6 text-terminal-muted">Sign in to pick up your review where you left off.</p></div>
+          <div><h1 className="text-3xl font-semibold text-terminal-text">Welcome back</h1><p className="mt-1 text-sm text-terminal-muted">Sign in to continue.</p></div>
 
+          <div className="w-full max-w-md lg:mt-auto lg:pt-10">
           {(loginError || error) && <p role="alert" className="mb-4 rounded-lg bg-terminal-red/10 p-3 text-sm text-terminal-red">{loginError || error}</p>}
           {message && <p role="status" className="mb-4 rounded-lg bg-terminal-cyan/10 p-3 text-sm text-terminal-cyan">{message}</p>}
 
@@ -98,6 +99,7 @@ export function AuthForm({ magicLinkAction, next, error, message }: AuthFormProp
 
           <div className="mt-6 flex items-start gap-2 pt-5 text-xs leading-5 text-terminal-muted"><ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-terminal-cyan" />Trading Journal does not place trades or provide signals. Your account keeps your review workflow private.</div>
           <p className="mt-5 text-sm text-terminal-muted">New to Trading Journal? <Link href="/signup" className="font-semibold text-terminal-cyan hover:underline">Create an account</Link></p>
+          </div>
         </section>
       </div>
     </main>
