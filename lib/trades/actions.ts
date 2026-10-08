@@ -37,6 +37,20 @@ function optionalOptionValue<const T extends readonly string[]>(formData: FormDa
   return value;
 }
 
+function tradeDirection(formData: FormData): Direction {
+  const value = String(formData.get("direction") ?? "").trim().toLowerCase();
+  if (value === "long") return "Long";
+  if (value === "short") return "Short";
+  throw new Error("Choose Long or Short for trade direction.");
+}
+
+function criteriaSelection(formData: FormData): boolean {
+  const value = String(formData.get("criteria_met") ?? "").trim().toLowerCase();
+  if (value === "yes") return true;
+  if (value === "no") return false;
+  throw new Error("Choose Yes or No for whether this idea meets your criteria.");
+}
+
 function optionalUrl(formData: FormData, name: string) {
   const value = String(formData.get(name) ?? "").trim();
   if (!value) {
@@ -110,10 +124,7 @@ export async function addTradeAction(_state: { error: string | null }, formData:
 
   const tradeId = crypto.randomUUID();
   try {
-  const direction = requiredString(formData, "direction") as Direction;
-  if (direction !== "Long" && direction !== "Short") {
-    throw new Error("direction must be Long or Short");
-  }
+  const direction = tradeDirection(formData);
 
   const pair = requiredString(formData, "pair");
   const recordState = optionValue(formData, "record_state", ["Planned", "Active"] as const);
@@ -127,8 +138,7 @@ export async function addTradeAction(_state: { error: string | null }, formData:
   const fomo = formData.get("fomo") === "on";
   const cutWinnerEarly = formData.get("cut_winner_early") === "on";
   const revengeTrade = formData.get("revenge_trade") === "on";
-  const criteriaValue = String(formData.get("criteria_met") ?? "");
-  const criteriaMet = criteriaValue === "on" || criteriaValue === "yes";
+  const criteriaMet = criteriaSelection(formData);
   const basePayload = {
     id: tradeId,
     user_id: user.id,

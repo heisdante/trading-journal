@@ -43,8 +43,8 @@ export function TradeForm({ defaults }: { defaults?: { market?: string | null; s
   const [values, setValues] = useState<Record<string, string>>({
     date: `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`,
     market: defaults?.market ?? "Forex",
-    direction: "Long",
-    criteria_met: "yes",
+    direction: "",
+    criteria_met: "",
     session: defaults?.session ?? "",
     record_state: "",
   });
@@ -81,7 +81,7 @@ export function TradeForm({ defaults }: { defaults?: { market?: string | null; s
     <section hidden={step !== 2} aria-labelledby="trade-review-title" className="p-5 sm:p-8">
       <div className="mb-6"><p className="font-mono text-[10px] uppercase tracking-[0.16em] text-terminal-cyan">03 / review</p><h2 id="trade-review-title" className="mt-2 text-xl font-semibold text-terminal-text">Review your trade</h2><p className="mt-1 text-sm text-terminal-muted">Check everything you recorded. Edit any detail before the final check-in.</p></div>
       <div className="grid gap-4 sm:grid-cols-2">
-        <article className="rounded-xl bg-terminal-bg/55 p-4"><div className="flex items-center justify-between"><h3 className="text-sm font-semibold">Trade idea</h3><button type="button" onClick={() => setStep(0)} className="text-xs font-semibold text-terminal-cyan">Edit</button></div><p className="mt-3 text-sm text-terminal-muted">{values.pair || "No symbol yet"} · {values.direction} · {values.market}</p><p className="mt-2 text-sm text-terminal-muted">{values.date} · Criteria: {values.criteria_met === "yes" ? "Yes" : "No"}</p><p className="mt-3 text-sm leading-6 text-terminal-muted">Entry reason comes next, before you save.</p></article>
+        <article className="rounded-xl bg-terminal-bg/55 p-4"><div className="flex items-center justify-between"><h3 className="text-sm font-semibold">Trade idea</h3><button type="button" onClick={() => setStep(0)} className="text-xs font-semibold text-terminal-cyan">Edit</button></div><p className="mt-3 text-sm text-terminal-muted">{values.pair || "No symbol yet"} · {values.direction || "Direction not selected"} · {values.market}</p><p className="mt-2 text-sm text-terminal-muted">{values.date} · Criteria: {values.criteria_met === "yes" ? "Yes" : values.criteria_met === "no" ? "No" : "Not selected"}</p><p className="mt-3 text-sm leading-6 text-terminal-muted">Entry reason comes next, before you save.</p></article>
         <article className="rounded-xl bg-terminal-bg/55 p-4"><div className="flex items-center justify-between"><h3 className="text-sm font-semibold">Context</h3><button type="button" onClick={() => setStep(1)} className="text-xs font-semibold text-terminal-cyan">Edit</button></div><p className="mt-3 text-sm text-terminal-muted">{values.session || "No session selected"}</p><p className="mt-3 text-sm leading-6 text-terminal-text">{values.notes || "No additional notes yet"}</p></article>
       </div>
       <div className="mt-8 flex flex-col-reverse gap-3 pt-5 sm:flex-row sm:items-center sm:justify-between"><button type="button" onClick={() => setStep(1)} className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-terminal-panel2 px-5 text-sm font-medium text-terminal-muted"><ArrowLeft className="h-4 w-4" />Back</button><button type="button" onClick={() => setStep(3)} className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-terminal-cyan px-5 text-sm font-semibold text-terminal-bg">Continue to reflection <ArrowRight className="h-4 w-4" /></button></div>
