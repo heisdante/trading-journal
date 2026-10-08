@@ -49,14 +49,14 @@ export function SignupForm({ error, message }: SignupFormProps) {
     <main className="login-screen auth-shell grid min-h-screen gap-3 p-3 xl:h-dvh xl:min-h-0 xl:grid-cols-[minmax(0,1fr)_minmax(400px,31%)] xl:grid-rows-[minmax(0,1fr)]">
       <AuthMotion />
       <section className="login-art-panel relative flex min-h-[310px] flex-col overflow-hidden rounded-[18px] p-6 sm:min-h-[370px] sm:p-10 xl:min-h-0 xl:p-10 2xl:p-14" data-auth-reveal>
-        <div className="relative z-10 flex items-center gap-2 font-mono text-[10px] font-semibold uppercase tracking-[.16em] text-[#8ce0ad]">
+        <div className="login-art-eyebrow relative z-10 flex items-center gap-2 font-mono text-[10px] font-semibold uppercase tracking-[.16em] text-[#8ce0ad]">
           <span>Trading journal</span><span className="text-[#546458]">/</span><span className="text-[#89958b]">Process workspace</span>
         </div>
 
         <div className="login-art-body relative z-10 grid flex-1 items-end gap-8 pt-10 xl:grid-cols-[minmax(0,1.12fr)_minmax(0,.88fr)] xl:items-center xl:gap-7 2xl:gap-12">
           <div className="login-art-copy max-w-[570px]">
-            <h2 className="text-[clamp(2.1rem,4vw,4.5rem)] font-semibold leading-[1.02] tracking-[-.06em]"><span className="block text-[#a8b4ab]">Grow as you execute.</span> <span className="block text-white">Journal every trade.</span></h2>
-            <p className="mt-5 max-w-[410px] text-sm leading-6 text-[#c5d1c7]">A private space for your setups, decisions, and lessons behind every outcome.</p>
+            <h2 className="text-[clamp(2.1rem,4vw,4.5rem)] font-semibold leading-[1.02] tracking-[-.06em]"><span className="block text-[#a8b4ab]">Start turning trades</span> <span className="block text-white">into evidence.</span></h2>
+            <p className="mt-5 max-w-[410px] text-sm leading-6 text-[#c5d1c7]">A private space to reflect, build consistency, and grow with every trade.</p>
             <Link href="/" className="mt-7 inline-flex min-h-11 items-center gap-3 rounded-full bg-white px-4 text-sm font-semibold text-[#101510] transition hover:bg-[#e6f3e9]"><span className="grid h-7 w-7 place-items-center rounded-full bg-[#8ce0ad] text-[#0b120e]"><LineChart className="h-4 w-4" /></span>Explore the journal<ArrowRight className="h-4 w-4 text-[#365842]" /></Link>
           </div>
 
