@@ -65,7 +65,7 @@ export function TradeCalendar({ trades, compact = false }: { trades: Trade[]; co
       <header className="calendar-header">
         <div>
           <p className="calendar-eyebrow">Trade activity / calendar</p>
-          <h1>{monthLabel}</h1>
+          {compact ? <h2>{monthLabel}</h2> : <h1>{monthLabel}</h1>}
           {!compact && <p className="calendar-subtitle">A month at a glance. Open a day’s record to revisit the decision.</p>}
         </div>
         <div className="calendar-controls" aria-label="Calendar navigation">
