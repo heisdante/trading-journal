@@ -61,9 +61,9 @@ export function AuthForm({ next, error, message }: AuthFormProps) {
   }
 
   return (
-    <main className="login-screen auth-shell grid min-h-screen gap-3 p-3 lg:grid-cols-[minmax(0,1fr)_minmax(390px,25vw)]">
+    <main className="login-screen auth-shell grid min-h-screen gap-3 p-3 lg:h-dvh lg:min-h-0 lg:grid-cols-[minmax(0,1fr)_minmax(390px,25vw)] lg:grid-rows-[minmax(0,1fr)]">
       <AuthMotion />
-      <section className="login-art-panel relative hidden overflow-hidden rounded-[18px] p-8 lg:flex lg:min-h-[calc(100dvh-24px)] lg:flex-col lg:p-12 xl:p-14" data-auth-reveal>
+      <section className="login-art-panel relative hidden overflow-hidden rounded-[18px] p-8 lg:flex lg:min-h-0 lg:flex-col lg:p-12 xl:p-14" data-auth-reveal>
         <div className="login-art-dots absolute inset-0" aria-hidden="true" />
         <div className="relative z-10 flex items-center gap-2 font-mono text-[10px] font-semibold uppercase tracking-[.16em] text-[#96720e]">
           <span>Trading journal</span><span className="text-[#c6bfa8]">/</span><span>Execution &amp; review</span>
@@ -80,11 +80,11 @@ export function AuthForm({ next, error, message }: AuthFormProps) {
         <div className="relative z-10 mt-auto flex items-center gap-3 pt-10 font-mono text-[10px] text-[#777365]"><span className="font-semibold text-[#292820]">01</span><span className="h-px w-9 bg-[#292820]"/><span className="h-px w-5 bg-[#c9c3b0]"/><span className="h-px w-5 bg-[#c9c3b0]"/><span>04</span></div>
       </section>
 
-      <section className="login-panel relative flex min-h-[calc(100dvh-24px)] flex-col rounded-[18px] px-6 py-6 text-[#f4f1e8] sm:px-10 sm:py-8 lg:px-11" data-auth-reveal>
+      <section className="login-panel relative flex min-h-[calc(100dvh-24px)] flex-col rounded-[18px] px-6 py-6 text-[#f4f1e8] sm:px-10 sm:py-8 lg:min-h-0 lg:overflow-y-auto lg:px-11" data-auth-reveal>
         <Link href="/" className="flex items-center gap-2.5 text-sm font-semibold"><span className="grid h-8 w-8 place-items-center rounded-lg bg-[#ffcc32] text-[#17140b]"><LineChart className="h-4 w-4" /></span>Trading Journal</Link>
-        <div className="mt-12 sm:mt-16 lg:mt-[clamp(46px,12vh,110px)]"><h1 className="text-[32px] font-semibold tracking-[-.055em]">Welcome back.</h1><p className="mt-2 text-xs text-[#8c877c]">Sign in to pick up right where you left off.</p></div>
+        <div className="mt-12 sm:mt-16 lg:mt-[clamp(38px,8vh,72px)]"><h1 className="text-[32px] font-semibold tracking-[-.055em]">Welcome back.</h1><p className="mt-2 text-xs text-[#8c877c]">Sign in to pick up right where you left off.</p></div>
 
-        <div className="mx-auto mt-9 w-full max-w-[390px] lg:mt-auto lg:pb-[clamp(28px,8vh,72px)] lg:pt-10">
+        <div className="mx-auto mt-9 w-full max-w-[390px] lg:mt-auto lg:pb-[clamp(20px,4vh,36px)] lg:pt-8">
           {(loginError || error) && <p role="alert" className="mb-4 rounded-xl bg-[#5d2822] px-3 py-3 text-sm text-[#ffb1a4]">{loginError || error}</p>}
           {message && <p role="status" className="mb-4 rounded-xl bg-[#302b1c] px-3 py-3 text-sm text-[#f0d783]">{message}</p>}
 
@@ -99,7 +99,7 @@ export function AuthForm({ next, error, message }: AuthFormProps) {
           <div className="mt-5 flex items-start gap-2 text-[10px] leading-5 text-[#777268]"><ShieldCheck className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[#aaa498]" />Your journal stays private. Trading Journal does not execute trades or provide signals.</div>
           <p className="mt-5 text-center text-xs text-[#8c877c]">New to Trading Journal? <Link href="/signup" className="font-semibold text-[#ffcc32] hover:text-[#ffe38b]">Create an account</Link></p>
         </div>
-        <p className="mt-auto pt-5 text-[9px] leading-4 text-[#666159]">By continuing, you agree to our <Link href="/legal/terms" className="underline underline-offset-2 hover:text-[#aaa498]">Terms of Service</Link> and <Link href="/legal/privacy" className="underline underline-offset-2 hover:text-[#aaa498]">Privacy Policy</Link>.</p>
+        <p className="mt-auto pt-3 text-[9px] leading-4 text-[#666159]">By continuing, you agree to our <Link href="/legal/terms" className="underline underline-offset-2 hover:text-[#aaa498]">Terms of Service</Link> and <Link href="/legal/privacy" className="underline underline-offset-2 hover:text-[#aaa498]">Privacy Policy</Link>.</p>
       </section>
     </main>
   );
