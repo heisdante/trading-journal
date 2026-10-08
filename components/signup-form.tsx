@@ -48,7 +48,7 @@ export function SignupForm({ error, message }: SignupFormProps) {
     <main className="auth-shell flex min-h-screen items-center justify-center px-4 py-10 sm:px-6 lg:px-8">
       <AuthMotion />
       <div className="auth-card grid w-full max-w-5xl overflow-hidden rounded-2xl bg-[#0d110e]/75 backdrop-blur-2xl lg:grid-cols-[0.95fr_1.05fr]">
-        <section className="auth-visual relative hidden min-h-[620px] p-8 lg:flex lg:flex-col lg:justify-between" data-auth-reveal>
+        <section className="auth-visual relative flex min-h-[310px] flex-col justify-between p-6 sm:min-h-[370px] sm:p-8 lg:min-h-[620px]" data-auth-reveal>
           <Link href="/" className="relative z-10 flex items-center gap-3 text-terminal-text">
             <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-terminal-cyan/15 text-terminal-cyan">
               <LineChart className="h-5 w-5" />
@@ -56,18 +56,12 @@ export function SignupForm({ error, message }: SignupFormProps) {
             <span className="font-semibold">Trading Journal</span>
           </Link>
           <div className="relative z-10 mt-auto max-w-md">
-            <h2 className="text-4xl font-semibold leading-tight text-terminal-text">Start turning trades into evidence.</h2>
+            <h2 className="text-3xl font-semibold leading-tight text-terminal-text sm:text-4xl">Start turning trades into evidence.</h2>
             <p className="mt-4 text-sm leading-6 text-white/70">A private space to reflect, build consistency, and grow with every trade.</p>
           </div>
         </section>
 
         <section className="relative flex flex-col p-5 sm:p-8 lg:min-h-[620px]" data-auth-reveal>
-          <Link href="/" className="mb-8 flex items-center gap-3 text-terminal-text lg:hidden">
-            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-terminal-cyan/10 text-terminal-cyan">
-              <LineChart className="h-5 w-5" />
-            </span>
-            <span className="font-semibold">Trading Journal</span>
-          </Link>
           <div>
             <h1 className="text-3xl font-semibold text-terminal-text">Create your journal</h1>
             <p className="mt-1 text-sm text-terminal-muted">A clear record of every trade and lesson.</p>
