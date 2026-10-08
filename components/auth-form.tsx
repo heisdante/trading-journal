@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useEffect, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { useFormStatus } from "react-dom";
-import { ArrowRight, CheckCircle2, Eye, EyeOff, LineChart, Mail, ShieldCheck, Sparkles } from "lucide-react";
+import { ArrowRight, Eye, EyeOff, LineChart, Mail, ShieldCheck } from "lucide-react";
 import { AuthMotion } from "@/components/auth-motion";
 import { createClient } from "@/lib/supabase/client";
 
@@ -74,13 +74,12 @@ export function AuthForm({ magicLinkAction, next, error, message }: AuthFormProp
       <div className="auth-card grid w-full max-w-5xl overflow-hidden rounded-2xl bg-[#0d110e]/75 backdrop-blur-2xl lg:grid-cols-[0.95fr_1.05fr]">
         <section className="auth-visual relative hidden min-h-[620px] p-8 lg:flex lg:flex-col lg:justify-between" data-auth-reveal>
           <Link href="/" className="relative z-10 flex items-center gap-3 text-terminal-text"><span className="flex h-10 w-10 items-center justify-center rounded-xl bg-terminal-cyan/15 text-terminal-cyan"><LineChart className="h-5 w-5" /></span><span className="font-semibold">Trading Journal</span></Link>
-          <div className="relative z-10"><p className="inline-flex items-center gap-2 rounded-full bg-terminal-cyan/15 px-3 py-2 font-mono text-xs uppercase text-terminal-cyan"><Sparkles className="h-4 w-4" />Secure journal session</p><h2 className="mt-6 text-4xl font-semibold leading-tight text-terminal-text">Pick up where your process left off.</h2><p className="mt-4 text-sm leading-6 text-terminal-muted">Your trades, rules, reviews, and coaching context stay tied to your private account.</p></div>
-          <div className="relative z-10 grid gap-2">{["Private account workspace", "Rule and review history", "Performance evidence in R"].map((item) => <div key={item} className="flex items-center gap-3 rounded-xl bg-black/20 px-3 py-3 text-sm text-white/80"><CheckCircle2 className="h-4 w-4 text-terminal-green" />{item}</div>)}</div>
+          <div className="relative z-10 mt-auto max-w-md"><h2 className="text-4xl font-semibold leading-tight text-terminal-text">Pick up where your process left off.</h2><p className="mt-4 text-sm leading-6 text-white/70">Your trades, rules, reviews, and coaching context stay tied to your private account.</p></div>
         </section>
 
         <section className="relative p-5 sm:p-8" data-auth-reveal>
           <Link href="/" className="mb-7 flex items-center gap-3 text-terminal-text lg:hidden"><span className="flex h-10 w-10 items-center justify-center rounded-xl bg-terminal-cyan/10 text-terminal-cyan"><LineChart className="h-5 w-5" /></span><span className="font-semibold">Trading Journal</span></Link>
-          <div className="mb-6"><p className="font-mono text-xs uppercase text-terminal-cyan">auth / login</p><h1 className="mt-2 text-3xl font-semibold text-terminal-text">Welcome back</h1><p className="mt-2 text-sm leading-6 text-terminal-muted">Sign in to pick up your review where you left off.</p></div>
+          <div className="mb-6"><h1 className="text-3xl font-semibold text-terminal-text">Welcome back</h1><p className="mt-2 text-sm leading-6 text-terminal-muted">Sign in to pick up your review where you left off.</p></div>
 
           {(loginError || error) && <p role="alert" className="mb-4 rounded-lg bg-terminal-red/10 p-3 text-sm text-terminal-red">{loginError || error}</p>}
           {message && <p role="status" className="mb-4 rounded-lg bg-terminal-cyan/10 p-3 text-sm text-terminal-cyan">{message}</p>}
