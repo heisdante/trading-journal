@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { ArrowRight, Eye, EyeOff, LineChart, ShieldCheck } from "lucide-react";
 import { AuthMotion } from "@/components/auth-motion";
 import { AuthProcessChart } from "@/components/auth-process-chart";
+import { AuthThemeToggle } from "@/components/auth-theme-toggle";
 import { createClient } from "@/lib/supabase/client";
 
 type SignupFormProps = {
@@ -68,7 +69,7 @@ export function SignupForm({ error, message }: SignupFormProps) {
       </section>
 
       <section className="login-panel relative flex min-h-[620px] flex-col rounded-[18px] px-6 py-6 text-[#f4f1e8] sm:px-10 sm:py-8 xl:min-h-0 xl:overflow-y-auto xl:px-11" data-auth-reveal>
-        <Link href="/" className="flex items-center gap-2.5 text-sm font-semibold"><span className="grid h-8 w-8 place-items-center rounded-lg bg-[#1d2b21] text-[#8ce0ad]"><LineChart className="h-4 w-4" /></span>Trading Journal</Link>
+        <div className="flex items-center justify-between gap-3"><Link href="/" className="auth-brand flex items-center gap-2.5 text-sm font-semibold"><span className="grid h-8 w-8 place-items-center rounded-lg bg-[#1d2b21] text-[#8ce0ad]"><LineChart className="h-4 w-4" /></span>Trading Journal</Link><AuthThemeToggle /></div>
         <div className="login-form-content mx-auto flex w-full max-w-[390px] flex-1 flex-col justify-center py-8">
           <div className="mb-7 text-center"><h1 className="text-[32px] font-semibold tracking-[-.055em]">Create your journal.</h1><p className="mt-2 text-xs text-[#8e9b91]">Build a clear record of every trade and lesson.</p></div>
           {signupError && <p role="alert" className="mb-4 rounded-xl bg-[#3a211e] px-3 py-3 text-sm text-[#ffb1a4]">{signupError}</p>}
