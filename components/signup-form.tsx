@@ -73,7 +73,7 @@ export function SignupForm({ error, message }: SignupFormProps) {
             <p className="mt-1 text-sm text-terminal-muted">A clear record of every trade and lesson.</p>
           </div>
 
-        <div className="w-full max-w-md lg:mt-auto lg:pt-10">
+        <div className="mx-auto mt-8 w-full max-w-md">
         <form onSubmit={handleSubmit} className="space-y-4">
           <label className="block">
             <span className="text-sm text-terminal-muted">Email</span>
@@ -110,7 +110,7 @@ export function SignupForm({ error, message }: SignupFormProps) {
             type="submit"
             className="inline-flex h-12 w-full items-center justify-center gap-2 rounded bg-terminal-cyan px-4 font-semibold text-terminal-bg transition hover:bg-cyan-300"
           >
-            Create account <ArrowRight className="h-4 w-4" />
+            Create an account <ArrowRight className="h-4 w-4" />
           </button>
         </form>
 
