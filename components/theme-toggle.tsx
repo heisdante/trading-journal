@@ -1,22 +1,30 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { Moon, Sun } from "lucide-react";
-import { useTheme } from "@/components/theme-provider";
 
-export function ThemeToggle({ compact = false }: { compact?: boolean }) {
-  const { theme, setTheme } = useTheme();
-  const nextTheme = theme === "dark" ? "light" : "dark";
+type Theme = "light" | "dark";
+const storageKey = "trading-journal-theme";
 
-  return (
-    <button
-      type="button"
-      onClick={() => setTheme(nextTheme)}
-      aria-label={`Switch to ${nextTheme} mode`}
-      title={`Switch to ${nextTheme} mode`}
-      className={`inline-flex min-h-11 items-center border border-terminal-line text-sm text-terminal-muted transition hover:border-terminal-cyan hover:text-terminal-cyan ${compact ? "w-11 justify-center" : "w-full justify-between gap-3 px-3"}`}
-    >
-      <span className={compact ? "sr-only" : "font-medium"}>{theme === "dark" ? "Dark mode" : "Light mode"}</span>
-      {theme === "dark" ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
-    </button>
-  );
+export function ThemeToggle() {
+  const [theme, setTheme] = useState<Theme>("dark");
+
+  useEffect(() => {
+    const syncTheme = () => setTheme(document.documentElement.dataset.theme === "light" ? "light" : "dark");
+    syncTheme();
+    window.addEventListener("journal-theme-change", syncTheme);
+    return () => window.removeEventListener("journal-theme-change", syncTheme);
+  }, []);
+
+  function selectTheme(next: Theme) {
+    document.documentElement.dataset.theme = next;
+    window.localStorage.setItem(storageKey, next);
+    setTheme(next);
+    window.dispatchEvent(new Event("journal-theme-change"));
+  }
+
+  return <div className="auth-theme-switch" role="group" aria-label="Appearance">
+    <button type="button" className="auth-theme-option" onClick={() => selectTheme("light")} aria-label="Light mode" aria-pressed={theme === "light"} title="Light mode"><Sun className="h-4 w-4" /></button>
+    <button type="button" className="auth-theme-option" onClick={() => selectTheme("dark")} aria-label="Dark mode" aria-pressed={theme === "dark"} title="Dark mode"><Moon className="h-4 w-4" /></button>
+  </div>;
 }

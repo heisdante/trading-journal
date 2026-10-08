@@ -17,8 +17,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" data-theme="dark">
+    <html lang="en" data-theme="dark" suppressHydrationWarning>
       <body className={`${manrope.variable} ${plexMono.variable} font-sans antialiased`}>
+        <script dangerouslySetInnerHTML={{ __html: `try{var t=localStorage.getItem('trading-journal-theme')||localStorage.getItem('trading-journal-auth-theme');document.documentElement.dataset.theme=t==='light'?'light':'dark'}catch(e){}` }} />
         <SmoothScroll />{children}
       </body>
     </html>
