@@ -61,33 +61,35 @@ export function AuthForm({ next, error, message }: AuthFormProps) {
   }
 
   return (
-    <main className="login-screen auth-shell grid min-h-screen gap-3 p-3 lg:h-dvh lg:min-h-0 lg:grid-cols-[minmax(0,1fr)_minmax(390px,25vw)] lg:grid-rows-[minmax(0,1fr)]">
+    <main className="login-screen auth-shell grid min-h-screen gap-3 p-3 xl:h-dvh xl:min-h-0 xl:grid-cols-[minmax(0,1fr)_minmax(400px,31%)] xl:grid-rows-[minmax(0,1fr)]">
       <AuthMotion />
-      <section className="login-art-panel relative hidden overflow-hidden rounded-[18px] p-8 lg:flex lg:min-h-0 lg:flex-col lg:p-12 xl:p-14" data-auth-reveal>
+      <section className="login-art-panel relative flex min-h-[310px] flex-col overflow-hidden rounded-[18px] p-6 sm:min-h-[370px] sm:p-10 xl:min-h-0 xl:p-10 2xl:p-14" data-auth-reveal>
         <div className="relative z-10 flex items-center gap-2 font-mono text-[10px] font-semibold uppercase tracking-[.16em] text-[#8ce0ad]">
           <span>Trading journal</span><span className="text-[#546458]">/</span><span className="text-[#89958b]">Process workspace</span>
         </div>
 
-        <div className="relative z-10 mt-12 max-w-[540px]">
-          <h2 className="max-w-[12ch] text-5xl font-semibold leading-[.98] tracking-[-.065em] xl:text-6xl"><span className="text-[#747e76]">Grow as you execute.</span> <span className="text-white">Journal every trade.</span></h2>
-          <p className="mt-6 max-w-[390px] text-sm leading-6 text-[#9aa69d]">A second brain for your setups, your decisions, and the lessons behind every outcome.</p>
-          <Link href="/" className="mt-8 inline-flex min-h-11 items-center gap-3 rounded-full bg-white px-4 text-sm font-semibold text-[#101510] transition hover:bg-[#e6f3e9]"><span className="grid h-7 w-7 place-items-center rounded-full bg-[#8ce0ad] text-[#0b120e]"><LineChart className="h-4 w-4" /></span>Explore the journal<ArrowRight className="h-4 w-4 text-[#365842]" /></Link>
+        <div className="login-art-body relative z-10 grid flex-1 items-end gap-8 pt-10 xl:grid-cols-[minmax(0,1.12fr)_minmax(0,.88fr)] xl:items-center xl:gap-7 2xl:gap-12">
+          <div className="login-art-copy max-w-[570px]">
+            <h2 className="text-[clamp(2.1rem,4vw,4.5rem)] font-semibold leading-[1.02] tracking-[-.06em]"><span className="block text-[#a8b4ab]">Grow as you execute.</span> <span className="block text-white">Journal every trade.</span></h2>
+            <p className="mt-5 max-w-[410px] text-sm leading-6 text-[#c5d1c7]">A second brain for your setups, your decisions, and the lessons behind every outcome.</p>
+            <Link href="/" className="mt-7 inline-flex min-h-11 items-center gap-3 rounded-full bg-white px-4 text-sm font-semibold text-[#101510] transition hover:bg-[#e6f3e9]"><span className="grid h-7 w-7 place-items-center rounded-full bg-[#8ce0ad] text-[#0b120e]"><LineChart className="h-4 w-4" /></span>Explore the journal<ArrowRight className="h-4 w-4 text-[#365842]" /></Link>
+          </div>
+
+          <div className="login-review-art mb-8 hidden self-end xl:block" aria-hidden="true">
+            <div className="flex items-center justify-between gap-3"><p className="font-mono text-[9px] uppercase tracking-[.14em] text-[#a1b1a5]">Process in motion</p><span className="font-mono text-[9px] text-[#72c994]">01 / 03</span></div>
+            <svg viewBox="0 0 520 190" fill="none" className="mt-3 w-full" role="presentation">
+              <path d="M4 30H516M4 75H516M4 120H516M4 165H516" stroke="#29362d" strokeWidth="1" />
+              <path d="M18 142L76 129L124 138L178 94L228 108L280 72L326 88L378 49L425 67L497 24" stroke="#8ce0ad" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+              <circle cx="178" cy="94" r="4" fill="#8ce0ad"/><circle cx="378" cy="49" r="4" fill="#8ce0ad"/><circle cx="497" cy="24" r="5" fill="#8ce0ad"/>
+            </svg>
+            <div className="mt-2 flex items-center justify-between font-mono text-[9px] uppercase tracking-[.12em] text-[#9bad9e]"><span>Plan</span><span>Execute</span><span>Reflect</span></div>
+          </div>
         </div>
 
-        <div className="login-review-art absolute" aria-hidden="true">
-          <p className="font-mono text-[9px] uppercase tracking-[.14em] text-[#8e9b91]">One trade at a time</p>
-          <svg viewBox="0 0 520 190" fill="none" className="mt-3 w-full" role="presentation">
-            <path d="M4 30H516M4 75H516M4 120H516M4 165H516" stroke="#27312a" strokeWidth="1" />
-            <path d="M18 142L76 129L124 138L178 94L228 108L280 72L326 88L378 49L425 67L497 24" stroke="#8ce0ad" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
-            <circle cx="178" cy="94" r="4" fill="#8ce0ad"/><circle cx="378" cy="49" r="4" fill="#8ce0ad"/><circle cx="497" cy="24" r="5" fill="#8ce0ad"/>
-          </svg>
-          <div className="mt-2 flex items-center justify-between font-mono text-[9px] uppercase tracking-[.12em] text-[#77837a]"><span>Plan</span><span>Execute</span><span>Reflect</span></div>
-        </div>
-
-        <div className="relative z-10 mt-auto flex items-center gap-3 pt-10 font-mono text-[10px] text-[#77837a]"><span className="font-semibold text-[#aeb9b0]">TRADE JOURNAL</span><span className="h-px w-9 bg-[#546458]"/><span>Learn from the process</span></div>
+        <div className="relative z-10 mt-8 hidden items-center gap-3 font-mono text-[10px] text-[#a0afa2] xl:flex"><span className="font-semibold text-[#e1eee4]">TRADE JOURNAL</span><span className="h-px w-9 bg-[#728d78]"/><span>Learn from the process</span></div>
       </section>
 
-      <section className="login-panel relative flex min-h-[calc(100dvh-24px)] flex-col rounded-[18px] px-6 py-6 text-[#f4f1e8] sm:px-10 sm:py-8 lg:min-h-0 lg:overflow-y-auto lg:px-11" data-auth-reveal>
+      <section className="login-panel relative flex min-h-[620px] flex-col rounded-[18px] px-6 py-6 text-[#f4f1e8] sm:px-10 sm:py-8 xl:min-h-0 xl:overflow-y-auto xl:px-11" data-auth-reveal>
         <Link href="/" className="flex items-center gap-2.5 text-sm font-semibold"><span className="grid h-8 w-8 place-items-center rounded-lg bg-[#1d2b21] text-[#8ce0ad]"><LineChart className="h-4 w-4" /></span>Trading Journal</Link>
         <div className="login-form-content mx-auto flex w-full max-w-[390px] flex-1 flex-col justify-center py-8">
           <div className="mb-7 text-center"><h1 className="text-[32px] font-semibold tracking-[-.055em]">Welcome back.</h1><p className="mt-2 text-xs text-[#8e9b91]">Sign in to pick up right where you left off.</p></div>
