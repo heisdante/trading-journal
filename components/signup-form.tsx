@@ -49,7 +49,7 @@ export function SignupForm({ error, message }: SignupFormProps) {
   return (
     <main className="login-screen auth-shell grid min-h-screen gap-3 p-3 xl:h-dvh xl:min-h-0 xl:grid-cols-[minmax(0,1fr)_minmax(400px,31%)] xl:grid-rows-[minmax(0,1fr)]">
       <AuthMotion />
-      <section className="login-art-panel relative flex min-h-[310px] flex-col overflow-hidden rounded-[18px] p-6 sm:min-h-[370px] sm:p-10 xl:min-h-0 xl:p-10 2xl:p-14" data-auth-reveal>
+      <section className="login-art-panel relative hidden min-h-[310px] flex-col overflow-hidden rounded-[18px] p-6 sm:min-h-[370px] sm:p-10 md:flex xl:min-h-0 xl:p-10 2xl:p-14" data-auth-reveal>
         <div className="login-art-eyebrow relative z-10 flex items-center gap-2 font-mono text-[10px] font-semibold uppercase tracking-[.16em] text-[#8ce0ad]">
           <span>Trading journal</span><span className="text-[#546458]">/</span><span className="text-[#89958b]">Process workspace</span>
         </div>
