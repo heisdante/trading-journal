@@ -3,32 +3,115 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { Activity, BookOpenCheck, BotMessageSquare, CalendarRange, Calculator, ChevronLeft, ChevronRight, ClipboardList, CreditCard, FileOutput, FileUp, LayoutDashboard, ListChecks, Menu, PlusCircle, RotateCcw, Settings, Target, X } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
+import {
+  Activity, BookOpenCheck, BotMessageSquare, CalendarDays, Calculator, ChevronLeft,
+  ChevronRight, ClipboardList, CreditCard, FileOutput, FileUp, LayoutDashboard,
+  ListChecks, Menu, Plus, RotateCcw, Settings2, Target, X,
+} from "lucide-react";
 import { LogoutButton } from "@/components/logout-button";
 import { ThemeToggle } from "@/components/theme-toggle";
 
-const workspaceItems = [{ href: "/dashboard", label: "Dashboard", icon: LayoutDashboard }, { href: "/log", label: "Log trade", icon: PlusCircle }, { href: "/trades", label: "Trades", icon: ClipboardList }, { href: "/calculator", label: "Lot calculator", icon: Calculator }, { href: "/growth", label: "Growth roadmap", icon: Target }, { href: "/calendar", label: "Calendar", icon: CalendarRange }, { href: "/import", label: "Import history", icon: FileUp }];
-const reviewItems = [{ href: "/rules", label: "Trading rules", icon: ListChecks }, { href: "/playbooks", label: "Playbooks", icon: BookOpenCheck }, { href: "/review", label: "Daily review", icon: RotateCcw }, { href: "/weekly", label: "Weekly debrief", icon: CalendarRange }, { href: "/coach", label: "AI coach", icon: BotMessageSquare }, { href: "/report", label: "Accountability report", icon: FileOutput }];
+type NavigationItem = { href: string; label: string; icon: LucideIcon };
 
-type SidebarContentProps = { email: string; collapsed?: boolean; onNavigate?: () => void; onToggle?: () => void; mobile?: boolean };
+const navigation: Array<{ label: string; items: NavigationItem[] }> = [
+  { label: "Trading desk", items: [
+    { href: "/dashboard", label: "Overview", icon: LayoutDashboard },
+    { href: "/log", label: "Log a trade", icon: Plus },
+    { href: "/trades", label: "Trade history", icon: ClipboardList },
+    { href: "/calendar", label: "Calendar", icon: CalendarDays },
+  ] },
+  { label: "Plan & tools", items: [
+    { href: "/calculator", label: "Lot calculator", icon: Calculator },
+    { href: "/growth", label: "Growth roadmap", icon: Target },
+    { href: "/import", label: "Import trades", icon: FileUp },
+  ] },
+  { label: "Review & learn", items: [
+    { href: "/rules", label: "Trading rules", icon: ListChecks },
+    { href: "/playbooks", label: "Playbooks", icon: BookOpenCheck },
+    { href: "/review", label: "Daily review", icon: RotateCcw },
+    { href: "/weekly", label: "Weekly debrief", icon: CalendarDays },
+    { href: "/coach", label: "Journal coach", icon: BotMessageSquare },
+    { href: "/report", label: "Reports", icon: FileOutput },
+  ] },
+];
 
-function SidebarContent({ email, collapsed = false, onNavigate, onToggle, mobile = false }: SidebarContentProps) {
+type SidebarContentProps = {
+  email: string;
+  collapsed?: boolean;
+  mobile?: boolean;
+  onNavigate?: () => void;
+  onToggle?: () => void;
+};
+
+function SidebarContent({ email, collapsed = false, mobile = false, onNavigate, onToggle }: SidebarContentProps) {
   const pathname = usePathname();
   const isActive = (href: string) => pathname === href || (href !== "/dashboard" && pathname.startsWith(`${href}/`));
-  const navLink = (item: (typeof workspaceItems)[number]) => {
-    const active = isActive(item.href);
-    return <Link key={item.href} href={item.href} onClick={onNavigate} title={collapsed ? item.label : undefined} aria-label={collapsed ? item.label : undefined} className={`app-nav-link relative flex min-h-11 items-center border-l-2 text-sm transition ${collapsed ? "justify-center px-2" : "gap-3 px-3"} ${active ? "is-active border-terminal-cyan bg-terminal-cyan/10 font-semibold text-terminal-text" : "border-transparent text-terminal-muted hover:border-terminal-line hover:bg-terminal-panel2 hover:text-terminal-text"}`}><item.icon className="h-4 w-4 shrink-0" /><span className={collapsed ? "sr-only" : undefined}>{item.label}</span></Link>;
-  };
-  const accountLink = (href: "/profile" | "/billing", label: string, Icon: typeof Settings) => <Link href={href} onClick={onNavigate} title={collapsed ? label : undefined} aria-label={collapsed ? label : undefined} className={`app-nav-link relative flex min-h-11 items-center border-l-2 text-sm transition ${collapsed ? "justify-center px-2" : "gap-3 px-3"} ${isActive(href) ? "is-active border-terminal-cyan bg-terminal-cyan/10 font-semibold text-terminal-text" : "border-transparent text-terminal-muted hover:bg-terminal-panel2 hover:text-terminal-text"}`}><Icon className="h-4 w-4 shrink-0" /><span className={collapsed ? "sr-only" : undefined}>{label}</span></Link>;
 
-  return <div className="app-sidebar flex h-full min-h-0 flex-col bg-terminal-panel">
-    <div className={`border-b border-terminal-line py-5 ${collapsed ? "px-3" : "px-5"}`}><div className={`flex items-center ${collapsed ? "justify-center" : "justify-between gap-3"}`}><Link href="/dashboard" onClick={onNavigate} title={collapsed ? "Trading Journal" : undefined} className="flex items-center gap-3"><span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-terminal-line bg-terminal-panel2 text-terminal-cyan"><Activity className="h-5 w-5" /></span><span className={collapsed ? "sr-only" : "text-base font-semibold tracking-tight text-terminal-text"}>Trading Journal</span></Link>{!mobile && !collapsed ? <button type="button" onClick={onToggle} aria-label="Collapse sidebar" title="Collapse sidebar" className="flex h-9 w-9 shrink-0 items-center justify-center text-terminal-muted transition hover:bg-terminal-panel2 hover:text-terminal-cyan"><ChevronLeft className="h-4 w-4" /></button> : null}</div>{collapsed ? <button type="button" onClick={onToggle} aria-label="Expand sidebar" title="Expand sidebar" className="mt-4 flex h-9 w-full items-center justify-center text-terminal-muted transition hover:bg-terminal-panel2 hover:text-terminal-cyan"><ChevronRight className="h-4 w-4" /></button> : <p className="mt-4 truncate text-xs text-terminal-muted" title={email}>{email}</p>}</div>
-    <nav className="flex-1 overflow-y-auto py-5" aria-label="Workspace navigation"><p className={collapsed ? "sr-only" : "px-5 pb-2 font-mono text-[11px] uppercase text-terminal-muted"}>Workspace</p><div className="space-y-1">{workspaceItems.map(navLink)}</div><p className={collapsed ? "sr-only" : "px-5 pb-2 pt-7 font-mono text-[11px] uppercase text-terminal-muted"}>Process</p><div className="space-y-1">{reviewItems.map(navLink)}</div></nav>
-    <div className={`border-t border-terminal-line py-3 ${collapsed ? "px-2" : "px-3"}`}><div className={collapsed ? "flex justify-center" : "px-3"}><ThemeToggle compact={collapsed} /></div>{accountLink("/profile", "Settings", Settings)}<div className="mt-1">{accountLink("/billing", "Billing", CreditCard)}</div><div className={`mt-1 ${collapsed ? "flex justify-center" : "px-3"}`}><LogoutButton compact={collapsed} /></div></div>
-  </div>;
+  return (
+    <div className="app-sidebar flex h-full min-h-0 flex-col">
+      <div className={`sidebar-brand ${collapsed ? "is-collapsed" : ""}`}>
+        <div className="flex items-center justify-between gap-2">
+          <Link href="/dashboard" onClick={onNavigate} aria-label="Trading Journal overview" className="sidebar-brand-link">
+            <span className="sidebar-brand-icon"><Activity className="h-5 w-5" /></span>
+            <span className={collapsed ? "sr-only" : "sidebar-brand-name"}>Trading Journal</span>
+          </Link>
+          {!mobile && !collapsed && <button type="button" onClick={onToggle} className="sidebar-icon-button" aria-label="Collapse navigation" title="Collapse navigation"><ChevronLeft className="h-4 w-4" /></button>}
+        </div>
+        {!collapsed && <div className="sidebar-account-identity"><span className="sidebar-avatar">{email.slice(0, 1).toUpperCase()}</span><span className="min-w-0"><span className="block truncate text-xs font-semibold text-white">{email}</span><span className="mt-0.5 block text-[10px] text-white/50">PRIVATE WORKSPACE</span></span></div>}
+        {collapsed && !mobile && <button type="button" onClick={onToggle} className="sidebar-icon-button mx-auto mt-4" aria-label="Expand navigation" title="Expand navigation"><ChevronRight className="h-4 w-4" /></button>}
+      </div>
+
+      <nav className="sidebar-nav flex-1 overflow-y-auto" aria-label="Workspace navigation">
+        {navigation.map((group) => (
+          <section key={group.label} className="sidebar-nav-group">
+            <h2 className={collapsed ? "sr-only" : "sidebar-nav-heading"}>{group.label}</h2>
+            <div className="space-y-1">
+              {group.items.map(({ href, label, icon: Icon }) => {
+                const active = isActive(href);
+                return (
+                  <Link
+                    key={href}
+                    href={href}
+                    onClick={onNavigate}
+                    title={collapsed ? label : undefined}
+                    aria-label={collapsed ? label : undefined}
+                    aria-current={active ? "page" : undefined}
+                    className={`app-nav-link ${active ? "is-active" : ""} ${collapsed ? "is-collapsed" : ""}`}
+                  >
+                    <span className="app-nav-icon"><Icon className="h-[17px] w-[17px]" strokeWidth={1.8} /></span>
+                    <span className={collapsed ? "sr-only" : "truncate"}>{label}</span>
+                    {active && !collapsed && <span aria-hidden="true" className="app-nav-indicator" />}
+                  </Link>
+                );
+              })}
+            </div>
+          </section>
+        ))}
+      </nav>
+
+      <div className="sidebar-footer">
+        {!collapsed && <p className="sidebar-nav-heading">Account</p>}
+        <Link href="/profile" onClick={onNavigate} title={collapsed ? "Settings" : undefined} aria-label={collapsed ? "Settings" : undefined} className={`app-nav-link ${isActive("/profile") ? "is-active" : ""} ${collapsed ? "is-collapsed" : ""}`}><span className="app-nav-icon"><Settings2 className="h-[17px] w-[17px]" strokeWidth={1.8} /></span><span className={collapsed ? "sr-only" : "truncate"}>Settings</span></Link>
+        <Link href="/billing" onClick={onNavigate} title={collapsed ? "Billing" : undefined} aria-label={collapsed ? "Billing" : undefined} className={`app-nav-link ${isActive("/billing") ? "is-active" : ""} ${collapsed ? "is-collapsed" : ""}`}><span className="app-nav-icon"><CreditCard className="h-[17px] w-[17px]" strokeWidth={1.8} /></span><span className={collapsed ? "sr-only" : "truncate"}>Billing</span></Link>
+        <div className={`sidebar-footer-actions ${collapsed ? "is-collapsed" : ""}`}><ThemeToggle compact={collapsed} /><LogoutButton compact={collapsed} /></div>
+      </div>
+    </div>
+  );
 }
 
 export function AppSidebar({ email, collapsed, onCollapsedChange }: { email: string; collapsed: boolean; onCollapsedChange: (value: boolean) => void }) {
   const [open, setOpen] = useState(false);
-  return <><aside className="sticky top-0 hidden h-dvh border-r border-terminal-line lg:block"><SidebarContent email={email} collapsed={collapsed} onToggle={() => onCollapsedChange(!collapsed)} /></aside><header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-terminal-line bg-terminal-bg/90 px-4 backdrop-blur lg:hidden"><Link href="/dashboard" className="flex items-center gap-2 font-semibold text-terminal-text"><Activity className="h-5 w-5 text-terminal-cyan" />Trading Journal</Link><div className="flex items-center gap-2"><ThemeToggle compact /><button type="button" onClick={() => setOpen(true)} aria-label="Open navigation" className="flex h-11 w-11 items-center justify-center border border-terminal-line text-terminal-muted transition hover:border-terminal-cyan hover:text-terminal-cyan"><Menu className="h-5 w-5" /></button></div></header>{open ? <div className="fixed inset-0 z-50 lg:hidden" role="dialog" aria-modal="true" aria-label="Navigation"><button type="button" aria-label="Close navigation" onClick={() => setOpen(false)} className="absolute inset-0 bg-terminal-bg/75 backdrop-blur-sm" /><aside className="app-drawer relative h-dvh w-[min(19rem,88vw)] border-r border-terminal-line shadow-2xl"><button type="button" aria-label="Close navigation" onClick={() => setOpen(false)} className="absolute right-3 top-3 z-10 flex h-10 w-10 items-center justify-center text-terminal-muted transition hover:text-terminal-cyan"><X className="h-5 w-5" /></button><SidebarContent email={email} mobile onNavigate={() => setOpen(false)} /></aside></div> : null}</>;
+  return (
+    <>
+      <aside className="app-sidebar-rail sticky top-0 hidden h-dvh lg:block">
+        <SidebarContent email={email} collapsed={collapsed} onToggle={() => onCollapsedChange(!collapsed)} />
+      </aside>
+      <header className="app-mobile-header sticky top-0 z-30 flex h-16 items-center justify-between px-4 lg:hidden">
+        <Link href="/dashboard" className="sidebar-brand-link"><span className="sidebar-brand-icon"><Activity className="h-5 w-5" /></span><span className="font-semibold text-white">Trading Journal</span></Link>
+        <div className="flex items-center gap-2"><ThemeToggle compact /><button type="button" onClick={() => setOpen(true)} aria-label="Open navigation" className="sidebar-icon-button"><Menu className="h-5 w-5" /></button></div>
+      </header>
+      {open && <div className="fixed inset-0 z-50 lg:hidden" role="dialog" aria-modal="true" aria-label="Workspace navigation"><button type="button" aria-label="Close navigation" onClick={() => setOpen(false)} className="app-drawer-scrim absolute inset-0" /><aside className="app-drawer relative h-dvh w-[min(20rem,88vw)]"><button type="button" aria-label="Close navigation" onClick={() => setOpen(false)} className="sidebar-icon-button absolute right-3 top-3 z-10"><X className="h-5 w-5" /></button><SidebarContent email={email} mobile onNavigate={() => setOpen(false)} /></aside></div>}
+    </>
+  );
 }

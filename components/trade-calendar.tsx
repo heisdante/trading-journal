@@ -14,7 +14,7 @@ function toDateKey(date: Date) {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
 }
 
-export function TradeCalendar({ trades }: { trades: Trade[] }) {
+export function TradeCalendar({ trades, compact = false }: { trades: Trade[]; compact?: boolean }) {
   const latestTrade = trades[0]?.date;
   const [cursor, setCursor] = useState(() => (latestTrade ? new Date(`${latestTrade}T12:00:00`) : new Date()));
 
@@ -49,10 +49,10 @@ export function TradeCalendar({ trades }: { trades: Trade[] }) {
     setCursor((current) => new Date(current.getFullYear(), current.getMonth() + offset, 1));
   }
 
-  const monthLabel = new Intl.DateTimeFormat("en-US", { month: "long", year: "numeric" }).format(cursor);
+  const monthLabel = new Intl.DateTimeFormat(undefined, { month: "long", year: "numeric" }).format(cursor);
 
   return (
-    <section className="terminal-panel app-chart-panel overflow-hidden rounded-lg">
+    <section className={`terminal-panel app-chart-panel trade-calendar overflow-hidden rounded-lg ${compact ? "is-compact" : ""}`}>
       <div className="app-page-heading flex flex-col gap-3 border-b border-terminal-line p-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <p className="font-mono text-xs uppercase text-terminal-cyan">calendar / trade record</p>
@@ -64,12 +64,13 @@ export function TradeCalendar({ trades }: { trades: Trade[] }) {
           <button type="button" onClick={() => moveMonth(1)} aria-label="Next month" className="flex h-10 w-10 items-center justify-center border border-terminal-line text-terminal-muted transition hover:border-terminal-cyan hover:text-terminal-cyan"><ChevronRight className="h-4 w-4" /></button>
         </div>
       </div>
-      <div className="grid grid-cols-7 border-b border-terminal-line bg-terminal-panel2 text-center font-mono text-[11px] uppercase text-terminal-muted">
-        {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => <div key={day} className="px-2 py-2">{day}</div>)}
+      <div className="calendar-scroll">
+      <div className="calendar-grid grid grid-cols-7 border-b border-terminal-line bg-terminal-panel2 text-center font-mono text-[11px] uppercase text-terminal-muted">
+        {Array.from({ length: 7 }, (_, index) => new Intl.DateTimeFormat(undefined, { weekday: "short" }).format(new Date(2024, 0, index + 7))).map((day, index) => <div key={`${day}-${index}`} className="px-2 py-2">{day}</div>)}
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-7">
+      <div className="calendar-grid grid grid-cols-7">
         {calendar.map((day) => (
-          <div key={day.key} className={`min-h-28 border-b border-terminal-line p-3 md:border-r ${day.isCurrentMonth ? "bg-terminal-bg/35" : "bg-terminal-panel/40 text-terminal-muted"}`}>
+          <div key={day.key} className={`calendar-day min-h-28 border-b border-terminal-line p-3 md:border-r ${day.isCurrentMonth ? "bg-terminal-bg/35" : "bg-terminal-panel/40 text-terminal-muted"}`}>
             <div className="flex items-center justify-between gap-2">
               <span className="number text-sm text-terminal-muted">{day.date.getDate()}</span>
               {day.trades.length ? <span className={`number rounded-sm border px-2 py-0.5 text-[11px] ${day.totalR > 0 ? "border-terminal-green/30 bg-terminal-green/10 text-terminal-green" : day.totalR < 0 ? "border-terminal-red/30 bg-terminal-red/10 text-terminal-red" : "border-terminal-amber/30 bg-terminal-amber/10 text-terminal-amber"}`}>{formatR(day.totalR)}</span> : null}
@@ -84,6 +85,7 @@ export function TradeCalendar({ trades }: { trades: Trade[] }) {
             </div>
           </div>
         ))}
+      </div>
       </div>
     </section>
   );

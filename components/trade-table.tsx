@@ -19,7 +19,7 @@ function resultClass(rValue: number) {
   return "border-terminal-amber/30 bg-terminal-amber/10 text-terminal-amber";
 }
 
-export function TradeTable({ trades }: { trades: Trade[] }) {
+export function TradeTable({ trades, compact = false }: { trades: Trade[]; compact?: boolean }) {
   const [query, setQuery] = useState("");
   const [market, setMarket] = useState("all");
   const [session, setSession] = useState("all");
@@ -57,7 +57,7 @@ export function TradeTable({ trades }: { trades: Trade[] }) {
   }
 
   return (
-    <div className="terminal-panel overflow-hidden rounded-lg">
+    <div className={`terminal-panel trade-table overflow-hidden rounded-lg ${compact ? "is-compact" : ""}`}>
       <div className="app-page-heading flex flex-col gap-4 border-b border-terminal-line p-4 lg:flex-row lg:items-end lg:justify-between">
         <div>
           <p className="font-mono text-xs uppercase text-terminal-cyan">history / all</p>
@@ -87,7 +87,7 @@ export function TradeTable({ trades }: { trades: Trade[] }) {
 
       {filteredTrades.length ? (
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[1760px] border-collapse text-left text-sm">
+          <table className="trade-data-table w-full min-w-[1100px] border-collapse text-left text-sm">
             <thead className="bg-terminal-panel2 text-xs uppercase tracking-wider text-terminal-muted">
               <tr>
                 <th className="px-4 py-3 font-medium">Date</th>

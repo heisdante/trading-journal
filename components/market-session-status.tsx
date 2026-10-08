@@ -59,7 +59,7 @@ function sessionState(session: Session, now: Date) {
   return { ...parts, label, detail, isOpen, preOpen };
 }
 
-export function MarketSessionStatus() {
+export function MarketSessionStatus({ compact = false }: { compact?: boolean }) {
   const [now, setNow] = useState(() => new Date());
 
   useEffect(() => {
@@ -71,17 +71,17 @@ export function MarketSessionStatus() {
   const activeCount = states.filter(({ state }) => state.isOpen).length;
 
   return (
-    <section className="terminal-panel app-chart-panel rounded-lg p-4">
+    <section className={`terminal-panel app-chart-panel market-sessions rounded-lg p-4 ${compact ? "is-compact" : ""}`}>
       <div className="flex flex-col gap-3 border-b border-terminal-line pb-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <p className="font-mono text-xs uppercase text-terminal-cyan">market / sessions</p>
-          <h2 className="mt-1 text-xl font-semibold text-terminal-text">Session clock</h2>
+          <h2 className="mt-1 text-xl font-semibold text-terminal-text">{compact ? "Market hours" : "Session clock"}</h2>
         </div>
         <span className="number rounded-sm border border-terminal-line bg-terminal-bg/70 px-2 py-1 text-xs text-terminal-muted">
           {activeCount} session{activeCount === 1 ? "" : "s"} open
         </span>
       </div>
-      <div className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+      <div className="market-session-grid mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
         {states.map(({ session, state }) => (
           <article key={session.name} className={`market-session-card rounded border p-3 ${state.isOpen ? "border-terminal-green/40 bg-terminal-green/10" : state.preOpen ? "border-terminal-amber/50 bg-terminal-amber/10" : "border-terminal-line bg-terminal-bg/45"}`}>
             <div className="flex items-start justify-between gap-3">

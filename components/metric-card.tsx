@@ -5,9 +5,10 @@ type MetricCardProps = {
   label: string;
   value: string;
   tone?: "default" | "good" | "bad" | "warn";
+  note?: string;
 };
 
-export function MetricCard({ label, value, tone = "default" }: MetricCardProps) {
+export function MetricCard({ label, value, tone = "default", note }: MetricCardProps) {
   const toneClass = {
     default: "text-terminal-text",
     good: "text-terminal-green",
@@ -25,6 +26,7 @@ export function MetricCard({ label, value, tone = "default" }: MetricCardProps) 
       <p className={clsx("number mt-5 text-2xl font-semibold tracking-tight sm:text-[1.8rem]", toneClass)}>
         {value}
       </p>
+      {note && <p className="metric-card-note">{note}</p>}
     </div>
   );
 }
