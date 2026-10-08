@@ -342,6 +342,29 @@ tbody tr:hover { background-color: rgba(var(--accent-rgb), 0.045); }
 .auth-visual::before { content: ""; position: absolute; inset: -24px; background-image:url("https://images.unsplash.com/photo-1748439435495-722cc1728b7e?auto=format&fit=crop&w=1400&q=80"); background-position:center; background-size:cover; filter:blur(16px) brightness(.25); }
 .auth-visual::after { content: ""; position: absolute; inset:0; background:rgba(9,12,10,.2); pointer-events:none; }
 
+/* Split-screen editorial login inspired by the supplied trading reference. */
+.login-screen { overflow-x:hidden; background:#0a0908; color-scheme:dark; }
+.login-screen::before { content:none; }
+.login-art-panel { background:#f2f0e8; color:#181712; }
+.login-art-dots { background-image:radial-gradient(circle,#d7cfb7 1.8px,transparent 2.2px); background-position:0 0; background-size:42px 42px; opacity:.9; }
+.login-panel { border:0; background:#151310; box-shadow:none; }
+.login-coin-art { right:-16px; bottom:8%; width:min(46%,440px); height:390px; pointer-events:none; }
+.login-dollar-coin,.login-euro-coin,.login-mini-coin { position:absolute; display:grid; place-items:center; border-radius:50%; font-family:var(--font-manrope),sans-serif; font-weight:750; line-height:1; }
+.login-dollar-coin { right:180px; bottom:48px; width:250px; height:250px; background:#292a28; color:#e8b62b; font-size:172px; }
+.login-euro-coin { right:-8px; bottom:0; width:225px; height:225px; background:#d9a927; color:#24221b; font-size:158px; }
+.login-mini-coin { top:0; right:85px; width:72px; height:72px; background:#282823; color:#e8b62b; font-size:40px; transform:rotate(14deg); }
+.login-mini-coin b { margin-left:-18px; color:#dfb347; font-size:29px; }
+.login-coin-arrow { position:absolute; right:152px; bottom:117px; color:#24221b; font-size:75px; font-weight:700; line-height:1; transform:rotate(35deg); }
+@media(max-width:1279px) {
+  .login-coin-art { right:-10px; bottom:10%; width:44%; height:310px; }
+  .login-dollar-coin { right:135px; bottom:34px; width:190px; height:190px; font-size:132px; }
+  .login-euro-coin { right:-14px; bottom:0; width:175px; height:175px; font-size:120px; }
+  .login-mini-coin { right:62px; width:58px; height:58px; font-size:32px; }
+  .login-mini-coin b { font-size:23px; }
+  .login-coin-arrow { right:116px; bottom:91px; font-size:58px; }
+}
+@media(max-width:1023px) { .login-screen { grid-template-columns:minmax(0,1fr); } }
+
 [data-auth-reveal] {
   opacity: 0;
   transform: translateY(10px);
