@@ -347,9 +347,9 @@ tbody tr:hover { background-color: rgba(var(--accent-rgb), 0.045); }
 .login-screen::before { content:none; }
 .login-art-panel { background:#090c0a; color:#eef3ee; }
 .login-panel { border:0; background:#0d110e; box-shadow:none; }
-/* Photo: Nima Saffari / Unsplash, https://unsplash.com/photos/PfeZ3ii77es */
-.login-art-panel::before { content:""; position:absolute; z-index:0; inset:-12px; background-image:url("/images/login-forest.jpg"); background-position:62% center; background-size:cover; filter:blur(5px) brightness(.88) saturate(1.15); transform:scale(1.03); }
-.login-art-panel::after { content:""; position:absolute; z-index:1; inset:0; background:rgba(4,17,10,.25); pointer-events:none; }
+/* Photo: Austin Hervias / Unsplash, https://unsplash.com/photos/VLpWpv3oDB4 */
+.login-art-panel::before { content:""; position:absolute; z-index:0; inset:-12px; background-image:url("/images/login-trading-chart.jpg"); background-position:62% center; background-size:cover; filter:blur(2px) brightness(.68) saturate(.8); transform:scale(1.03); }
+.login-art-panel::after { content:""; position:absolute; z-index:1; inset:0; background:rgba(4,17,10,.43); pointer-events:none; }
 .login-art-body { width:100%; }
 .login-review-art { min-width:0; width:100%; border-radius:16px; background:rgba(12,19,14,.84); padding:clamp(14px,1.5vw,22px); backdrop-filter:blur(12px); }
 .login-panel { isolation:isolate; }
