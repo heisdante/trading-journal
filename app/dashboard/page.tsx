@@ -2,6 +2,7 @@ import { AppShell } from "@/components/app-shell";
 import { DashboardOverview } from "@/components/dashboard-overview";
 import { getTrades } from "@/lib/trades/queries";
 import { hasValidSupabaseEnv, supabaseEnvMessage } from "@/lib/supabase/env";
+import "./dashboard.css";
 
 export default async function DashboardPage() {
   if (!hasValidSupabaseEnv()) {
