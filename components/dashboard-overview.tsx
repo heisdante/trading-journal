@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import { ArrowRight, ArrowUpRight, BookOpenCheck, CalendarClock, CheckCircle2, ChevronDown, ClipboardList, Plus, Target, TrendingUp } from "lucide-react";
+import { Activity, ArrowRight, ArrowUpRight, BookOpenCheck, CalendarClock, CheckCircle2, ChevronDown, CircleDot, ClipboardList, Plus, Target, TrendingUp } from "lucide-react";
 import { DisciplineAnalysis } from "@/components/discipline-analysis";
 import { EquityCurve } from "@/components/equity-curve";
 import { MetricCard } from "@/components/metric-card";
@@ -70,12 +70,12 @@ export function DashboardOverview({ trades, pendingReviews, reviewComplete, grow
   ];
 
   return (
-    <div className="dashboard-page space-y-6 lg:space-y-7">
+    <div className="dashboard-page dashboard-nerve space-y-5 lg:space-y-6">
       <header className="dashboard-heading">
         <div>
-          <p className="page-eyebrow"><TrendingUp className="h-3.5 w-3.5" /> Trading performance</p>
+          <p className="page-eyebrow"><Activity className="h-3.5 w-3.5" /> Trading intelligence / workspace</p>
           <h1>Overview</h1>
-          <p>Review the numbers, then focus on the next decision that will move your process forward.</p>
+          <p>Your trading activity, execution quality, and next review in one place.</p>
         </div>
         <div className="dashboard-heading-actions">
           <Link href="/review" className="button-secondary"><BookOpenCheck className="h-4 w-4" />Daily review</Link>
@@ -83,7 +83,15 @@ export function DashboardOverview({ trades, pendingReviews, reviewComplete, grow
         </div>
       </header>
 
+      <div className="dashboard-commandbar"><div className="dashboard-command-label"><span className="dashboard-status-dot" /><span>PERSONAL TRADING DESK</span><span className="dashboard-command-divider">/</span><span>PERFORMANCE MONITOR</span></div><div className="dashboard-command-stats"><span><CircleDot className="h-3 w-3" />{openIdeas.length} active setup{openIdeas.length === 1 ? "" : "s"}</span><span className="dashboard-command-divider">·</span><span>{metrics.totalTrades} completed</span></div></div>
+
       {trades.length > 0 && <div className="dashboard-filterbar"><div><span className="dashboard-filter-label">Performance period</span><span className="dashboard-filter-caption">{metrics.totalTrades} completed trade{metrics.totalTrades === 1 ? "" : "s"}</span></div><div className="dashboard-range-group" role="group" aria-label="Filter dashboard by time period">{rangeOptions.map((option) => <button key={option.key} type="button" aria-pressed={range === option.key} onClick={() => setRange(option.key)} className={range === option.key ? "is-active" : ""}>{option.label}</button>)}</div></div>}
+
+      <section aria-label={`${visibleLabel} performance metrics`} className="dashboard-metric-grid">
+        {primaryMetrics.map((metric) => <MetricCard key={metric.label} {...metric} />)}
+      </section>
+      {trades.length > 0 && <div className="dashboard-more-metrics"><button type="button" aria-expanded={showMoreMetrics} onClick={() => setShowMoreMetrics((open) => !open)}>{showMoreMetrics ? "Hide detailed metrics" : "View detailed metrics"}<ChevronDown className={`h-4 w-4 transition-transform ${showMoreMetrics ? "rotate-180" : ""}`} /></button></div>}
+      {trades.length > 0 && showMoreMetrics && <section className="dashboard-secondary-metrics">{secondaryMetrics.map((metric) => <MetricCard key={metric.label} {...metric} />)}</section>}
 
       {trades.length === 0 ? (
         <>
@@ -97,12 +105,6 @@ export function DashboardOverview({ trades, pendingReviews, reviewComplete, grow
       ) : (
         <>
           <DailyReviewReminder complete={reviewComplete} />
-
-          <section aria-label={`${visibleLabel} performance metrics`} className="dashboard-metric-grid">
-            {primaryMetrics.map((metric) => <MetricCard key={metric.label} {...metric} />)}
-          </section>
-          <div className="dashboard-more-metrics"><button type="button" aria-expanded={showMoreMetrics} onClick={() => setShowMoreMetrics((open) => !open)}>{showMoreMetrics ? "Hide detailed metrics" : "View detailed metrics"}<ChevronDown className={`h-4 w-4 transition-transform ${showMoreMetrics ? "rotate-180" : ""}`} /></button></div>
-          {showMoreMetrics && <section className="dashboard-secondary-metrics">{secondaryMetrics.map((metric) => <MetricCard key={metric.label} {...metric} />)}</section>}
 
           {needsReview.length > 0 && <section className="dashboard-review-queue"><div className="dashboard-review-icon"><BookOpenCheck className="h-5 w-5" /></div><div className="min-w-0 flex-1"><p className="page-eyebrow">Close the learning loop</p><h2>{needsReview.length} trade{needsReview.length === 1 ? "" : "s"} ready for reflection</h2><p>Review the setup and your mindset while the decision is still fresh.</p></div><Link href={`/trades/${needsReview[0].id}`} className="button-secondary">Review next<ArrowRight className="h-4 w-4" /></Link></section>}
 
