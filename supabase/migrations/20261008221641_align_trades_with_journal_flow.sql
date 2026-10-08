@@ -1,5 +1,6 @@
 -- Bring existing trading-journal projects forward without replacing their trades.
 -- Older projects have the original completed-trade table and miss the journal fields.
+begin;
 alter table public.trades add column if not exists trade_date date;
 alter table public.trades add column if not exists pair text;
 alter table public.trades add column if not exists market text;
@@ -57,6 +58,23 @@ update public.trades set trade_date = coalesce(trade_date, created_at::date, cur
 update public.trades set market = case when pair in ('Forex','Stocks','Futures','Crypto','Indices','Options','Bonds','Funds','Economy') then pair else 'Forex' end where market is null;
 update public.trades set pair = coalesce(nullif(pair, ''), nullif(setup_name, ''), 'Imported trade') where pair is null or pair = '';
 update public.trades set setup_name = coalesce(nullif(setup_name, ''), pair || ' trade') where setup_name is null or setup_name = '';
+-- Preserve the first-generation outcome before replacing its plain result field.
+do $$
+begin
+  if exists (
+    select 1 from information_schema.columns
+    where table_schema = 'public' and table_name = 'trades'
+      and column_name = 'result' and is_generated = 'NEVER'
+  ) then
+    update public.trades set outcome = case
+      when result = 'Win' then 'Win'
+      when result = 'Loss' then 'Loss'
+      when result in ('BE', 'Breakeven') then 'Breakeven'
+      else outcome
+    end where outcome is null;
+    alter table public.trades rename column result to legacy_result;
+  end if;
+end $$;
 alter table public.trades alter column trade_date set not null;
 alter table public.trades alter column market set not null;
 alter table public.trades alter column pair set not null;
@@ -67,12 +85,19 @@ alter table public.trades alter column outcome drop not null;
 alter table public.trades alter column followed_trading_plan drop not null;
 alter table public.trades alter column session drop not null;
 alter table public.trades alter column trade_type drop not null;
+-- The old completed-trade model required this value on every insert.
+-- Planned and active trades cannot have an R multiple yet.
+do $$
+begin
+  if exists (select 1 from information_schema.columns where table_schema = 'public' and table_name = 'trades' and column_name = 'r_multiple') then
+    alter table public.trades alter column r_multiple drop not null;
+  end if;
+end $$;
 alter table public.trades drop constraint if exists trades_pair_check;
 
--- Older generated result columns classified unentered plans as breakeven.
-alter table public.trades drop column if exists r_value;
-alter table public.trades drop column if exists result;
-alter table public.trades add column r_value numeric(18, 6) generated always as (
+-- Keep the original result values for historical records while giving the app
+-- a status-aware generated result for planned, active, and completed trades.
+alter table public.trades add column if not exists r_value numeric(18, 6) generated always as (
   case
     when status <> 'Completed' or entry_price is null or stop_price is null or exit_price is null then 0
     when direction = 'Long' and entry_price <> stop_price then (exit_price - entry_price) / nullif(entry_price - stop_price, 0)
@@ -80,7 +105,7 @@ alter table public.trades add column r_value numeric(18, 6) generated always as 
     else 0
   end
 ) stored;
-alter table public.trades add column result text generated always as (
+alter table public.trades add column if not exists result text generated always as (
   case
     when status = 'Planned' then 'Planned'
     when status = 'Active' then 'Open'
@@ -98,3 +123,4 @@ create index if not exists trades_user_rule_status_idx on public.trades (user_id
 
 -- Refresh PostgREST after the DDL transaction commits.
 notify pgrst, 'reload schema';
+commit;
