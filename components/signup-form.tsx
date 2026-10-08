@@ -30,16 +30,23 @@ export function SignupForm({ error, message }: SignupFormProps) {
     const password = String(formData.get("password") ?? "").trim();
 
     const supabase = createClient();
-    const { error: signUpError } = await supabase.auth.signUp({
+    const { data, error: signUpError } = await supabase.auth.signUp({
       email,
       password,
       options: {
         emailRedirectTo: `${window.location.origin}/auth/callback`,
+        data: { trading_journal_tour: "pending" },
       },
     });
 
     if (signUpError) {
       setSignupError(signUpError.message);
+      return;
+    }
+
+    if (data.session) {
+      router.replace("/dashboard");
+      router.refresh();
       return;
     }
 

@@ -4,8 +4,9 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ArrowUpRight, CircleDot } from "lucide-react";
 import { AppSidebar } from "@/components/app-sidebar";
+import { WorkspaceTour } from "@/components/workspace-tour";
 
-export function AppWorkspace({ children, email }: { children: React.ReactNode; email: string }) {
+export function AppWorkspace({ children, email, userId, tourPending }: { children: React.ReactNode; email: string; userId: string; tourPending: boolean }) {
   const pathname = usePathname();
 
   const pathSegments = pathname.split("/").filter(Boolean);
@@ -34,6 +35,7 @@ export function AppWorkspace({ children, email }: { children: React.ReactNode; e
           <div className="space-y-6">{children}</div>
         </div>
       </div>
+      <WorkspaceTour userId={userId} autoStart={tourPending} />
     </main>
   );
 }

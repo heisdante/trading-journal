@@ -5,5 +5,7 @@ export async function AppShell({ children }: { children: React.ReactNode }) {
   const supabase = createClient();
   const { data } = await supabase.auth.getClaims();
 
-  return <AppWorkspace email={data?.claims.email ?? "terminal session"}>{children}</AppWorkspace>;
+  const claims = data?.claims as ({ sub?: string; email?: string; user_metadata?: { trading_journal_tour?: string } }) | undefined;
+
+  return <AppWorkspace email={claims?.email ?? "terminal session"} userId={claims?.sub ?? ""} tourPending={claims?.user_metadata?.trading_journal_tour === "pending"}>{children}</AppWorkspace>;
 }

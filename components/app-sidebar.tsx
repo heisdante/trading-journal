@@ -8,6 +8,7 @@ import {
   Activity, BookOpenCheck, BotMessageSquare, CalendarDays, Calculator,
   ClipboardList, CreditCard, FileOutput, FileUp, LayoutDashboard,
   ListChecks, Menu, Plus, RotateCcw, Settings2, Target, X,
+  Sparkles,
 } from "lucide-react";
 import { LogoutButton } from "@/components/logout-button";
 import { ThemeToggle } from "@/components/theme-toggle";
@@ -87,6 +88,7 @@ function SidebarContent({ email, onNavigate }: SidebarContentProps) {
         <p className="sidebar-nav-heading">Account</p>
         <Link href="/profile" onClick={onNavigate} className={`app-nav-link ${isActive("/profile") ? "is-active" : ""}`}><span className="app-nav-icon"><Settings2 className="h-[17px] w-[17px]" strokeWidth={1.8} /></span><span className="truncate">Settings</span></Link>
         <Link href="/billing" onClick={onNavigate} className={`app-nav-link ${isActive("/billing") ? "is-active" : ""}`}><span className="app-nav-icon"><CreditCard className="h-[17px] w-[17px]" strokeWidth={1.8} /></span><span className="truncate">Billing</span></Link>
+        <button type="button" onClick={() => { onNavigate?.(); window.dispatchEvent(new Event("trading-journal:open-tour")); }} className="app-nav-link w-full text-left"><span className="app-nav-icon"><Sparkles className="h-[17px] w-[17px]" strokeWidth={1.8} /></span><span className="truncate">Take a tour</span></button>
         <div className="sidebar-theme-row"><span>Appearance</span><ThemeToggle /></div>
         <div className="sidebar-footer-actions"><LogoutButton /></div>
       </div>
