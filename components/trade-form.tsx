@@ -49,7 +49,7 @@ export function TradeForm({ defaults }: { defaults?: { market?: string | null; s
   const [flags, setFlags] = useState({ fomo: false, cut_winner_early: false, revenge_trade: false });
   const update = (name: string, value: string) => setValues((current) => ({ ...current, [name]: value }));
 
-  return <form action={addTradeAction} onKeyDown={(event) => { if (step < 2 && event.key === "Enter" && !(event.target instanceof HTMLTextAreaElement)) event.preventDefault(); }} className="mx-auto w-full max-w-4xl overflow-hidden rounded-xl border border-terminal-line bg-terminal-panel shadow-[0_24px_72px_rgba(0,0,0,0.22)]">
+  return <form action={addTradeAction} onKeyDown={(event) => { if (step < 2 && event.key === "Enter" && !(event.target instanceof HTMLTextAreaElement)) event.preventDefault(); }} className="trade-wizard mx-auto w-full max-w-5xl overflow-hidden rounded-xl border border-terminal-line bg-terminal-panel shadow-[0_24px_72px_rgba(0,0,0,0.22)]">
     <header className="border-b border-terminal-line bg-terminal-panel2/55 px-5 py-6 sm:px-8 sm:py-8">
       <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
         <div><p className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.18em] text-terminal-cyan"><Sparkles className="h-3.5 w-3.5" />Trade journal / guided entry</p><h1 className="mt-3 text-2xl font-semibold tracking-tight text-terminal-text sm:text-3xl">Build your trade idea</h1><p className="mt-2 max-w-xl text-sm leading-6 text-terminal-muted">Take it one step at a time. Save the setup now, then add execution and reflection as the trade unfolds.</p></div>
