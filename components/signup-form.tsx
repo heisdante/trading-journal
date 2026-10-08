@@ -68,12 +68,12 @@ export function SignupForm({ error, message }: SignupFormProps) {
             </span>
             <span className="font-semibold">Trading Journal</span>
           </Link>
-          <div>
-            <h1 className="text-3xl font-semibold text-terminal-text">Create your journal</h1>
+          <div className="text-center">
+            <h1 className="text-3xl font-semibold text-terminal-text">Create an account</h1>
             <p className="mt-1 text-sm text-terminal-muted">A clear record of every trade and lesson.</p>
           </div>
 
-        <div className="w-full max-w-md lg:mt-auto lg:pt-10">
+        <div className="mx-auto w-full max-w-md lg:mt-auto lg:pt-10">
         <form onSubmit={handleSubmit} className="space-y-4">
           <label className="block">
             <span className="text-sm text-terminal-muted">Email</span>
