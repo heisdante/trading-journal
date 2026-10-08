@@ -20,17 +20,14 @@ function normalizeScreenshots(value: unknown): TradeScreenshot[] {
 
 export function normalizeTrade(row: Record<string, unknown>): Trade {
   const date = String(row.date ?? row.trade_date);
-  const direction = row.direction === "Short" ? "Short" : "Long";
+  const direction = String(row.direction).toLowerCase() === "short" ? "Short" : "Long";
   const status = (row.status === "Planned" || row.status === "Active" ? row.status : "Completed") as TradeStatus;
-  const rValue =
-    row.r_value === undefined || row.r_value === null
-      ? calculateRValue({
-          direction,
-          entry_price: Number(row.entry_price ?? 0),
-          stop_price: Number(row.stop_price ?? 0),
-          exit_price: Number(row.exit_price ?? 0),
-        })
-      : Number(row.r_value);
+  const rValue = calculateRValue({
+    direction,
+    entry_price: Number(row.entry_price ?? 0),
+    stop_price: Number(row.stop_price ?? 0),
+    exit_price: Number(row.exit_price ?? 0),
+  });
 
   return {
     id: String(row.id),
@@ -92,7 +89,7 @@ export function normalizeTrade(row: Record<string, unknown>): Trade {
     trade_type: (row.trade_type === "Day Trade" || row.trade_type === "Swing Trade" ? row.trade_type : null) as TradeType | null,
     notes: row.notes === null ? null : String(row.notes),
     r_value: rValue,
-    result: status === "Planned" ? "Planned" : status === "Active" ? "Open" : (row.result === "Loss" ? "Loss" : row.result === "BE" ? "BE" : classifyResult(rValue)),
+    result: status === "Planned" ? "Planned" : status === "Active" ? "Open" : classifyResult(rValue),
     created_at: String(row.created_at),
     updated_at: String(row.updated_at ?? row.created_at),
   };

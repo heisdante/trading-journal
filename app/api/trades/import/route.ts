@@ -14,6 +14,7 @@ export async function POST(request: Request) {
     const rows = drafts.map((draft) => ({
       user_id: userData.user.id,
       ...draft,
+      direction: draft.direction.toLowerCase() as "long" | "short",
       criteria_met: false,
       criteria_status: "Fail" as const,
       outcome: (draft.profit === null ? "Breakeven" : draft.profit > 0 ? "Win" : draft.profit < 0 ? "Loss" : "Breakeven") as TradeOutcome,

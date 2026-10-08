@@ -26,7 +26,7 @@ export type Database = {
           pair: string;
           market: Market;
           setup_name: string;
-          direction: Direction;
+          direction: Direction | "long" | "short";
           status: TradeStatus;
           entry_price: number | null;
           stop_price: number | null;
@@ -76,7 +76,7 @@ export type Database = {
           pair: string;
           market: Market;
           setup_name: string;
-          direction: Direction;
+          direction: Direction | "long" | "short";
           status?: TradeStatus;
           entry_price?: number | null;
           stop_price?: number | null;
@@ -122,7 +122,7 @@ export type Database = {
           pair?: string;
           market?: Market;
           setup_name?: string;
-          direction?: Direction;
+          direction?: Direction | "long" | "short";
           status?: TradeStatus;
           entry_price?: number | null;
           stop_price?: number | null;

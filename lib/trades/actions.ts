@@ -146,7 +146,7 @@ export async function addTradeAction(_state: { error: string | null }, formData:
     pair,
     market: optionValue(formData, "market", markets) as Market,
     setup_name: `${pair} trade`,
-    direction,
+    direction: direction.toLowerCase() as "long" | "short",
     status: recordState,
     entry_price: entry,
     stop_price: stop,
@@ -220,7 +220,7 @@ export async function updatePlannedSetupAction(formData: FormData) {
   const direction = optionValue(formData, "direction", ["Long", "Short"] as const) as Direction;
   const pair = requiredString(formData, "pair");
   const payload = {
-    pair, setup_name: `${pair} trade`, direction,
+    pair, setup_name: `${pair} trade`, direction: direction.toLowerCase() as "long" | "short",
     trade_date: requiredString(formData, "date"), criteria_met: criteriaMet, criteria_status: criteriaMet ? "Good" as const : "Fail" as const,
     entry_reason: requiredString(formData, "entry_reason"), trade_idea_link: optionalUrl(formData, "trade_idea_link"),
     notes: String(formData.get("notes") ?? "").trim() || null,
@@ -240,7 +240,7 @@ export async function activateTradeAction(formData: FormData) {
   if (trade.status !== "Planned") throw new Error("Only a planned setup can be activated.");
   const entry = optionalPositiveNumber(formData, "entry_price"); const stop = optionalPositiveNumber(formData, "stop_price"); const target = optionalPositiveNumber(formData, "target_price");
   if (entry === null || stop === null) throw new Error("Add your actual entry and protective stop to activate the trade.");
-  validateExecutionPrices(trade.direction as Direction, entry, stop, target);
+  validateExecutionPrices(trade.direction.toLowerCase() === "short" ? "Short" : "Long", entry, stop, target);
   const riskRaw = String(formData.get("risk_percent") ?? "").trim(); const riskPercent = riskRaw ? Number(riskRaw) : null;
   if (riskPercent !== null && (!Number.isFinite(riskPercent) || riskPercent <= 0 || riskPercent > 100)) throw new Error("Risk per trade must be between 0 and 100 percent.");
   const { error } = await supabase.from("trades").update({ status: "Active", entry_price: entry, stop_price: stop, target_price: target, risk_percent: riskPercent, opened_at: new Date().toISOString() }).eq("id", id).eq("user_id", user.id);
@@ -254,7 +254,7 @@ export async function updateActiveTradeAction(formData: FormData) {
   if (trade.status !== "Active") throw new Error("Only active trades can be updated here.");
   const entry = optionalPositiveNumber(formData, "entry_price"); const stop = optionalPositiveNumber(formData, "stop_price"); const target = optionalPositiveNumber(formData, "target_price");
   if (entry === null || stop === null) throw new Error("Entry and protective stop are required.");
-  validateExecutionPrices(trade.direction as Direction, entry, stop, target);
+  validateExecutionPrices(trade.direction.toLowerCase() === "short" ? "Short" : "Long", entry, stop, target);
   const riskRaw = String(formData.get("risk_percent") ?? "").trim(); const riskPercent = riskRaw ? Number(riskRaw) : null;
   if (riskPercent !== null && (!Number.isFinite(riskPercent) || riskPercent <= 0 || riskPercent > 100)) throw new Error("Risk per trade must be between 0 and 100 percent.");
   const { error } = await supabase.from("trades").update({ entry_price: entry, stop_price: stop, target_price: target, risk_percent: riskPercent }).eq("id", id).eq("user_id", user.id);
@@ -269,7 +269,7 @@ export async function completeTradeAction(formData: FormData) {
   const exit = optionalPositiveNumber(formData, "exit_price"); if (exit === null) throw new Error("Add the closing price before completing the trade.");
   const followedPlan = optionValue(formData, "followed_trading_plan", followedTradingPlanOptions) as FollowedTradingPlan;
   const exitReason = requiredString(formData, "exit_reason");
-  const reward = trade.direction === "Long" ? exit - Number(trade.entry_price) : Number(trade.entry_price) - exit;
+  const reward = trade.direction.toLowerCase() === "long" ? exit - Number(trade.entry_price) : Number(trade.entry_price) - exit;
   const outcome: TradeOutcome = reward > 0 ? "Win" : reward < 0 ? "Loss" : "Breakeven";
   const reviewInput = { pair: trade.pair, direction: trade.direction, setup_name: trade.setup_name, entry_reason: trade.entry_reason, exit_reason: exitReason, criteria_met: trade.criteria_met, followed_trading_plan: followedPlan, emotion: trade.emotion, fomo: trade.fomo, cut_winner_early: trade.cut_winner_early, revenge_trade: trade.revenge_trade, notes: trade.notes };
   const [{ data: rules }, { data: profile }] = await Promise.all([

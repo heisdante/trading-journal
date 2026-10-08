@@ -11,7 +11,7 @@ create table if not exists public.trades (
   pair text not null check (char_length(trim(pair)) > 0),
   market text not null check (market in ('Forex', 'Stocks', 'Futures', 'Crypto', 'Indices', 'Options', 'Bonds', 'Funds', 'Economy')),
   setup_name text not null check (char_length(trim(setup_name)) > 0),
-  direction text not null check (direction in ('Long', 'Short')),
+  direction text not null check (lower(direction) in ('long', 'short')),
   status text not null default 'Completed' check (status in ('Planned', 'Active', 'Completed')),
   entry_reason text not null default 'Imported trade',
   exit_reason text not null default 'Imported trade',
@@ -53,9 +53,9 @@ create table if not exists public.trades (
   r_value numeric(18, 6) generated always as (
     case
       when status <> 'Completed' or entry_price is null or stop_price is null or exit_price is null then 0
-      when direction = 'Long' and entry_price <> stop_price
+      when lower(direction) = 'long' and entry_price <> stop_price
         then (exit_price - entry_price) / nullif(entry_price - stop_price, 0)
-      when direction = 'Short' and stop_price <> entry_price
+      when lower(direction) = 'short' and stop_price <> entry_price
         then (entry_price - exit_price) / nullif(stop_price - entry_price, 0)
       else 0
     end
@@ -66,18 +66,18 @@ create table if not exists public.trades (
       when status = 'Active' then 'Open'
       when (
         case
-          when direction = 'Long' and entry_price <> stop_price
+          when lower(direction) = 'long' and entry_price <> stop_price
             then (exit_price - entry_price) / nullif(entry_price - stop_price, 0)
-          when direction = 'Short' and stop_price <> entry_price
+          when lower(direction) = 'short' and stop_price <> entry_price
             then (entry_price - exit_price) / nullif(stop_price - entry_price, 0)
           else 0
         end
       ) > 0 then 'Win'
       when (
         case
-          when direction = 'Long' and entry_price <> stop_price
+          when lower(direction) = 'long' and entry_price <> stop_price
             then (exit_price - entry_price) / nullif(entry_price - stop_price, 0)
-          when direction = 'Short' and stop_price <> entry_price
+          when lower(direction) = 'short' and stop_price <> entry_price
             then (entry_price - exit_price) / nullif(stop_price - entry_price, 0)
           else 0
         end
@@ -88,10 +88,10 @@ create table if not exists public.trades (
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
   constraint valid_long_risk check (
-    direction <> 'Long' or entry_price > stop_price
+    lower(direction) <> 'long' or entry_price > stop_price
   ),
   constraint valid_short_risk check (
-    direction <> 'Short' or stop_price > entry_price
+    lower(direction) <> 'short' or stop_price > entry_price
   )
 );
 
@@ -133,8 +133,8 @@ alter table public.trades drop column if exists result;
 alter table public.trades add column r_value numeric(18, 6) generated always as (
   case
     when status <> 'Completed' or entry_price is null or stop_price is null or exit_price is null then 0
-    when direction = 'Long' and entry_price <> stop_price then (exit_price - entry_price) / nullif(entry_price - stop_price, 0)
-    when direction = 'Short' and stop_price <> entry_price then (entry_price - exit_price) / nullif(stop_price - entry_price, 0)
+    when lower(direction) = 'long' and entry_price <> stop_price then (exit_price - entry_price) / nullif(entry_price - stop_price, 0)
+    when lower(direction) = 'short' and stop_price <> entry_price then (entry_price - exit_price) / nullif(stop_price - entry_price, 0)
     else 0
   end
 ) stored;
@@ -142,10 +142,10 @@ alter table public.trades add column result text generated always as (
   case
     when status = 'Planned' then 'Planned'
     when status = 'Active' then 'Open'
-    when direction = 'Long' and entry_price is not null and stop_price is not null and exit_price is not null and entry_price <> stop_price and (exit_price - entry_price) / nullif(entry_price - stop_price, 0) > 0 then 'Win'
-    when direction = 'Short' and entry_price is not null and stop_price is not null and exit_price is not null and stop_price <> entry_price and (entry_price - exit_price) / nullif(stop_price - entry_price, 0) > 0 then 'Win'
-    when direction = 'Long' and entry_price is not null and stop_price is not null and exit_price is not null and entry_price <> stop_price and (exit_price - entry_price) / nullif(entry_price - stop_price, 0) < 0 then 'Loss'
-    when direction = 'Short' and entry_price is not null and stop_price is not null and exit_price is not null and stop_price <> entry_price and (entry_price - exit_price) / nullif(stop_price - entry_price, 0) < 0 then 'Loss'
+    when lower(direction) = 'long' and entry_price is not null and stop_price is not null and exit_price is not null and entry_price <> stop_price and (exit_price - entry_price) / nullif(entry_price - stop_price, 0) > 0 then 'Win'
+    when lower(direction) = 'short' and entry_price is not null and stop_price is not null and exit_price is not null and stop_price <> entry_price and (entry_price - exit_price) / nullif(stop_price - entry_price, 0) > 0 then 'Win'
+    when lower(direction) = 'long' and entry_price is not null and stop_price is not null and exit_price is not null and entry_price <> stop_price and (exit_price - entry_price) / nullif(entry_price - stop_price, 0) < 0 then 'Loss'
+    when lower(direction) = 'short' and entry_price is not null and stop_price is not null and exit_price is not null and stop_price <> entry_price and (entry_price - exit_price) / nullif(stop_price - entry_price, 0) < 0 then 'Loss'
     else 'BE'
   end
 ) stored;
