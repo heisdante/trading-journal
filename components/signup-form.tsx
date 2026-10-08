@@ -73,7 +73,7 @@ export function SignupForm({ error, message }: SignupFormProps) {
             <p className="mt-1 text-sm text-terminal-muted">A clear record of every trade and lesson.</p>
           </div>
 
-        <div className="mx-auto mt-10 w-full max-w-md">
+        <div className="mx-auto mt-16 w-full max-w-md">
         <form onSubmit={handleSubmit} className="space-y-4">
           <label className="block">
             <span className="text-sm text-terminal-muted">Email</span>
