@@ -377,9 +377,11 @@ tbody tr:hover { background-color: rgba(var(--accent-rgb), 0.045); }
   from { transform:scale(1.08); }
   to { transform:scale(1.03); }
 }
-@keyframes auth-chart-draw {
-  from { stroke-dashoffset:720; }
-  to { stroke-dashoffset:0; }
+@keyframes auth-chart-progress {
+  0%, 8% { stroke-dashoffset:100; opacity:1; }
+  58%, 76% { stroke-dashoffset:0; opacity:1; }
+  83% { stroke-dashoffset:0; opacity:0; }
+  84%, 100% { stroke-dashoffset:100; opacity:0; }
 }
 .login-art-panel[data-auth-in-view="true"]::before { animation:auth-art-settle 900ms cubic-bezier(.22,1,.36,1) both; }
 [data-auth-reveal][data-auth-in-view="true"] .login-art-copy > *,
@@ -388,7 +390,8 @@ tbody tr:hover { background-color: rgba(var(--accent-rgb), 0.045); }
 [data-auth-reveal][data-auth-in-view="true"] .login-form-content > *:nth-child(2) { animation-delay:90ms; }
 [data-auth-reveal][data-auth-in-view="true"] .login-art-copy > *:nth-child(3),
 [data-auth-reveal][data-auth-in-view="true"] .login-form-content > *:nth-child(3) { animation-delay:160ms; }
-.login-art-panel[data-auth-in-view="true"] .login-review-art svg path:nth-child(2) { stroke-dasharray:720; animation:auth-chart-draw 1100ms ease-out 250ms both; }
+.auth-process-line { stroke-dasharray:100; stroke-dashoffset:100; }
+.login-art-panel[data-auth-in-view="true"] .auth-process-line { animation:auth-chart-progress 5.5s linear 250ms infinite; }
 
 [data-auth-reveal] {
   opacity: 0;
@@ -461,6 +464,7 @@ html.lenis.lenis-stopped { overflow: hidden; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
   [data-reveal], [data-app-reveal="true"], [data-auth-reveal] { opacity: 1; transform: none; }
+  .auth-process-line { animation:none !important; stroke-dashoffset:0; opacity:1; }
   .login-art-copy a:hover, .login-panel form button[type="submit"]:hover, .login-review-art:hover,
   .login-art-copy a:hover svg:last-child, .login-panel form button[type="submit"]:hover svg { transform:none; }
 }
