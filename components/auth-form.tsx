@@ -3,14 +3,11 @@
 import Link from "next/link";
 import { useEffect, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
-import { useFormStatus } from "react-dom";
-import { ArrowRight, Eye, EyeOff, LineChart, Mail, ShieldCheck } from "lucide-react";
+import { ArrowRight, Eye, EyeOff, LineChart, ShieldCheck } from "lucide-react";
 import { AuthMotion } from "@/components/auth-motion";
 import { createClient } from "@/lib/supabase/client";
 
 type AuthFormProps = {
-  mode: "login";
-  magicLinkAction: (formData: FormData) => Promise<void>;
   next?: string;
   error?: string;
   message?: string;
@@ -20,12 +17,7 @@ function LoginButton({ pending }: { pending: boolean }) {
   return <button disabled={pending} type="submit" className="inline-flex h-12 w-full items-center justify-center gap-2 rounded bg-terminal-cyan px-4 font-semibold text-terminal-bg transition hover:bg-cyan-300 disabled:cursor-wait disabled:opacity-70">{pending ? "Signing in…" : "Sign in"}{!pending && <ArrowRight className="h-4 w-4" />}</button>;
 }
 
-function LinkButton() {
-  const { pending } = useFormStatus();
-  return <button disabled={pending} type="submit" className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded bg-white/[0.045] px-4 text-sm font-semibold text-terminal-text transition hover:bg-white/[0.08] hover:text-terminal-cyan disabled:cursor-wait disabled:opacity-70"><Mail className="h-4 w-4" />{pending ? "Sending link…" : "Email me a sign-in link"}</button>;
-}
-
-export function AuthForm({ magicLinkAction, next, error, message }: AuthFormProps) {
+export function AuthForm({ next, error, message }: AuthFormProps) {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [rememberEmail, setRememberEmail] = useState(false);
@@ -92,10 +84,6 @@ export function AuthForm({ magicLinkAction, next, error, message }: AuthFormProp
             <label className="flex min-h-8 items-center gap-2 text-sm text-terminal-muted"><input type="checkbox" checked={rememberEmail} onChange={(event) => setRememberEmail(event.target.checked)} className="h-4 w-4 accent-cyan-300" />Remember my email on this device</label>
             <LoginButton pending={pending} />
           </form>
-
-          <div className="my-5 flex items-center gap-3"><span className="h-px flex-1 bg-terminal-line" /><span className="font-mono text-[10px] uppercase text-terminal-muted">or skip the password</span><span className="h-px flex-1 bg-terminal-line" /></div>
-          <form action={magicLinkAction} onSubmit={remember}><input type="hidden" name="email" value={email} /><input type="hidden" name="next" value={next ?? ""} /><LinkButton /></form>
-          <p className="mt-2 text-center text-xs leading-5 text-terminal-muted">We’ll email a one-time sign-in link. It won’t create a new account.</p>
 
           <div className="mt-6 flex items-start gap-2 pt-5 text-xs leading-5 text-terminal-muted"><ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-terminal-cyan" />Trading Journal does not place trades or provide signals. Your account keeps your review workflow private.</div>
           <p className="mt-5 text-sm text-terminal-muted">New to Trading Journal? <Link href="/signup" className="font-semibold text-terminal-cyan hover:underline">Create an account</Link></p>
