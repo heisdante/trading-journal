@@ -75,6 +75,12 @@ begin
     alter table public.trades rename column result to legacy_result;
   end if;
 end $$;
+do $$
+begin
+  if exists (select 1 from information_schema.columns where table_schema = 'public' and table_name = 'trades' and column_name = 'legacy_result') then
+    alter table public.trades alter column legacy_result drop not null;
+  end if;
+end $$;
 alter table public.trades alter column trade_date set not null;
 alter table public.trades alter column market set not null;
 alter table public.trades alter column pair set not null;

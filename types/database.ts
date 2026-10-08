@@ -67,6 +67,7 @@ export type Database = {
           notes: string | null;
           r_value: number;
           result: TradeResult;
+          legacy_result?: string | null;
           created_at: string;
         };
         Insert: {
@@ -116,8 +117,10 @@ export type Database = {
           trade_type?: TradeType | null;
           notes?: string | null;
           created_at?: string;
+          legacy_result?: string | null;
         };
         Update: {
+          legacy_result?: string | null;
           trade_date?: string;
           pair?: string;
           market?: Market;

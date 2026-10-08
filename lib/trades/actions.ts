@@ -173,7 +173,17 @@ export async function addTradeAction(_state: { error: string | null }, formData:
   const screenshots = await uploadScreenshots(supabase, user.id, tradeId, formData);
   const payload = { ...basePayload, screenshots, discipline_score: null, ai_rule_status: "Unavailable" as const, ai_rule_feedback: null, risk_percent: null };
 
-  const { error } = await supabase.from("trades").insert(payload);
+  let { error } = await supabase.from("trades").insert(payload);
+
+  // Older databases retain a required plain-text result column after it is
+  // renamed to legacy_result. Supply it only when that old constraint exists.
+  if (error?.code === "23502" && error.message.includes("legacy_result")) {
+    const retry = await supabase.from("trades").insert({
+      ...payload,
+      legacy_result: recordState === "Planned" ? "Planned" : "Open",
+    });
+    error = retry.error;
+  }
 
   if (error) {
     if (screenshots.length) {
@@ -243,7 +253,7 @@ export async function activateTradeAction(formData: FormData) {
   validateExecutionPrices(trade.direction.toLowerCase() === "short" ? "Short" : "Long", entry, stop, target);
   const riskRaw = String(formData.get("risk_percent") ?? "").trim(); const riskPercent = riskRaw ? Number(riskRaw) : null;
   if (riskPercent !== null && (!Number.isFinite(riskPercent) || riskPercent <= 0 || riskPercent > 100)) throw new Error("Risk per trade must be between 0 and 100 percent.");
-  const { error } = await supabase.from("trades").update({ status: "Active", entry_price: entry, stop_price: stop, target_price: target, risk_percent: riskPercent, opened_at: new Date().toISOString() }).eq("id", id).eq("user_id", user.id);
+  const { error } = await supabase.from("trades").update({ status: "Active", entry_price: entry, stop_price: stop, target_price: target, risk_percent: riskPercent, opened_at: new Date().toISOString(), ...(trade.legacy_result !== undefined ? { legacy_result: "Open" } : {}) }).eq("id", id).eq("user_id", user.id);
   if (error) throw new Error(error.message);
   revalidatePath(`/trades/${id}`); revalidatePath("/trades"); redirect(`/trades/${id}?step=close&updated=active`);
 }
@@ -277,7 +287,7 @@ export async function completeTradeAction(formData: FormData) {
     supabase.from("user_profiles").select("ai_coach_enabled").maybeSingle(),
   ]);
   const review = profile?.ai_coach_enabled === false ? { status: "Unavailable" as const, feedback: null, disciplineScore: calculateDisciplineScore(reviewInput) } : await reviewTradeAgainstRules(rules ?? [], reviewInput);
-  const { error } = await supabase.from("trades").update({ status: "Completed", exit_price: exit, outcome, exit_reason: exitReason, followed_trading_plan: followedPlan, closed_at: new Date().toISOString(), review_required: true, reviewed_at: null, review_comment: null, lesson_learned: null, next_trade_action: null, ai_rule_status: review.status, ai_rule_feedback: review.feedback, discipline_score: review.disciplineScore }).eq("id", id).eq("user_id", user.id);
+  const { error } = await supabase.from("trades").update({ status: "Completed", exit_price: exit, outcome, exit_reason: exitReason, followed_trading_plan: followedPlan, closed_at: new Date().toISOString(), review_required: true, reviewed_at: null, review_comment: null, lesson_learned: null, next_trade_action: null, ai_rule_status: review.status, ai_rule_feedback: review.feedback, discipline_score: review.disciplineScore, ...(trade.legacy_result !== undefined ? { legacy_result: outcome === "Breakeven" ? "BE" : outcome } : {}) }).eq("id", id).eq("user_id", user.id);
   if (error) throw new Error(error.message);
   revalidatePath(`/trades/${id}`); revalidatePath("/dashboard"); revalidatePath("/trades"); redirect(`/trades/${id}?updated=completed`);
 }
