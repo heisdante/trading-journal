@@ -51,16 +51,15 @@ function criteriaSelection(formData: FormData): boolean {
   throw new Error("Choose Yes or No for whether this idea meets your criteria.");
 }
 
-function optionalUrl(formData: FormData, name: string) {
-  const value = String(formData.get(name) ?? "").trim();
-  if (!value) {
-    return null;
-  }
-
+function requiredTradeIdeaUrl(formData: FormData) {
+  const value = String(formData.get("trade_idea_link") ?? "").trim();
+  if (!value) throw new Error("Add a trade idea link before saving.");
   try {
-    return new URL(value).toString();
+    const url = new URL(value);
+    if (url.protocol !== "https:" && url.protocol !== "http:") throw new Error("invalid protocol");
+    return url.toString();
   } catch {
-    throw new Error(`${name} must be a valid URL`);
+    throw new Error("Trade idea link must be a valid http or https URL.");
   }
 }
 
@@ -135,9 +134,6 @@ export async function addTradeAction(_state: { error: string | null }, formData:
     validateExecutionPrices(direction, entry, stop, null);
   }
   const emotion = (String(formData.get("emotion") ?? "").trim() || null) as Emotion | null;
-  const fomo = formData.get("fomo") === "on";
-  const cutWinnerEarly = formData.get("cut_winner_early") === "on";
-  const revengeTrade = formData.get("revenge_trade") === "on";
   const criteriaMet = criteriaSelection(formData);
   const basePayload = {
     id: tradeId,
@@ -158,7 +154,7 @@ export async function addTradeAction(_state: { error: string | null }, formData:
     criteria_met: criteriaMet,
     criteria_status: (criteriaMet ? "Good" : "Fail") as CriteriaStatus,
     outcome: null as TradeOutcome | null,
-    trade_idea_link: optionalUrl(formData, "trade_idea_link"),
+    trade_idea_link: requiredTradeIdeaUrl(formData),
     followed_trading_plan: null,
     review_required: false,
     session: optionalOptionValue(formData, "session", sessions) as TradingSession | null,
@@ -166,9 +162,9 @@ export async function addTradeAction(_state: { error: string | null }, formData:
     notes: String(formData.get("notes") ?? "").trim() || null,
     emotion,
     emotion_notes: String(formData.get("emotion_notes") ?? "").trim() || null,
-    fomo,
-    cut_winner_early: cutWinnerEarly,
-    revenge_trade: revengeTrade,
+    fomo: false,
+    cut_winner_early: false,
+    revenge_trade: false,
   };
   const screenshots = await uploadScreenshots(supabase, user.id, tradeId, formData);
   const payload = { ...basePayload, screenshots, discipline_score: null, ai_rule_status: "Unavailable" as const, ai_rule_feedback: null, risk_percent: null };
@@ -232,11 +228,11 @@ export async function updatePlannedSetupAction(formData: FormData) {
   const payload = {
     pair, setup_name: `${pair} trade`, direction: direction.toLowerCase() as "long" | "short",
     trade_date: requiredString(formData, "date"), criteria_met: criteriaMet, criteria_status: criteriaMet ? "Good" as const : "Fail" as const,
-    entry_reason: requiredString(formData, "entry_reason"), trade_idea_link: optionalUrl(formData, "trade_idea_link"),
+    entry_reason: requiredString(formData, "entry_reason"), trade_idea_link: requiredTradeIdeaUrl(formData),
     notes: String(formData.get("notes") ?? "").trim() || null,
     emotion: (String(formData.get("emotion") ?? "").trim() || null) as Emotion | null,
     emotion_notes: String(formData.get("emotion_notes") ?? "").trim() || null,
-    fomo: formData.get("fomo") === "on", cut_winner_early: formData.get("cut_winner_early") === "on", revenge_trade: formData.get("revenge_trade") === "on",
+    fomo: false, cut_winner_early: false, revenge_trade: false,
     session: optionalOptionValue(formData, "session", sessions) as TradingSession | null,
   };
   const { error } = await supabase.from("trades").update(payload).eq("id", id).eq("user_id", user.id);
@@ -281,13 +277,13 @@ export async function completeTradeAction(formData: FormData) {
   const exitReason = requiredString(formData, "exit_reason");
   const reward = trade.direction.toLowerCase() === "long" ? exit - Number(trade.entry_price) : Number(trade.entry_price) - exit;
   const outcome: TradeOutcome = reward > 0 ? "Win" : reward < 0 ? "Loss" : "Breakeven";
-  const reviewInput = { pair: trade.pair, direction: trade.direction, setup_name: trade.setup_name, entry_reason: trade.entry_reason, exit_reason: exitReason, criteria_met: trade.criteria_met, followed_trading_plan: followedPlan, emotion: trade.emotion, fomo: trade.fomo, cut_winner_early: trade.cut_winner_early, revenge_trade: trade.revenge_trade, notes: trade.notes };
+  const reviewInput = { pair: trade.pair, direction: trade.direction, setup_name: trade.setup_name, entry_reason: trade.entry_reason, exit_reason: exitReason, criteria_met: trade.criteria_met, followed_trading_plan: followedPlan, emotion: trade.emotion, fomo: outcome === "Loss" && trade.fomo, cut_winner_early: outcome === "Loss" && trade.cut_winner_early, revenge_trade: outcome === "Loss" && trade.revenge_trade, notes: trade.notes };
   const [{ data: rules }, { data: profile }] = await Promise.all([
     supabase.from("trading_rules").select("id,user_id,title,rule_text,is_active,created_at,updated_at").eq("is_active", true),
     supabase.from("user_profiles").select("ai_coach_enabled").maybeSingle(),
   ]);
   const review = profile?.ai_coach_enabled === false ? { status: "Unavailable" as const, feedback: null, disciplineScore: calculateDisciplineScore(reviewInput) } : await reviewTradeAgainstRules(rules ?? [], reviewInput);
-  const { error } = await supabase.from("trades").update({ status: "Completed", exit_price: exit, outcome, exit_reason: exitReason, followed_trading_plan: followedPlan, closed_at: new Date().toISOString(), review_required: true, reviewed_at: null, review_comment: null, lesson_learned: null, next_trade_action: null, ai_rule_status: review.status, ai_rule_feedback: review.feedback, discipline_score: review.disciplineScore, ...(trade.legacy_result !== undefined ? { legacy_result: outcome === "Breakeven" ? "BE" : outcome } : {}) }).eq("id", id).eq("user_id", user.id);
+  const { error } = await supabase.from("trades").update({ status: "Completed", exit_price: exit, outcome, exit_reason: exitReason, followed_trading_plan: followedPlan, closed_at: new Date().toISOString(), review_required: true, reviewed_at: null, review_comment: null, lesson_learned: null, next_trade_action: null, fomo: outcome === "Loss" ? trade.fomo : false, cut_winner_early: outcome === "Loss" ? trade.cut_winner_early : false, revenge_trade: outcome === "Loss" ? trade.revenge_trade : false, ai_rule_status: review.status, ai_rule_feedback: review.feedback, discipline_score: review.disciplineScore, ...(trade.legacy_result !== undefined ? { legacy_result: outcome === "Breakeven" ? "BE" : outcome } : {}) }).eq("id", id).eq("user_id", user.id);
   if (error) throw new Error(error.message);
   revalidatePath(`/trades/${id}`); revalidatePath("/dashboard"); revalidatePath("/trades"); redirect(`/trades/${id}?updated=completed`);
 }
@@ -303,7 +299,12 @@ export async function saveTradeReviewAction(formData: FormData) {
   const lesson = String(formData.get("lesson_learned") ?? "").trim();
   const nextAction = String(formData.get("next_trade_action") ?? "").trim();
   if (!comment || !lesson || !nextAction) throw new Error("Complete all three reflection prompts before saving.");
-  const { error } = await supabase.from("trades").update({ review_comment: comment, lesson_learned: lesson, next_trade_action: nextAction, reviewed_at: new Date().toISOString(), review_required: false }).eq("id", id).eq("user_id", user.id);
+  const isLoss = trade.outcome === "Loss";
+  const fomo = isLoss && formData.get("fomo") === "on";
+  const cutWinnerEarly = isLoss && formData.get("cut_winner_early") === "on";
+  const revengeTrade = isLoss && formData.get("revenge_trade") === "on";
+  const disciplineScore = calculateDisciplineScore({ criteria_met: trade.criteria_met, followed_trading_plan: trade.followed_trading_plan, fomo, cut_winner_early: cutWinnerEarly, revenge_trade: revengeTrade });
+  const { error } = await supabase.from("trades").update({ review_comment: comment, lesson_learned: lesson, next_trade_action: nextAction, reviewed_at: new Date().toISOString(), review_required: false, fomo, cut_winner_early: cutWinnerEarly, revenge_trade: revengeTrade, discipline_score: disciplineScore }).eq("id", id).eq("user_id", user.id);
   if (error) throw new Error(error.message);
   revalidatePath(`/trades/${id}`); revalidatePath("/dashboard"); revalidatePath("/trades");
   redirect(`/trades/${id}?review=saved`);

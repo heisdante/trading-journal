@@ -914,6 +914,7 @@ html.lenis.lenis-stopped { overflow: hidden; }
 }
 
 .sidebar-theme-row { display:flex; align-items:center; justify-content:space-between; gap:8px; margin:13px 4px 0; color:var(--terminal-muted); font-size:11px; }
+.trade-wizard input[name="record_state"]:checked + span > span:first-child { border-color:var(--terminal-cyan); background:var(--terminal-cyan); color:var(--terminal-bg); }
 .app-mobile-header .auth-theme-switch { flex:none; }
 :root[data-theme="light"] .app-shell,
 :root[data-theme="light"] .app-shell:has(.dashboard-nerve),
