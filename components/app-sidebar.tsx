@@ -47,8 +47,8 @@ function SidebarContent({ email, onNavigate }: SidebarContentProps) {
   const isActive = (href: string) => pathname === href || (href !== "/dashboard" && pathname.startsWith(`${href}/`));
 
   return (
-    <div className="app-sidebar flex h-full min-h-0 flex-col">
-      <div className="sidebar-brand">
+    <div className="app-sidebar flex h-full min-h-0 flex-col overflow-y-auto overscroll-contain">
+      <div className="sidebar-brand flex-none">
         <div className="flex items-center gap-2">
           <Link href="/dashboard" onClick={onNavigate} aria-label="Trading Journal overview" className="sidebar-brand-link">
             <span className="sidebar-brand-icon"><Activity className="h-5 w-5" /></span>
@@ -58,7 +58,7 @@ function SidebarContent({ email, onNavigate }: SidebarContentProps) {
         <div className="sidebar-account-identity"><span className="sidebar-avatar">{email.slice(0, 1).toUpperCase()}</span><span className="min-w-0"><span className="block truncate text-xs font-semibold text-white">{email}</span><span className="mt-0.5 block text-[10px] text-white/50">PRIVATE WORKSPACE</span></span></div>
       </div>
 
-      <nav className="sidebar-nav flex-1 overflow-y-auto" aria-label="Workspace navigation">
+      <nav className="sidebar-nav min-h-max flex-1" aria-label="Workspace navigation">
         {navigation.map((group) => (
           <section key={group.label} className="sidebar-nav-group">
             <h2 className="sidebar-nav-heading">{group.label}</h2>
@@ -84,7 +84,7 @@ function SidebarContent({ email, onNavigate }: SidebarContentProps) {
         ))}
       </nav>
 
-      <div className="sidebar-footer">
+      <div className="sidebar-footer flex-none">
         <p className="sidebar-nav-heading">Account</p>
         <Link href="/profile" onClick={onNavigate} className={`app-nav-link ${isActive("/profile") ? "is-active" : ""}`}><span className="app-nav-icon"><Settings2 className="h-[17px] w-[17px]" strokeWidth={1.8} /></span><span className="truncate">Settings</span></Link>
         <Link href="/billing" onClick={onNavigate} className={`app-nav-link ${isActive("/billing") ? "is-active" : ""}`}><span className="app-nav-icon"><CreditCard className="h-[17px] w-[17px]" strokeWidth={1.8} /></span><span className="truncate">Billing</span></Link>

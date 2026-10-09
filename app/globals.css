@@ -193,7 +193,7 @@ input, textarea, select { color-scheme: inherit; }
 }
 
 .app-sidebar-rail { padding: 12px 0 12px 12px; }
-.app-sidebar-rail > .app-sidebar { overflow: hidden; }
+.app-sidebar-rail > .app-sidebar { overflow-y: auto; }
 .sidebar-brand { padding: 22px 16px 18px; border-bottom: 1px solid rgba(140, 224, 173, 0.1); }
 .sidebar-brand-link { display: inline-flex; min-width: 0; align-items: center; gap: 10px; color: #f1f6f8; text-decoration: none; }
 .sidebar-brand-icon { display: inline-flex; width: 38px; height: 38px; flex: none; align-items: center; justify-content: center; border: 1px solid rgba(140, 224, 173, 0.26); border-radius: 13px; background: rgba(140, 224, 173, 0.1); color: #9be5b8; }
@@ -216,7 +216,7 @@ input, textarea, select { color-scheme: inherit; }
 .sidebar-icon-button:hover { border-color: rgba(140, 224, 173, 0.34); background: rgba(140, 224, 173, 0.1); color: #f1f6f8; }
 .app-mobile-header { border-bottom: 1px solid #242d26; background: #090c0a; color: #eef3ee; }
 .app-mobile-header .sidebar-icon-button { width: 42px; height: 42px; }
-.app-drawer { overflow: auto; border-right: 1px solid #242d26; background: #0d110e; animation: drawer-enter 220ms var(--ease-out); }
+.app-drawer { overflow: hidden; border-right: 1px solid #242d26; background: #0d110e; animation: drawer-enter 220ms var(--ease-out); }
 .app-drawer-scrim { background: rgba(0, 0, 0, 0.66); backdrop-filter: blur(4px); }
 
 .app-mobile-header .sidebar-brand-icon { width: 34px; height: 34px; }
@@ -502,8 +502,8 @@ html.lenis, html.lenis body { height: auto; }
 html.lenis.lenis-smooth { scroll-behavior: auto !important; }
 html.lenis.lenis-stopped { overflow: hidden; }
 
-.app-shell::-webkit-scrollbar, .app-sidebar nav::-webkit-scrollbar, .terminal-panel *::-webkit-scrollbar { width: 8px; height: 8px; }
-.app-shell::-webkit-scrollbar-thumb, .app-sidebar nav::-webkit-scrollbar-thumb, .terminal-panel *::-webkit-scrollbar-thumb { border-radius: 999px; background: var(--terminal-line); }
+.app-shell::-webkit-scrollbar, .app-sidebar::-webkit-scrollbar, .terminal-panel *::-webkit-scrollbar { width: 8px; height: 8px; }
+.app-shell::-webkit-scrollbar-thumb, .app-sidebar::-webkit-scrollbar-thumb, .terminal-panel *::-webkit-scrollbar-thumb { border-radius: 999px; background: var(--terminal-line); }
 
 @keyframes drawer-enter {
   from { opacity: 0; transform: translateX(-12px); }
