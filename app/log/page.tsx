@@ -1,7 +1,8 @@
 import { AppShell } from "@/components/app-shell";
-import { TradeForm } from "@/components/trade-form";
+import { TradeEntry } from "@/components/trade-entry";
 import { hasValidSupabaseEnv, supabaseEnvMessage } from "@/lib/supabase/env";
 import { createClient } from "@/lib/supabase/server";
+import "@/components/quick-trade-capture.css";
 
 export default async function LogPage() {
   if (!hasValidSupabaseEnv()) {
@@ -21,7 +22,7 @@ export default async function LogPage() {
 
   return (
     <AppShell>
-      <TradeForm defaults={{ market: profile?.default_market, session: profile?.default_session }} />
+      <TradeEntry defaults={{ market: profile?.default_market, session: profile?.default_session }} />
     </AppShell>
   );
 }

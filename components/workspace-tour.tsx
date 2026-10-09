@@ -5,8 +5,9 @@ import { ArrowLeft, ArrowRight, Check, Sparkles, X } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 
 const steps = [
+  { group: "Welcome", title: "See how your journal works", detail: "A short guide to capturing an idea, saving a trade, and learning from the outcome.", how: "Watch the walkthrough, then move through the feature tour at your own pace.", cue: "Your trading second brain", video: true },
   { group: "Trading desk", title: "Overview", detail: "Your command center for trading activity, consistency, and the next action to take.", how: "Start here to see recent trades, performance, and your current growth plan.", cue: "See the whole picture" },
-  { group: "Trading desk", title: "Log a trade", detail: "Capture an idea before entry, then update it as the setup becomes a live trade and closes.", how: "Move through the guided steps; add the outcome and reflection once the trade is complete.", cue: "Plan → execute → reflect" },
+  { group: "Trading desk", title: "Log a trade", detail: "Capture an idea before entry, then update it as the setup becomes a live trade and closes.", how: "Use Quick capture to paste a link and refine an AI draft, or switch to the guided journal. Confirm the details before saving. Add the outcome and reflection later.", cue: "Plan → execute → reflect" },
   { group: "Trading desk", title: "Trade history", detail: "Every saved setup and finished trade lives here, ready for a closer look.", how: "Open a trade to review the decision, result, notes, and lessons you recorded.", cue: "Your evidence library" },
   { group: "Trading desk", title: "Calendar", detail: "See your trading days and results over time, not just as isolated wins and losses.", how: "Select a day to revisit its trades and spot patterns in your routine.", cue: "Find your rhythm" },
   { group: "Plan & tools", title: "Lot calculator", detail: "Size a position before committing capital.", how: "Enter the pair, entry, stop loss, and account risk to estimate an appropriate lot size.", cue: "Risk first" },
@@ -85,7 +86,7 @@ export function WorkspaceTour({ userId, autoStart }: { userId: string; autoStart
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-[#020704]/85 p-3 backdrop-blur-md sm:p-6">
-      <div ref={dialogRef} tabIndex={-1} role="dialog" aria-modal="true" aria-labelledby="tour-title" aria-describedby="tour-description" className="relative grid w-full max-w-[800px] overflow-hidden rounded-[24px] bg-terminal-panel text-terminal-text shadow-[0_30px_90px_rgba(0,0,0,.4)] outline-none sm:grid-cols-[210px_minmax(0,1fr)]">
+      <div ref={dialogRef} tabIndex={-1} role="dialog" aria-modal="true" aria-labelledby="tour-title" aria-describedby="tour-description" className="relative grid max-h-[calc(100dvh-24px)] w-full max-w-[800px] overflow-y-auto rounded-[24px] bg-terminal-panel text-terminal-text shadow-[0_30px_90px_rgba(0,0,0,.4)] outline-none sm:max-h-[calc(100dvh-48px)] sm:grid-cols-[210px_minmax(0,1fr)]">
         <div className="hidden bg-[#0c2114] p-7 sm:flex sm:flex-col">
           <span className="inline-flex h-11 w-11 items-center justify-center rounded-[14px] bg-[#173e29] text-terminal-cyan"><Sparkles className="h-5 w-5" /></span>
           <p className="mt-7 font-mono text-[10px] uppercase tracking-[.18em] text-terminal-cyan">Trading Journal</p>
@@ -100,11 +101,12 @@ export function WorkspaceTour({ userId, autoStart }: { userId: string; autoStart
           <div className="mt-5 flex gap-1" role="progressbar" aria-label="Tour progress" aria-valuenow={index + 1} aria-valuemin={1} aria-valuemax={steps.length}>
             {steps.map((item, itemIndex) => <span key={item.title} className={`h-1 flex-1 rounded-full ${itemIndex <= index ? "bg-terminal-cyan" : "bg-terminal-line"}`} />)}
           </div>
-          <div aria-live="polite" className="flex flex-1 flex-col justify-center py-9">
+          <div aria-live="polite" className="flex flex-1 flex-col justify-center py-7">
             <p className="font-mono text-[10px] uppercase tracking-[.18em] text-terminal-muted">{step.cue}</p>
             <h2 id="tour-title" className="mt-3 text-[clamp(2rem,5vw,3rem)] font-semibold leading-[1.04] tracking-[-.055em]">{step.title}</h2>
-            <p id="tour-description" className="mt-5 max-w-[480px] text-sm leading-6 text-terminal-muted">{step.detail}</p>
-            <div className="mt-7 rounded-[16px] bg-terminal-panel2 px-4 py-4">
+            <p id="tour-description" className="mt-4 max-w-[480px] text-sm leading-6 text-terminal-muted">{step.detail}</p>
+            {"video" in step && step.video && <video controls playsInline preload="metadata" poster="/videos/journal-guide-poster.png" aria-label="How the trading journal works" className="mt-5 aspect-video w-full rounded-xl bg-[#07130b]"><source src="/videos/trading-journal-guide.mp4" type="video/mp4" />Your browser does not support this video.</video>}
+            <div className="mt-5 rounded-[16px] bg-terminal-panel2 px-4 py-4">
               <p className="font-mono text-[10px] uppercase tracking-[.16em] text-terminal-cyan">How to use it</p>
               <p className="mt-2 text-sm leading-6 text-terminal-text">{step.how}</p>
             </div>

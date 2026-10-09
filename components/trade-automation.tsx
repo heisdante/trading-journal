@@ -1,16 +1,13 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
-
-type Draft = { pair: string; market: string; setup_name: string; direction: string; entry_reason: string; notes: string; missing_fields: string[] };
 
 export function TradeAutomation() {
   const [file, setFile] = useState<File | null>(null);
   const [source, setSource] = useState("MT4 / MT5 / cTrader CSV");
   const [status, setStatus] = useState("");
   const [importBusy, setImportBusy] = useState(false);
-  const [draft, setDraft] = useState<Draft | null>(null);
-  const [aiBusy, setAiBusy] = useState(false);
 
   async function importFile() {
     if (!file || importBusy) return;
@@ -31,22 +28,6 @@ export function TradeAutomation() {
     }
   }
 
-  async function makeDraft(formData: FormData) {
-    setAiBusy(true);
-    setStatus("Creating draft...");
-    try {
-      const response = await fetch("/api/trades/ai-draft", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(Object.fromEntries(formData)) });
-      const body = await response.json();
-      if (!response.ok) return setStatus(body.error);
-      setDraft(body);
-      setStatus("Draft ready. Review it before logging the trade.");
-    } catch {
-      setStatus("Could not create the draft. Try again.");
-    } finally {
-      setAiBusy(false);
-    }
-  }
-
   return (
     <div className="grid gap-6 lg:grid-cols-2">
       <section className="terminal-panel app-chart-panel rounded-lg p-5">
@@ -64,14 +45,9 @@ export function TradeAutomation() {
 
       <section className="terminal-panel app-chart-panel rounded-lg p-5">
         <p className="font-mono text-xs uppercase text-terminal-cyan">idea / assist</p>
-        <h2 className="mt-2 text-2xl font-semibold text-terminal-text">Turn a rough idea into a draft</h2>
-        <form action={makeDraft} className="mt-5 space-y-4">
-          <input name="pair" placeholder="Pair or symbol, e.g. EURUSD" className="h-11 w-full rounded border border-terminal-line bg-terminal-bg px-3 text-terminal-text placeholder:text-terminal-muted/50" />
-          <input name="url" type="url" placeholder="Reference chart or idea URL" className="h-11 w-full rounded border border-terminal-line bg-terminal-bg px-3 text-terminal-text placeholder:text-terminal-muted/50" />
-          <textarea name="details" rows={5} placeholder="What are you seeing? Bias, setup, invalidation, and execution plan..." className="w-full resize-y rounded border border-terminal-line bg-terminal-bg px-3 py-3 text-terminal-text placeholder:text-terminal-muted/50" />
-          <button type="submit" disabled={aiBusy} className="h-11 rounded border border-terminal-cyan px-5 font-semibold text-terminal-cyan transition hover:bg-terminal-cyan/10 disabled:opacity-40">{aiBusy ? "Drafting..." : "Create AI draft"}</button>
-        </form>
-        {draft ? <div className="mt-5 border-t border-terminal-line pt-4 text-sm text-terminal-muted"><p className="font-semibold text-terminal-text">{draft.pair} · {draft.direction} · {draft.setup_name}</p><p className="mt-2">{draft.entry_reason}</p><p className="mt-2">{draft.notes}</p>{draft.missing_fields.length ? <p className="mt-2 text-terminal-amber">Still needed: {draft.missing_fields.join(", ")}</p> : null}</div> : null}
+        <h2 className="mt-2 text-2xl font-semibold text-terminal-text">Capture a new trade idea</h2>
+        <p className="mt-3 text-sm leading-6 text-terminal-muted">Paste a trade idea link in Quick capture. The journal will organize your notes, ask what is missing, and let you review everything before saving.</p>
+        <Link href="/log" className="mt-5 inline-flex min-h-11 items-center rounded-xl bg-terminal-cyan px-5 text-sm font-semibold text-terminal-bg transition hover:brightness-110">Open Quick capture →</Link>
       </section>
       {status ? <p role="status" className="text-sm text-terminal-muted lg:col-span-2">{status}</p> : null}
     </div>
