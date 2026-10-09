@@ -22,10 +22,17 @@ export async function saveProfileAction(formData: FormData) {
   const risk = String(formData.get("default_risk_percent") ?? "").trim();
   const defaultRisk = risk ? Number(risk) : null;
   if (defaultRisk !== null && (!Number.isFinite(defaultRisk) || defaultRisk <= 0 || defaultRisk > 100)) throw new Error("Default risk must be between 0 and 100");
+  const timezone = String(formData.get("timezone") ?? "UTC").trim() || "UTC";
+  if (timezone.length > 100) throw new Error("Choose a valid timezone.");
+  try {
+    new Intl.DateTimeFormat("en-US", { timeZone: timezone });
+  } catch {
+    throw new Error("Choose a valid timezone.");
+  }
   const payload = {
     id: userData.user.id,
     full_name: String(formData.get("full_name") ?? "").trim() || null,
-    timezone: String(formData.get("timezone") ?? "UTC").trim() || "UTC",
+    timezone,
     currency: String(formData.get("currency") ?? "USD").trim().toUpperCase(),
     default_market: optionalOption(formData.get("default_market"), markets) as Market | null,
     default_session: optionalOption(formData.get("default_session"), sessions) as TradingSession | null,
@@ -36,26 +43,9 @@ export async function saveProfileAction(formData: FormData) {
   const { error } = await supabase.from("user_profiles").upsert(payload);
   if (error) throw new Error(error.message);
   revalidatePath("/profile");
+  revalidatePath("/dashboard");
   revalidatePath("/log");
   redirect("/profile?message=Profile%20saved");
-}
-
-export async function saveTimezoneAction(formData: FormData) {
-  const timezone = String(formData.get("timezone") ?? "").trim();
-  if (!timezone || timezone.length > 100) throw new Error("Choose a valid timezone.");
-  try {
-    new Intl.DateTimeFormat("en-US", { timeZone: timezone });
-  } catch {
-    throw new Error("Choose a valid timezone.");
-  }
-  const supabase = createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) redirect("/login");
-  const { error } = await supabase.from("user_profiles").upsert({ id: user.id, timezone }, { onConflict: "id" });
-  if (error) throw new Error(error.message);
-  revalidatePath("/dashboard");
-  revalidatePath("/profile");
-  redirect("/dashboard");
 }
 
 export async function updateAccountAction(formData: FormData) {

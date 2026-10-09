@@ -43,11 +43,9 @@
 .pulse-header > div:first-child { max-width: min(100%, 780px); }
 .pulse-header h1 { overflow-wrap:anywhere; }
 .pulse-greeting-date { margin:12px 0 0; color:#bacdc0; font-size:13px; line-height:1.5; }
-.pulse-timezone-form { display:inline-flex; min-height:36px; max-width:100%; align-items:center; gap:7px; margin-top:15px; border-radius:9px; background:rgba(5,18,10,.66); padding:4px 5px 4px 11px; color:#a8dfb5; }
-.pulse-timezone-form select { max-width:190px; min-height:28px; border:0; background:transparent; color:#e9f5eb; font-size:11px; outline:none; }
-.pulse-timezone-form select option { background:#15231a; color:#e9f5eb; }
-.pulse-timezone-save { min-height:28px; border:0; border-radius:6px; background:#a8e2ad; padding:0 9px; color:#10231a; font-size:10px; font-weight:700; white-space:nowrap; }
-.pulse-timezone-save:hover { background:#c4f1c8; }
+.pulse-greeting-timezone { display:inline-flex; align-items:center; gap:7px; margin-top:12px; color:#a8dfb5; font-size:11px; font-weight:600; }
+.pulse-greeting-timezone span { color:#b4c9b7; font-weight:400; }
+.pulse-greeting-timezone:hover span { color:#e9f5eb; }
 .pulse-kicker,.pulse-card-heading p,.pulse-section-heading > div > span,.pulse-hero-top,.pulse-focus-top,.pulse-stat-row > div > span,.pulse-heatmap-foot { font-family:var(--font-plex-mono),ui-monospace,monospace; font-size:10px; font-weight:600; letter-spacing:.13em; }
 .pulse-kicker { display:flex; align-items:center; gap:9px; margin:0; color:var(--terminal-cyan); }
 .pulse-kicker > span { width:6px; height:6px; border-radius:50%; background:currentColor; box-shadow:0 0 0 4px rgba(var(--accent-rgb),.12); }
@@ -184,4 +182,4 @@
 @media(max-width:390px) { .pulse-kicker { font-size:8px; } .pulse-header h1 { font-size:2.35rem; } .pulse-secondary-link { display:none !important; } .pulse-hero-body strong { font-size:3.1rem; } .pulse-hero-bottom span { font-size:7px; } .pulse-stat-row > div > span { font-size:8px; } }
 @media(prefers-reduced-motion:reduce) { .pulse-dashboard * { animation-duration:.01ms !important; transition-duration:.01ms !important; } }
 @media(max-width:640px) { .pulse-header { min-height:220px; padding:22px; } }
-@media(max-width:640px) { .pulse-header h1 { font-size:clamp(2rem,9vw,2.7rem); } .pulse-timezone-form { width:100%; } .pulse-timezone-form select { flex:1; min-width:0; } }
+@media(max-width:640px) { .pulse-header h1 { font-size:clamp(2rem,9vw,2.7rem); } }
