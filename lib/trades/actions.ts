@@ -127,12 +127,6 @@ export async function addTradeAction(_state: { error: string | null }, formData:
 
   const pair = requiredString(formData, "pair");
   const recordState = optionValue(formData, "record_state", ["Planned", "Active"] as const);
-  const entry = recordState === "Active" ? optionalPositiveNumber(formData, "entry_price") : null;
-  const stop = recordState === "Active" ? optionalPositiveNumber(formData, "stop_price") : null;
-  if (recordState === "Active") {
-    if (entry === null || stop === null) throw new Error("Add the actual entry and protective stop for an active trade.");
-    validateExecutionPrices(direction, entry, stop, null);
-  }
   const emotion = (String(formData.get("emotion") ?? "").trim() || null) as Emotion | null;
   const criteriaMet = criteriaSelection(formData);
   const basePayload = {
@@ -144,8 +138,8 @@ export async function addTradeAction(_state: { error: string | null }, formData:
     setup_name: `${pair} trade`,
     direction: direction.toLowerCase() as "long" | "short",
     status: recordState,
-    entry_price: entry,
-    stop_price: stop,
+    entry_price: null,
+    stop_price: null,
     opened_at: recordState === "Active" ? new Date().toISOString() : null,
     target_price: null,
     exit_price: null,

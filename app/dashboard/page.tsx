@@ -19,10 +19,11 @@ export default async function DashboardPage() {
 
   const supabase = (await import("@/lib/supabase/server")).createClient();
   const today = new Date().toISOString().slice(0, 10);
-  const [trades, { data: todayReview }, { data: growthPlan }] = await Promise.all([
+  const [trades, { data: todayReview }, { data: growthPlan }, { data: profile }] = await Promise.all([
     getTrades(),
     supabase.from("daily_reviews").select("id").eq("review_date", today).maybeSingle(),
     supabase.from("growth_plans").select("id,title,account_type,starting_balance,target_balance,currency,risk_percent,deadline,milestones").eq("is_active", true).order("created_at", { ascending: false }).limit(1).maybeSingle(),
+    supabase.from("user_profiles").select("full_name,timezone").maybeSingle(),
   ]);
   const pendingReviews = trades.filter((trade) => trade.review_required && trade.reviewed_at === null);
 
@@ -33,6 +34,8 @@ export default async function DashboardPage() {
         pendingReviews={pendingReviews}
         reviewComplete={Boolean(todayReview)}
         growthPlan={growthPlan}
+        fullName={profile?.full_name ?? null}
+        timezone={profile?.timezone ?? null}
       />
     </AppShell>
   );
