@@ -12,13 +12,13 @@ type Evidence = Database["public"]["Tables"]["analysis_evidence"]["Row"];
 type Match = Database["public"]["Tables"]["analysis_matches"]["Row"];
 type TradeOption = Pick<Database["public"]["Tables"]["trades"]["Row"], "id" | "trade_date" | "pair" | "outcome" | "status" | "entry_reason" | "exit_reason" | "notes" | "review_comment" | "lesson_learned" | "emotion_notes">;
 type Kind = Evidence["kind"];
-type Props = { userId: string; initialStudies: Study[]; recentTrades: TradeOption[]; latestTrades: TradeOption[]; setupError: string | null; initialTradeId?: string };
+type Props = { userId: string; initialStudies: Study[]; recentTrades: TradeOption[]; latestTrades: TradeOption[]; setupError: string | null; aiConfigured: boolean; initialTradeId?: string };
 
 const supabase = createClient();
 const dateLabel = (value: string) => new Date(value).toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" });
 const isHttpUrl = (value: string) => { try { return ["http:", "https:"].includes(new URL(value).protocol); } catch { return false; } };
 
-export function AnalysisStudio({ userId, initialStudies, recentTrades, latestTrades, setupError, initialTradeId = "" }: Props) {
+export function AnalysisStudio({ userId, initialStudies, recentTrades, latestTrades, setupError, aiConfigured, initialTradeId = "" }: Props) {
   const initialTrade = recentTrades.find((trade) => trade.id === initialTradeId);
   const [studies, setStudies] = useState(initialStudies);
   const [activeId, setActiveId] = useState(initialStudies[0]?.id ?? "");
@@ -231,8 +231,8 @@ export function AnalysisStudio({ userId, initialStudies, recentTrades, latestTra
           <div className="analysis-composer-foot"><p>{kind === "Link" ? "Links are saved as references. AI does not open external pages." : "Each addition stays in order, so you can follow how your thinking developed."}</p><button type="button" className="analysis-primary" onClick={() => void addEvidence()} disabled={busy === "evidence"}>{busy === "evidence" ? <Loader2 className="animate-spin" size={16} /> : <Plus size={16} />} Add {kind.toLowerCase()}</button></div>
         </section>
 
-        <section className="analysis-conclusion"><div className="analysis-panel-head"><div><p className="analysis-kicker">02 / SYNTHESIZE</p><h3>Turn evidence into a lesson</h3></div><button type="button" className="analysis-ai-button" onClick={() => void askAi()} disabled={busy === "ai" || !evidence.length}>{busy === "ai" ? <Loader2 size={16} className="animate-spin" /> : <Sparkles size={16} />} Draft with AI</button></div>
-          <p className="analysis-context">When you request a draft, your notes and up to eight recent screenshots are sent to the AI service. Links are references only; their pages are not opened. Review the draft before saving.</p>
+        <section className="analysis-conclusion"><div className="analysis-panel-head"><div><p className="analysis-kicker">02 / SYNTHESIZE</p><h3>Turn evidence into a lesson</h3></div><button type="button" className="analysis-ai-button" onClick={() => void askAi()} disabled={!aiConfigured || busy === "ai" || !evidence.length}>{busy === "ai" ? <Loader2 size={16} className="animate-spin" /> : <Sparkles size={16} />} Draft with AI</button></div>
+          <p className="analysis-context">{aiConfigured ? "When you request a draft, your notes and up to eight recent screenshots are sent to the AI service. Links are references only; their pages are not opened. Review the draft before saving." : "AI drafting is being configured. You can still save your own conclusions and check your latest trades for repeated journal patterns."}</p>
           <div className="analysis-conclusion-fields"><label className="analysis-field">Result being studied<select value={outcome} onChange={(event) => setOutcome(event.target.value as Study["outcome"])}><option>Exploring</option><option>Win</option><option>Loss</option></select></label><label className="analysis-field">What made this {outcome === "Win" ? "win possible" : outcome === "Loss" ? "loss happen" : "result happen"}?<textarea value={cause} onChange={(event) => setCause(event.target.value)} rows={3} placeholder="Describe the observed cause, and where you are still uncertain." /></label><label className="analysis-field">What did you learn?<textarea value={lesson} onChange={(event) => setLesson(event.target.value)} rows={3} placeholder="What would you recognize sooner next time?" /></label><label className="analysis-field">One action for the next setup<textarea value={nextAction} onChange={(event) => setNextAction(event.target.value)} rows={2} placeholder="A concrete habit or rule to carry forward." /></label></div>
           {questions.length > 0 && <div className="analysis-questions"><strong>Questions to investigate · add your answers as notes above</strong>{questions.map((question) => <p key={question}><CircleHelp size={15} /> {question}</p>)}</div>}
           <div className="analysis-actions"><button type="button" className="analysis-primary" onClick={() => void saveConclusion(true)} disabled={busy === "save"}><Check size={17} /> Complete study</button><button type="button" className="analysis-quiet" onClick={() => void saveConclusion(false)} disabled={busy === "save"}>Save as in progress</button></div>

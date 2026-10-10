@@ -15,5 +15,5 @@ export default async function AnalysisPage({ searchParams }: { searchParams?: { 
     supabase.from("trades").select("id,trade_date,pair,outcome,status,entry_reason,exit_reason,notes,review_comment,lesson_learned,emotion_notes")
       .eq("user_id", user.id).eq("status", "Completed").order("trade_date", { ascending: false }).order("created_at", { ascending: false }).limit(12),
   ]);
-  return <AppShell><AnalysisStudio userId={user.id} initialStudies={studies ?? []} recentTrades={trades ?? []} latestTrades={latestTrades ?? []} setupError={error?.message ?? null} initialTradeId={trades?.some((trade) => trade.id === searchParams?.trade) ? searchParams?.trade : ""} /></AppShell>;
+  return <AppShell><AnalysisStudio userId={user.id} initialStudies={studies ?? []} recentTrades={trades ?? []} latestTrades={latestTrades ?? []} setupError={error?.message ?? null} aiConfigured={Boolean(process.env.OPENAI_API_KEY)} initialTradeId={trades?.some((trade) => trade.id === searchParams?.trade) ? searchParams?.trade : ""} /></AppShell>;
 }
