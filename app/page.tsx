@@ -1,75 +1,58 @@
 import Link from "next/link";
-import { ArrowRight, ArrowUpRight, Check, LineChart, ShieldCheck, Target } from "lucide-react";
-import { HomepageMotion } from "@/components/homepage-motion";
+import { ArrowRight, ArrowUpRight, LineChart, Play } from "lucide-react";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { SmoothScroll } from "@/components/smooth-scroll";
+import { LandingDemo } from "@/components/landing-demo";
+import "./landing.css";
 
-const heroPhoto = "https://images.unsplash.com/photo-1748439435495-722cc1728b7e?auto=format&fit=crop&w=2200&q=88";
-const focusPhoto = "https://images.unsplash.com/photo-1768055104923-a6f76e7478c7?auto=format&fit=crop&w=1200&q=85";
-const contextPhoto = "https://images.unsplash.com/photo-1767424412548-1a1ac7f4b9bc?auto=format&fit=crop&w=1400&q=85";
-
-function WindowDots() {
-  return <div aria-hidden="true" className="flex items-center gap-1.5"><i className="h-2.5 w-2.5 rounded-full bg-[#ff6259]" /><i className="h-2.5 w-2.5 rounded-full bg-[#ffbd2e]" /><i className="h-2.5 w-2.5 rounded-full bg-[#28c840]" /></div>;
-}
-
-function DashboardWindow() {
-  return <div className="hero-window relative z-10 w-full max-w-[760px] overflow-hidden rounded-[20px] border border-[#8ce0ad]/20 bg-[#111411]/90 text-[#f4f2eb] shadow-[0_40px_110px_rgba(0,0,0,.54)] backdrop-blur-xl" data-parallax="window">
-    <div className="flex h-12 items-center justify-between border-b border-[#718174]/15 px-4 sm:px-5"><WindowDots /><p className="absolute left-1/2 -translate-x-1/2 font-mono text-[9px] uppercase tracking-[0.2em] text-white/45 sm:text-[10px]">trading journal / workspace</p><span className="flex items-center gap-1.5 font-mono text-[9px] uppercase tracking-wider text-[#b3e2bd]"><i className="h-1.5 w-1.5 rounded-full bg-[#a6d9ae]" />demo view</span></div>
-    <div className="grid gap-3 p-3 sm:gap-4 sm:p-5 lg:grid-cols-[1.55fr_.8fr]">
-      <div className="rounded-xl border border-[#718174]/15 bg-[#191d19] p-4 sm:p-5"><div className="flex items-start justify-between gap-3"><div><p className="font-mono text-[9px] uppercase tracking-[.18em] text-white/45">process curve / sample</p><p className="mt-2 text-2xl font-medium tracking-tight sm:text-3xl">+ 8.4 <span className="text-sm text-white/45">R</span></p></div><span className="rounded-full border border-[#b3e2bd]/25 px-2.5 py-1 text-[9px] text-[#b3e2bd]">20 trades</span></div>
-        <svg viewBox="0 0 540 190" className="mt-3 h-36 w-full sm:mt-5 sm:h-44" role="img" aria-label="Sample equity curve chart"><path d="M0 35H540M0 80H540M0 125H540M0 170H540" stroke="rgba(255,255,255,.09)" strokeWidth="1" /><path d="M8 151 C35 144 35 120 61 126 S91 108 111 119 S142 88 163 101 S195 108 215 75 S249 93 267 82 S300 49 324 65 S354 60 374 72 S406 43 424 54 S451 25 471 42 S506 19 532 24" fill="none" stroke="#a6d9ae" strokeWidth="3" strokeLinecap="round" /><circle cx="532" cy="24" r="5" fill="#a6d9ae" /><text x="0" y="187" fill="rgba(255,255,255,.4)" fontSize="9">TRADE 01</text><text x="470" y="187" fill="rgba(255,255,255,.4)" fontSize="9">TRADE 20</text></svg>
-        <div className="grid grid-cols-3 gap-2 border-t border-[#718174]/15 pt-3 sm:gap-4 sm:pt-4">{[["WIN RATE", "62.5%"], ["EXPECTANCY", "+0.42R"], ["PLAN KEPT", "84%"]].map(([label, value]) => <div key={label}><p className="font-mono text-[8px] tracking-[.14em] text-white/40 sm:text-[9px]">{label}</p><p className="mt-1 text-xs sm:text-sm">{value}</p></div>)}</div>
-      </div>
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-1">
-        <div className="rounded-xl border border-[#718174]/15 bg-[#191d19] p-4"><p className="font-mono text-[9px] uppercase tracking-[.16em] text-white/45">last reflection</p><p className="mt-3 text-xs leading-5 text-white/85">“Waited for confirmation instead of chasing the move.”</p><p className="mt-3 text-[9px] text-[#b3e2bd]">PROCESS WIN · 02 JUN</p></div>
-        <div className="rounded-xl border border-[#718174]/15 bg-[#191d19] p-4"><div className="flex items-center justify-between"><p className="font-mono text-[9px] uppercase tracking-[.16em] text-white/45">risk discipline</p><Target className="h-4 w-4 text-[#b3e2bd]" /></div><p className="mt-2 text-2xl">1.0<span className="text-xs text-white/45">%</span></p><p className="mt-1 text-[10px] text-white/50">planned risk / trade</p><div className="mt-3 h-px bg-white/10"><div className="h-px w-[84%] bg-[#a6d9ae]" /></div></div>
-      </div>
-    </div>
-    <div className="flex items-center justify-between border-t border-[#718174]/15 px-4 py-3 font-mono text-[8px] uppercase tracking-[.16em] text-white/40 sm:px-5"><span>Measure the decision, not just the outcome</span><span>JOURNAL / 001</span></div>
-  </div>;
-}
-
-function ProductMark() {
-  return <Link href="/" aria-label="Trading Journal home" className="group inline-flex items-center gap-2.5"><span className="flex h-9 w-9 items-center justify-center rounded-xl border border-[#819184]/18 bg-white/[.06] transition group-hover:border-[#b3e2bd]/50 group-hover:bg-[#b3e2bd]/10"><LineChart className="h-4 w-4 text-[#b3e2bd]" /></span><span className="text-sm font-medium tracking-tight text-[#f4f2eb]">Trading Journal</span></Link>;
+function Brand() {
+  return <Link href="/" aria-label="Trading Journal home" className="tj-brand">
+    <span className="tj-brand-icon"><LineChart size={18} strokeWidth={2} /></span>
+    <span>Trading Journal</span>
+  </Link>;
 }
 
 export default function HomePage() {
-  return <main className="landing relative overflow-hidden bg-[#101210] text-[#f4f2eb] selection:bg-[#b3e2bd] selection:text-[#101210]">
-    <HomepageMotion />
-    <SmoothScroll />
-    <header className="landing-header absolute inset-x-0 top-0 z-30"><nav className="mx-auto flex max-w-[1440px] items-center justify-between px-5 py-5 sm:px-8 lg:px-14"><ProductMark /><div className="hidden items-center gap-8 text-[13px] text-white/65 md:flex"><a className="transition hover:text-white" href="#approach">Approach</a><a className="transition hover:text-white" href="#journal">The journal</a><a className="transition hover:text-white" href="#method">Method</a></div><div className="flex items-center gap-2.5"><ThemeToggle /><Link href="/login" className="hidden min-h-10 items-center rounded-full px-4 text-sm text-white/75 transition hover:bg-white/10 hover:text-white sm:inline-flex">Sign in</Link><Link href="/signup" className="landing-nav-cta inline-flex min-h-10 items-center gap-2 rounded-full bg-[#e6e8dd] px-4 text-xs font-semibold text-[#151815] transition duration-300 hover:-translate-y-0.5 hover:bg-white sm:text-sm">Start journaling <ArrowUpRight className="h-4 w-4" /></Link></div></nav></header>
-
-    <section className="hero-story relative isolate flex items-center overflow-hidden" aria-labelledby="hero-title">
-      <div className="hero-photograph absolute inset-0 -z-20" style={{ backgroundImage: `url("${heroPhoto}")` }} role="img" aria-label="A trading desk with chart displays in low, warm light" />
-      <div className="hero-shade absolute inset-0 -z-10" />
-      <div className="mx-auto grid w-full max-w-[1440px] items-center gap-12 px-5 pb-20 pt-36 sm:px-8 sm:pb-24 lg:grid-cols-[.84fr_1.16fr] lg:gap-16 lg:px-14 lg:pb-28 lg:pt-44">
-        <div className="hero-copy relative z-20 max-w-[590px]" data-reveal>
-          <p className="hero-eyebrow font-mono text-[10px] font-medium uppercase tracking-[.24em]">A journal for deliberate traders</p>
-          <h1 id="hero-title" className="mt-7 text-[clamp(3.4rem,6.5vw,6.6rem)] font-semibold leading-[.98] tracking-[-.08em]">Make every<br /><span>trade count.</span></h1>
-          <p className="hero-description mt-7 max-w-[440px] text-base leading-7 sm:text-lg">Journal the plan, the decision, and the lesson. Build a clearer path with every trade.</p>
-          <div className="mt-9 flex flex-wrap items-center gap-6"><Link href="/signup" className="hero-cta group inline-flex min-h-12 items-center justify-center gap-3 rounded-full px-6 text-sm font-semibold transition duration-300 hover:-translate-y-0.5">Start your journal <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" /></Link><a href="#approach" className="hero-text-link inline-flex min-h-12 items-center gap-2 text-sm font-medium transition">See how it works <ArrowUpRight className="h-4 w-4" /></a></div>
+  return <main className="landing tj-home">
+    <div className="tj-home-photo" aria-hidden="true" />
+    <header className="landing-header tj-header">
+      <nav className="tj-nav" aria-label="Main navigation">
+        <Brand />
+        <div className="tj-nav-actions">
+          <ThemeToggle />
+          <Link href="/login" className="tj-signin">Sign in</Link>
+          <Link href="/signup" className="tj-nav-start">Get started <ArrowUpRight size={16} /></Link>
         </div>
-        <div className="hero-product relative mx-auto w-full max-w-[800px] lg:ml-auto"><DashboardWindow /></div>
+      </nav>
+    </header>
+
+    <section className="tj-hero" aria-labelledby="tj-title">
+      <div className="tj-hero-inner">
+        <div className="tj-hero-copy">
+          <span className="tj-eyebrow"><span /> THE TRADING JOURNAL FOR YOUR NEXT LEVEL</span>
+          <h1 id="tj-title">Trade with<br /><em>intention.</em></h1>
+          <p>Capture the setup. Review the decision. Grow with every trade.</p>
+          <div className="tj-hero-actions">
+            <Link href="/signup" className="tj-primary-link">Start your journal <ArrowRight size={18} /></Link>
+            <a href="#preview" className="tj-secondary-link">Explore the journal <ArrowUpRight size={16} /></a>
+          </div>
+          <div className="tj-hero-footnote"><span className="tj-footnote-line" /> Plan · Execute · Reflect</div>
+        </div>
+        <div id="preview" className="tj-hero-preview"><LandingDemo /></div>
       </div>
     </section>
-    <section id="approach" className="relative border-b border-[#718174]/15 bg-[#e9e9e1] text-[#181b18]">
-      <div className="mx-auto grid max-w-[1440px] gap-10 px-5 py-20 sm:px-8 sm:py-28 lg:grid-cols-[.75fr_1.25fr] lg:px-14 lg:py-36"><div className="story-reveal" data-reveal><p className="font-mono text-[10px] uppercase tracking-[.2em] text-[#607763]">A different kind of performance tool / 01</p><h2 className="mt-5 max-w-lg font-serif text-4xl leading-[1.02] tracking-[-.045em] sm:text-6xl">The chart shows price.<br /><span className="text-[#778477]">Your journal shows you.</span></h2></div><div className="story-reveal max-w-2xl self-end" data-reveal><p className="text-lg leading-8 text-[#414741] sm:text-xl sm:leading-9">A trade is more than an entry and an exit. It is the plan you made, the feeling you carried, the choice you took, and what you learned when it was over.</p><p className="mt-5 text-sm leading-7 text-[#626960]">Bring those pieces together. Build an honest record of your process, so progress has something real to stand on.</p></div></div>
+
+    <section className="tj-next-step" aria-label="Start journaling">
+      <div><span>START SIMPLE</span><h2>One trade at a time.</h2></div>
+      <div className="tj-next-actions">
+        <a href="/videos/trading-journal-guide.mp4" target="_blank" rel="noreferrer" className="tj-video-link"><Play size={15} fill="currentColor" /> Watch the tour</a>
+        <Link href="/signup" className="tj-bottom-cta">Create your journal <ArrowUpRight size={17} /></Link>
+      </div>
     </section>
 
-    <section id="journal" className="landing-journal bg-[#101210] px-5 py-20 sm:px-8 sm:py-28 lg:px-14 lg:py-36"><div className="mx-auto max-w-[1440px]"><div className="story-reveal flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between" data-reveal><div><p className="font-mono text-[10px] uppercase tracking-[.2em] text-[#a6d9ae]">Your trading, in context / 02</p><h2 className="mt-4 max-w-2xl font-serif text-4xl leading-[1.02] tracking-[-.045em] sm:text-6xl">A clearer view of<br />the whole decision.</h2></div><p className="max-w-sm text-sm leading-7 text-white/55">Small details get lost between sessions. Put the important ones somewhere you can find them again.</p></div>
-        <div className="mt-12 grid auto-rows-[minmax(220px,auto)] gap-4 sm:mt-16 sm:grid-cols-2 lg:grid-cols-4 lg:auto-rows-[260px]">
-          <article className="story-card photo-card relative isolate row-span-2 overflow-hidden rounded-[24px] border border-[#718174]/15 bg-[#282b27] sm:col-span-2 lg:col-span-2" data-reveal><div className="card-photo absolute inset-0 -z-20" style={{ backgroundImage: `url("${focusPhoto}")` }} role="img" aria-label="A focused trader reviewing market charts" /><div className="absolute inset-0 -z-10 bg-[#0c0f0c]/55" /><div className="flex h-full min-h-[420px] flex-col justify-between p-6 sm:p-9"><span className="w-fit rounded-full border border-[#8ce0ad]/20 bg-black/20 px-3 py-1.5 font-mono text-[9px] uppercase tracking-[.17em] text-white/75 backdrop-blur">Mindset / context</span><div><h3 className="max-w-md font-serif text-3xl leading-tight tracking-[-.035em] sm:text-4xl">Catch the feeling behind the decision.</h3><p className="mt-3 max-w-md text-sm leading-6 text-white/75">Notice pressure, patience, confidence, and the patterns that repeat when the stakes feel real.</p></div></div></article>
-          <article className="story-card hover-lift rounded-[24px] border border-[#718174]/15 bg-[#1a1d19] p-6 transition duration-300 sm:p-7" data-reveal><div className="flex items-center justify-between"><span className="font-mono text-[9px] uppercase tracking-[.16em] text-white/45">Performance</span><LineChart className="h-4 w-4 text-[#a6d9ae]" /></div><p className="mt-9 font-serif text-4xl tracking-tight">R, not noise.</p><p className="mt-2 text-sm leading-6 text-white/55">Risk-adjusted returns, expectancy, drawdown, and the stats behind your choices.</p><div className="mt-6 flex h-10 items-end gap-1.5" role="img" aria-label="Illustrative performance bars">{[20, 33, 26, 54, 41, 68, 58, 82, 70, 93, 80, 100].map((height, index) => <i key={index} className={`w-full rounded-t-sm ${index === 11 ? "bg-[#a6d9ae]" : "bg-white/15"}`} style={{ height: `${height}%` }} />)}</div></article>
-          <article className="story-card hover-lift rounded-[24px] border border-[#718174]/15 bg-[#dfe5d9] p-6 text-[#181d18] transition duration-300 sm:p-7" data-reveal><div className="flex items-center justify-between"><span className="font-mono text-[9px] uppercase tracking-[.16em] text-[#627162]">Review loop</span><Check className="h-4 w-4 text-[#627d67]" /></div><div className="mt-8 space-y-3">{[["01", "Save the idea"], ["02", "Log the execution"], ["03", "Keep the lesson"]].map(([n, title], i) => <div className="flex items-center gap-3 border-b border-[#182118]/10 pb-3 last:border-0" key={n}><span className="font-mono text-[9px] text-[#758174]">{n}</span><span className="text-sm font-medium">{title}</span><span className={`ml-auto h-1.5 w-1.5 rounded-full ${i === 2 ? "bg-[#839983]" : "bg-[#bdc8bc]"}`} /></div>)}</div></article>
-          <article className="story-card hover-lift rounded-[24px] border border-[#718174]/15 bg-[#1a1d19] p-6 transition duration-300 sm:p-7" data-reveal><div className="flex items-center justify-between"><span className="font-mono text-[9px] uppercase tracking-[.16em] text-white/45">Your rules</span><ShieldCheck className="h-4 w-4 text-[#a6d9ae]" /></div><h3 className="mt-8 font-serif text-3xl tracking-tight">Make discipline visible.</h3><p className="mt-2 text-sm leading-6 text-white/55">Compare what you planned with what you did. Review wins and losses with the same honesty.</p></article>
-          <article className="story-card photo-card relative isolate overflow-hidden rounded-[24px] border border-[#718174]/15 bg-[#34352f] sm:col-span-2 lg:col-span-2" data-reveal><div className="card-photo absolute inset-0 -z-20" style={{ backgroundImage: `url("${contextPhoto}")` }} role="img" aria-label="Trading analysis screens in a focused workspace" /><div className="absolute inset-0 -z-10 bg-[#101210]/65" /><div className="flex h-full min-h-[260px] flex-col justify-between p-6 sm:flex-row sm:items-end sm:p-8"><div><span className="font-mono text-[9px] uppercase tracking-[.16em] text-white/60">Growth roadmap</span><h3 className="mt-4 max-w-md font-serif text-3xl leading-tight tracking-[-.035em] sm:text-4xl">Choose the goal. Map the work.</h3><p className="mt-3 max-w-sm text-sm leading-6 text-white/70">Prop evaluation or personal account. Milestones grounded in process.</p></div><Link href="/signup" className="mt-5 inline-flex min-h-11 shrink-0 items-center gap-2 rounded-full border border-[#819184]/25 px-4 text-sm font-medium transition hover:bg-white/10 sm:mt-0">Explore your roadmap <ArrowUpRight className="h-4 w-4" /></Link></div></article>
-        </div>
-      </div></section>
-
-    <section id="method" className="bg-[#dfe5d9] text-[#181d18]"><div className="mx-auto grid max-w-[1440px] gap-12 px-5 py-20 sm:px-8 sm:py-28 lg:grid-cols-[.8fr_1.2fr] lg:px-14 lg:py-36"><div className="story-reveal" data-reveal><p className="font-mono text-[10px] uppercase tracking-[.2em] text-[#627763]">A repeatable practice / 03</p><h2 className="mt-5 max-w-md font-serif text-4xl leading-[1.02] tracking-[-.045em] sm:text-6xl">One trade at a time.</h2><p className="mt-5 max-w-md text-sm leading-7 text-[#596259]">Progress isn’t a perfect win rate. It’s the quality of attention you bring to the next decision.</p></div><ol className="grid gap-3 sm:grid-cols-3">{[["01", "Prepare", "Save the setup, your criteria, and your state of mind."], ["02", "Execute", "Record entry, stop, risk, and what actually happened."], ["03", "Reflect", "Keep the lesson and choose one action for next time."]].map(([n, title, copy], i) => <li key={n} className="method-card story-reveal rounded-2xl border border-[#182118]/10 bg-[#f0f1eb] p-5 transition duration-300 hover:-translate-y-1 hover:border-[#718471]/40 sm:p-6" data-reveal><span className="font-mono text-[10px] text-[#839083]">{n} / 0{i + 1}</span><h3 className="mt-10 font-serif text-2xl">{title}</h3><p className="mt-2 text-sm leading-6 text-[#687168]">{copy}</p></li>)}</ol></div></section>
-
-    <section className="landing-cta relative isolate overflow-hidden bg-[#101210] px-5 py-24 text-center sm:px-8 sm:py-32"><div className="absolute inset-x-0 top-0 h-px bg-white/10" /><div className="story-reveal relative mx-auto max-w-3xl" data-reveal><p className="font-mono text-[10px] uppercase tracking-[.2em] text-[#a6d9ae]">Make the next trade count twice</p><h2 className="mt-5 font-serif text-4xl leading-[1.02] tracking-[-.05em] sm:text-6xl">Once in the market.<br /><span className="text-white/45">Again in what you learn.</span></h2><p className="mx-auto mt-5 max-w-xl text-sm leading-7 text-white/55">Start building the record your future self can actually use.</p><Link href="/signup" className="group mt-8 inline-flex min-h-12 items-center gap-3 rounded-full bg-[#e6e8dd] px-6 text-sm font-semibold text-[#151815] transition duration-300 hover:-translate-y-1 hover:bg-white">Start your journal <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" /></Link></div></section>
-
-    <footer className="landing-footer border-t border-[#718174]/15 bg-[#101210]"><div className="mx-auto flex max-w-[1440px] flex-col gap-6 px-5 py-7 text-xs text-white/45 sm:flex-row sm:items-center sm:justify-between sm:px-8 lg:px-14"><div className="flex items-center gap-3"><ProductMark /><span className="hidden text-white/25 sm:inline">·</span><span className="hidden sm:inline">Grow as you execute and journal.</span></div><div className="flex flex-wrap gap-x-5 gap-y-3"><Link href="/login" className="transition hover:text-white">Sign in</Link><Link href="/help" className="transition hover:text-white">Help</Link><Link href="/contact" className="transition hover:text-white">Contact</Link><Link href="/legal/terms" className="transition hover:text-white">Terms</Link><Link href="/legal/privacy" className="transition hover:text-white">Privacy</Link><Link href="/legal/risk-disclosure" className="transition hover:text-white">Risk disclosure</Link></div><span>Images by <a href="https://unsplash.com/@jakubzerdzicki" target="_blank" rel="noreferrer" className="transition hover:text-white">Jakub Żerdzicki / Unsplash</a></span></div></footer>
+    <footer className="tj-footer">
+      <Brand />
+      <span>Grow as you execute. Journal every trade.</span>
+      <div><Link href="/help">Help</Link><Link href="/legal/privacy">Privacy</Link><Link href="/legal/risk-disclosure">Risk disclosure</Link></div>
+    </footer>
   </main>;
 }
