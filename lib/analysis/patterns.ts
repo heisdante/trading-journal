@@ -9,6 +9,7 @@ export type PatternTrade = {
   review_comment: string | null;
   lesson_learned: string | null;
   emotion_notes: string | null;
+  analysis_notes?: string | null;
 };
 
 export type PatternStudy = {
@@ -39,7 +40,7 @@ export function possibleRepeats(study: PatternStudy, trades: PatternTrade[]) {
     if (trade.id === study.trade_id || trade.outcome !== study.outcome) return [];
     const record = terms([
       trade.entry_reason, trade.exit_reason, trade.notes, trade.review_comment,
-      trade.lesson_learned, trade.emotion_notes,
+      trade.lesson_learned, trade.emotion_notes, trade.analysis_notes,
     ].filter(Boolean).join(" "));
     const shared = [...focus].filter((word) => record.has(word));
     if (shared.length < 2) return [];

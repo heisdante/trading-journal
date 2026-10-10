@@ -31,13 +31,29 @@ export default async function DashboardPage() {
   ]);
   const pendingReviews = trades.filter((trade) => trade.review_required && trade.reviewed_at === null);
   const latestIds = (latestCompleted ?? []).map((trade) => trade.id);
-  const { data: reviewedMatches } = latestIds.length
-    ? await supabase.from("analysis_matches").select("study_id,trade_id,review_status").in("trade_id", latestIds)
-    : { data: [] };
+  const [{ data: reviewedMatches }, { data: linkedStudies }] = await Promise.all([
+    latestIds.length
+      ? supabase.from("analysis_matches").select("study_id,trade_id,review_status").in("trade_id", latestIds)
+      : Promise.resolve({ data: [] }),
+    latestIds.length
+      ? supabase.from("analysis_studies").select("trade_id,cause,lesson").eq("status", "Complete").in("trade_id", latestIds)
+      : Promise.resolve({ data: [] }),
+  ]);
+  const notesByTrade = new Map<string, string[]>();
+  for (const linked of linkedStudies ?? []) {
+    if (!linked.trade_id) continue;
+    const notes = notesByTrade.get(linked.trade_id) ?? [];
+    notes.push(linked.cause, linked.lesson);
+    notesByTrade.set(linked.trade_id, notes);
+  }
+  const patternTrades: PatternTrade[] = (latestCompleted ?? []).map((trade) => ({
+    ...trade,
+    analysis_notes: (notesByTrade.get(trade.id) ?? []).join(" "),
+  }));
   const patternAlerts = (studies ?? []).flatMap((study) => {
     const reviewed = new Set((reviewedMatches ?? []).filter((item) => item.study_id === study.id && item.review_status !== "Suggested").map((item) => item.trade_id));
     const suggested = (reviewedMatches ?? []).filter((item) => item.study_id === study.id && item.review_status === "Suggested").map((item) => item.trade_id);
-    const repeats = possibleRepeats(study, (latestCompleted ?? []) as PatternTrade[]).map((item) => item.trade_id);
+    const repeats = possibleRepeats(study, patternTrades).map((item) => item.trade_id);
     const candidateIds = new Set([...suggested, ...repeats].filter((id) => !reviewed.has(id)));
     return candidateIds.size ? [{ studyId: study.id, title: study.title, outcome: study.outcome, count: candidateIds.size }] : [];
   }).slice(0, 3);
