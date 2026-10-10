@@ -1,4 +1,5 @@
 import type { RuleReviewStatus, TradingRule } from "@/types/trade";
+import { isAiConfigured, requestAi } from "@/lib/ai/provider";
 
 export type TradeReviewInput = {
   pair: string;
@@ -42,23 +43,17 @@ function fallbackReview(trade: TradeReviewInput, hasRules: boolean): TradeReview
 export async function reviewTradeAgainstRules(rules: TradingRule[], trade: TradeReviewInput): Promise<TradeReview> {
   const activeRules = rules.filter((rule) => rule.is_active);
   const fallback = fallbackReview(trade, activeRules.length > 0);
-  if (!activeRules.length || !process.env.OPENAI_API_KEY) return fallback;
+  if (!activeRules.length || !isAiConfigured()) return fallback;
 
   try {
-    const response = await fetch("https://api.openai.com/v1/responses", {
-      method: "POST",
-      headers: { Authorization: `Bearer ${process.env.OPENAI_API_KEY}`, "Content-Type": "application/json" },
-      body: JSON.stringify({
-        model: process.env.OPENAI_TRADE_REVIEW_MODEL || process.env.OPENAI_TRADE_INTAKE_MODEL || "gpt-5-mini",
-        store: false,
-        instructions: "Review a completed trade against the trader's explicit rules. Only flag a breach when the trade record supports it. Do not give financial advice. Return a short, neutral explanation and a discipline score from 0 to 100.",
-        input: JSON.stringify({ rules: activeRules.map((rule) => ({ title: rule.title, rule: rule.rule_text })), trade }),
-        text: { format: { type: "json_schema", name: "trade_rule_review", strict: true, schema } },
-      }),
+    const output = await requestAi({
+      task: "review",
+      instructions: "Review a completed trade against the trader's explicit rules. Only flag a breach when the trade record supports it. Do not give financial advice. Return a short, neutral explanation and a discipline score from 0 to 100.",
+      input: JSON.stringify({ rules: activeRules.map((rule) => ({ title: rule.title, rule: rule.rule_text })), trade }),
+      schema,
+      schemaName: "trade_rule_review",
     });
-    if (!response.ok) return fallback;
-    const body = await response.json() as { output_text?: string };
-    const result = JSON.parse(body.output_text ?? "{}");
+    const result = JSON.parse(output);
     return { status: result.status === "Warning" ? "Warning" : "Pass", feedback: String(result.feedback ?? ""), disciplineScore: Math.max(0, Math.min(100, Number(result.discipline_score) || 0)) };
   } catch {
     return fallback;
