@@ -193,6 +193,24 @@ export type Database = {
         Update: { title?: string; account_type?: "Prop firm" | "Personal account"; starting_balance?: number; target_balance?: number; currency?: string; risk_percent?: number; deadline?: string | null; milestones?: string; is_active?: boolean };
         Relationships: [];
       };
+      analysis_studies: {
+        Row: { id: string; user_id: string; trade_id: string | null; title: string; outcome: "Exploring" | "Win" | "Loss"; status: "In progress" | "Complete"; cause: string; lesson: string; next_action: string; created_at: string; updated_at: string };
+        Insert: { id?: string; user_id?: string; trade_id?: string | null; title: string; outcome?: "Exploring" | "Win" | "Loss"; status?: "In progress" | "Complete"; cause?: string; lesson?: string; next_action?: string; created_at?: string; updated_at?: string };
+        Update: { trade_id?: string | null; title?: string; outcome?: "Exploring" | "Win" | "Loss"; status?: "In progress" | "Complete"; cause?: string; lesson?: string; next_action?: string; updated_at?: string };
+        Relationships: [];
+      };
+      analysis_evidence: {
+        Row: { id: string; user_id: string; study_id: string; kind: "Note" | "Link" | "Screenshot"; body: string; storage_path: string | null; created_at: string };
+        Insert: { id?: string; user_id?: string; study_id: string; kind: "Note" | "Link" | "Screenshot"; body?: string; storage_path?: string | null; created_at?: string };
+        Update: { body?: string; storage_path?: string | null };
+        Relationships: [];
+      };
+      analysis_matches: {
+        Row: { id: string; user_id: string; study_id: string; trade_id: string; rationale: string; review_status: "Suggested" | "Confirmed" | "Dismissed"; created_at: string };
+        Insert: { id?: string; user_id?: string; study_id: string; trade_id: string; rationale?: string; review_status?: "Suggested" | "Confirmed" | "Dismissed" };
+        Update: { rationale?: string; review_status?: "Suggested" | "Confirmed" | "Dismissed" };
+        Relationships: [];
+      };
     };
     Views: Record<string, never>;
     Functions: Record<string, never>;

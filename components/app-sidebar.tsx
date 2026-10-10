@@ -8,7 +8,7 @@ import {
   Activity, BookOpenCheck, BotMessageSquare, CalendarDays, Calculator,
   ClipboardList, CreditCard, FileOutput, FileUp, LayoutDashboard,
   ListChecks, Menu, Plus, RotateCcw, Settings2, Target, X,
-  Sparkles,
+  Sparkles, ScanSearch,
 } from "lucide-react";
 import { LogoutButton } from "@/components/logout-button";
 import { ThemeToggle } from "@/components/theme-toggle";
@@ -28,6 +28,7 @@ const navigation: Array<{ label: string; items: NavigationItem[] }> = [
     { href: "/import", label: "Import trades", icon: FileUp },
   ] },
   { label: "Review & learn", items: [
+    { href: "/analysis", label: "Analysis Studio", icon: ScanSearch },
     { href: "/rules", label: "Trading rules", icon: ListChecks },
     { href: "/playbooks", label: "Playbooks", icon: BookOpenCheck },
     { href: "/review", label: "Daily review", icon: RotateCcw },

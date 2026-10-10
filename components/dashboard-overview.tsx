@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-import { Activity, ArrowRight, ArrowUpRight, BookOpenCheck, CalendarDays, Check, CircleDot, ClipboardList, Plus, Target, TrendingDown, TrendingUp } from "lucide-react";
+import { Activity, ArrowRight, ArrowUpRight, BookOpenCheck, CalendarDays, Check, CircleDot, ClipboardList, Plus, ScanSearch, Target, TrendingDown, TrendingUp } from "lucide-react";
 import { DashboardPsychology } from "@/components/dashboard-psychology";
 import { DashboardGreeting } from "@/components/dashboard-greeting";
 import { DashboardRoadmap } from "@/components/dashboard-roadmap";
@@ -30,6 +30,7 @@ type Props = {
   growthPlan: Pick<GrowthPlan, "id" | "title" | "account_type" | "starting_balance" | "target_balance" | "currency" | "risk_percent" | "deadline" | "milestones"> | null;
   fullName: string | null;
   timezone: string | null;
+  patternAlerts: Array<{ studyId: string; title: string; outcome: string; count: number }>;
 };
 
 function SectionHeading({ index, title, action, href }: { index: string; title: string; action?: string; href?: string }) {
@@ -76,7 +77,7 @@ function ActivityHeatmap({ trades }: { trades: Trade[] }) {
   return <section className="pulse-heatmap"><div className="pulse-card-heading"><div><p>LAST FOUR WEEKS</p><h3>Journal rhythm</h3></div><Link href="/calendar" aria-label="Open trading calendar"><ArrowUpRight size={17} /></Link></div><div className="pulse-heatmap-summary"><strong>{recordedDays}<small> / 28</small></strong><span>days with a journal entry</span></div><div className="pulse-heatmap-grid" aria-label="Last 28 days of trading activity">{days.map((date) => { const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`; const dayTrades = entries.get(key) ?? []; const net = dayTrades.filter((trade) => trade.status === "Completed").reduce((total, trade) => total + trade.r_value, 0); return <span key={key} className={dayTrades.length ? net > 0 ? "is-win" : net < 0 ? "is-loss" : "is-logged" : ""} title={`${key}: ${dayTrades.length} journal ${dayTrades.length === 1 ? "entry" : "entries"}${dayTrades.length ? `, ${formatR(net)}` : ""}`} />; })}</div><div className="pulse-heatmap-foot"><span>28 DAYS AGO</span><span>TODAY</span></div></section>;
 }
 
-export function DashboardOverview({ trades, pendingReviews, reviewComplete, growthPlan, fullName, timezone }: Props) {
+export function DashboardOverview({ trades, pendingReviews, reviewComplete, growthPlan, fullName, timezone, patternAlerts }: Props) {
   const [range, setRange] = useState<Range>("all");
   const [mode, setMode] = useState<ChartMode>("r");
   const visible = useMemo(() => {
@@ -98,6 +99,7 @@ export function DashboardOverview({ trades, pendingReviews, reviewComplete, grow
 
   return <div className="dashboard-page pulse-dashboard">
     <header className="pulse-header"><div><p className="pulse-kicker"><span /> TRADING JOURNAL <b>/</b> YOUR TRADING DESK</p><DashboardGreeting fullName={fullName} savedTimezone={timezone} /></div><div className="pulse-header-actions"><Link href="/calendar" className="pulse-secondary-link"><CalendarDays size={16} /> Calendar</Link><Link href="/log" className="pulse-main-link"><Plus size={17} /> Log a trade <ArrowUpRight size={15} /></Link></div></header>
+    {patternAlerts.length > 0 && <Link href="/analysis" className="flex items-center gap-3 rounded-[16px] bg-terminal-panel2 px-4 py-3 text-terminal-text transition hover:brightness-110"><span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-terminal-green/15 text-terminal-green"><ScanSearch size={19} /></span><span className="min-w-0 flex-1"><strong className="block text-sm">A past lesson may be repeating</strong><small className="block truncate text-xs text-terminal-muted">{patternAlerts[0].title} · {patternAlerts[0].count} possible {patternAlerts[0].outcome.toLowerCase()} match{patternAlerts[0].count === 1 ? "" : "es"} in your latest 12 completed trades</small></span><ArrowUpRight size={17} className="shrink-0 text-terminal-green" /></Link>}
 
     <div className="pulse-lead-grid"><section className="pulse-hero" aria-label="Performance summary"><div className="pulse-hero-top"><span>01 / PERFORMANCE BRIEF</span><span>{range === "all" ? "ALL TIME" : ranges.find((item) => item.key === range)?.label}</span></div><div className="pulse-hero-body"><div><p>Net performance</p><strong>{formatR(metrics.totalR)}</strong><span>{metrics.totalTrades ? `From ${metrics.totalTrades} completed ${metrics.totalTrades === 1 ? "trade" : "trades"}` : "Your track record starts with a decision"}</span></div><HeroLine trades={visible} /></div><div className="pulse-hero-bottom"><div><span>WIN RATE</span><strong>{metrics.winRate.toFixed(0)}%</strong></div><div><span>AVERAGE TRADE</span><strong>{formatR(metrics.expectancy)}</strong></div><div><span>PROCESS SCORE</span><strong>{discipline}<small> / 100</small></strong></div></div></section>
       <section className="pulse-focus"><div className="pulse-focus-top"><span>02 / IN FOCUS</span><CircleDot size={17} /></div><h2>What needs your attention?</h2><p>Turn today&apos;s activity into a better next decision.</p><Link href={next.href} className="pulse-focus-primary"><span><NextIcon size={20} /></span><span><strong>{next.label}</strong><small>{next.detail}</small></span><ArrowUpRight size={17} /></Link><div className="pulse-focus-list"><Link href="/review"><span>{reviewComplete ? <Check size={17} /> : <CalendarDays size={17} />}</span><span>{reviewComplete ? "Daily review complete" : "Complete daily review"}</span><ArrowRight size={15} /></Link><Link href="/growth"><span><Target size={17} /></span><span>{growthPlan ? "View growth roadmap" : "Create a growth roadmap"}</span><ArrowRight size={15} /></Link></div></section></div>

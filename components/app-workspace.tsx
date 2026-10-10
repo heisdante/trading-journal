@@ -15,7 +15,7 @@ export function AppWorkspace({ children, email, userId, tourPending }: { childre
     : ({
       dashboard: "Overview", log: "Log a trade", trades: "Trade history", calculator: "Lot calculator",
       growth: "Growth roadmap", calendar: "Trading calendar", import: "Import trades", rules: "Trading rules",
-      playbooks: "Playbooks", review: "Daily review", weekly: "Weekly debrief", coach: "Journal coach",
+      playbooks: "Playbooks", review: "Daily review", weekly: "Weekly debrief", coach: "Journal coach", analysis: "Analysis Studio",
       report: "Reports", profile: "Settings", billing: "Billing",
     } as Record<string, string>)[pathSegments[0]] ?? "Workspace";
   const actionHref = pathname === "/log" ? "/dashboard" : "/log";
